@@ -49,11 +49,16 @@ struct Stats {
   double normalize_ms = 0, build_ms = 0, trim_ms = 0;
   double select_ms = 0, switch_ms = 0, certificate_ms = 0;
   double kernel_ms = 0, total_ms = 0;
+  double count_ms = 0, sort_ms = 0;
+  uint64_t initial_degree_evaluations = 0, acceptance_key_visits = 0;
 };
 struct Result {
   std::vector<std::vector<uint64_t>> abort_rounds;
   std::vector<uint8_t> commit;
   std::vector<uint64_t> certificate;
+  // Acceptance policies expose their own order/rejections, never fake EAS rounds.
+  std::vector<uint64_t> consideration_order, rejected_ids;
+  std::vector<int64_t> initial_degrees; // input order, static policy only
   Stats stats;
 };
 class Unsupported : public std::runtime_error {
@@ -65,5 +70,7 @@ Result select(const Batch &batch, const Options &options);
 Result run(const std::vector<Input> &input, const Options &options);
 // Deliberately separate, small-input all-pairs/all-rounds reference.
 Result oracle(const std::vector<Input> &input, size_t k);
+Result acceptance_oracle(const std::vector<Input> &input, bool static_degree);
+bool is_acceptance(const std::string &mode);
 bool same_decisions(const Result &a, const Result &b);
 } // namespace eas

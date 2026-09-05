@@ -25,6 +25,8 @@ void check_certificate(const eas::Trace &trace, const eas::Result &r) {
   // never builds a hidden graph for large implicit-selector measurements.
   std::set<eas::Key> used;
   std::set<uint64_t> aborted;
+  for (auto id : r.rejected_ids)
+    if (!aborted.insert(id).second) throw std::logic_error("duplicate rejected ID");
   for (const auto &round : r.abort_rounds) for (auto id : round)
     if (!aborted.insert(id).second) throw std::logic_error("duplicate abort ID");
   std::vector<uint64_t> certificate;
@@ -54,7 +56,7 @@ int main(int argc, char **argv) {
       std::string arg = argv[i];
       if (arg == "--selector-only") { selector_only = true; continue; }
       if (arg == "--help") {
-        std::cout << "bench_eas --trace FILE [--trace NEXT_BATCH] --mode native|graph|lazy|profile|adaptive "
+        std::cout << "bench_eas --trace FILE [--trace NEXT_BATCH] --mode native|accept_id|accept_static_degree|graph|lazy|profile|adaptive "
                      "[--k 2] [--workers 1] [--selector-only] [--max-incidence 8000000] "
                      "[--max-graph-bytes 536870912] [--output FILE]\n";
         return 0;
@@ -82,8 +84,11 @@ int main(int argc, char **argv) {
         eas::Measurement m; m.result = eas::run(trace.input, options);
         m.selector_ms = m.result.stats.total_ms; m.extract_ms = m.result.stats.normalize_ms;
         check_certificate(trace, m.result);
-        if (trace.input.size() <= 64 && !eas::same_decisions(m.result, eas::oracle(trace.input, options.k)))
-          throw std::logic_error("selector-only oracle mismatch");
+        if (trace.input.size() <= 64) {
+          const auto reference = eas::is_acceptance(options.mode) ?
+              eas::acceptance_oracle(trace.input, options.mode == "accept_static_degree") : eas::oracle(trace.input, options.k);
+          if (!eas::same_decisions(m.result, reference)) throw std::logic_error("selector-only policy oracle mismatch");
+        }
         measurements.push_back(std::move(m));
       }
     } else measurements = eas::run_engine(traces, options, workers);

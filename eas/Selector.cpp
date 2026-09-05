@@ -6,6 +6,7 @@
 #include <cmath>
 #include <map>
 #include <memory>
+#include <numeric>
 #include <queue>
 #include <set>
 #include <unordered_map>
@@ -28,9 +29,10 @@ struct KeyHash {
   }
 };
 void check_options(const Options &o) {
-  if (!o.k) throw Unsupported("k=0");
-  if (!o.max_arity || o.max_arity > 8) throw Unsupported("max_arity must be 1..8");
-  if (o.mode != "graph" && o.mode != "lazy" && o.mode != "profile" && o.mode != "adaptive")
+  if (!is_acceptance(o.mode) && !o.k) throw Unsupported("k=0");
+  if (!o.max_arity || (o.mode != "accept_id" && o.max_arity > 8))
+    throw Unsupported("max_arity must be 1..8 for subset-based policies");
+  if (!is_acceptance(o.mode) && o.mode != "graph" && o.mode != "lazy" && o.mode != "profile" && o.mode != "adaptive")
     throw Unsupported("unknown selector mode: " + o.mode);
 }
 void check_batch(const Batch &b, const Options &o) {
@@ -44,7 +46,7 @@ void check_batch(const Batch &b, const Options &o) {
     const auto &keys = b.keys[t];
     if (keys.size() > o.max_arity) throw Unsupported("arity exceeds limit");
     arity = std::max(arity, keys.size());
-    const size_t add = (size_t(1) << keys.size()) - 1;
+    const size_t add = o.mode == "accept_id" ? 0 : (size_t(1) << keys.size()) - 1;
     if (add > o.max_incidence || incidences > o.max_incidence - add)
       throw Unsupported("subset incidence budget exceeded before allocation");
     incidences += add;
@@ -388,6 +390,9 @@ void audit(const State &s, const Scheduler &scheduler) {
 }
 } // namespace
 
+bool is_acceptance(const std::string &mode) {
+  return mode == "accept_id" || mode == "accept_static_degree";
+}
 Batch normalize(const std::vector<Input> &input, const Options &o) {
   check_options(o);
   if (input.size() > 1048576) throw Unsupported("transaction capacity exceeded");
@@ -402,7 +407,7 @@ Batch normalize(const std::vector<Input> &input, const Options &o) {
     std::sort(w.begin(), w.end()); w.erase(std::unique(w.begin(), w.end()), w.end());
     if (r != w) throw Unsupported("requires R=W=S (complete RMW)");
     if (r.size() > o.max_arity) throw Unsupported("arity exceeds limit");
-    const size_t add = (size_t(1) << r.size()) - 1; // arity checked before shift
+    const size_t add = o.mode == "accept_id" ? 0 : (size_t(1) << r.size()) - 1;
     if (add > o.max_incidence || b.incidences > o.max_incidence - add)
       throw Unsupported("subset incidence budget exceeded before allocation");
     b.incidences += add; b.accesses += r.size(); b.arity = std::max(b.arity, r.size());
@@ -418,8 +423,91 @@ Batch normalize(const std::vector<Input> &input, const Options &o) {
   return b;
 }
 namespace {
+Result accept(const Batch &b, const Options &o) {
+  Result r;
+  r.commit.resize(b.ids.size());
+  std::vector<size_t> order(b.ids.size());
+  std::iota(order.begin(), order.end(), 0);
+  if (o.mode == "accept_static_degree") {
+    const auto start = Clock::now();
+    r.initial_degrees.resize(b.ids.size());
+    if (b.arity <= 2) {
+      // Exact singleton/pair counts: duplicate signatures are distinct people.
+      std::vector<int64_t> single(b.key_count);
+      std::unordered_map<uint64_t, int64_t> pairs;
+      auto pair_key = [](const std::vector<uint32_t> &s) {
+        return (uint64_t(s[0]) << 32) | s[1];
+      };
+      for (const auto &s : b.keys) {
+        for (auto key : s) ++single[key];
+        if (s.size() == 2) ++pairs[pair_key(s)];
+      }
+      for (size_t t = 0; t < b.keys.size(); ++t) {
+        const auto &s = b.keys[t];
+        int64_t d = s.empty() ? 0 : -1;
+        for (auto key : s) d += single[key];
+        if (s.size() == 2) d -= pairs.at(pair_key(s));
+        r.initial_degrees[t] = d;
+      }
+      r.stats.subsets = b.key_count + pairs.size();
+      r.stats.index_payload_bytes = single.capacity() * sizeof(int64_t) +
+          pairs.size() * sizeof(std::pair<const uint64_t, int64_t>);
+    } else {
+      // One immutable inclusion-exclusion count map; no postings or profile.
+      std::map<Subset, int64_t> counts;
+      for (const auto &s : b.keys) subsets(s, [&](const Subset &q) { ++counts[q]; });
+      for (size_t t = 0; t < b.keys.size(); ++t) {
+        int64_t d = b.keys[t].empty() ? 0 : -1;
+        subsets(b.keys[t], [&](const Subset &q) { d += (q.size % 2 ? 1 : -1) * counts.at(q); });
+        r.initial_degrees[t] = d;
+      }
+      r.stats.subsets = counts.size();
+      r.stats.index_payload_bytes = counts.size() * sizeof(std::pair<const Subset, int64_t>);
+    } // count storage release is included
+    r.stats.incidences = b.incidences;
+    r.stats.initial_degree_evaluations = b.ids.size();
+    r.stats.count_ms = ms(start);
+    if (o.audit_degrees) for (size_t t = 0; t < b.ids.size(); ++t) {
+      int64_t d = 0;
+      for (size_t u = 0; u < b.ids.size(); ++u)
+        d += t != u && intersects(b.keys[t], b.keys[u]);
+      if (d != r.initial_degrees[t]) throw std::logic_error("static initial degree audit mismatch");
+    }
+  }
+  auto start = Clock::now();
+  auto less = [&](size_t t, size_t u) {
+    if (!r.initial_degrees.empty() && r.initial_degrees[t] != r.initial_degrees[u])
+      return r.initial_degrees[t] < r.initial_degrees[u];
+    return b.ids[t] < b.ids[u];
+  };
+  // Engine IDs are already ascending; do not charge accept_id an unnecessary sort.
+  if (!std::is_sorted(order.begin(), order.end(), less)) std::sort(order.begin(), order.end(), less);
+  r.stats.sort_ms = ms(start);
+  start = Clock::now();
+  std::vector<uint8_t> used(b.key_count);
+  for (auto t : order) {
+    r.consideration_order.push_back(b.ids[t]);
+    bool conflict = false;
+    for (auto key : b.keys[t]) {
+      ++r.stats.acceptance_key_visits;
+      if (used[key]) { conflict = true; break; }
+    }
+    if (conflict) r.rejected_ids.push_back(b.ids[t]);
+    else {
+      r.commit[t] = 1;
+      for (auto key : b.keys[t]) { used[key] = 1; ++r.stats.acceptance_key_visits; }
+    }
+  }
+  r.stats.select_ms = ms(start);
+  start = Clock::now();
+  for (size_t t = 0; t < b.ids.size(); ++t) if (r.commit[t]) r.certificate.push_back(b.ids[t]);
+  std::sort(r.certificate.begin(), r.certificate.end());
+  r.stats.certificate_ms = ms(start);
+  return r; // all scratch destruction included by select()'s outer interval
+}
 Result select_impl(const Batch &b, const Options &o) {
   check_batch(b, o);
+  if (is_acceptance(o.mode)) return accept(b, o);
   Result r; r.commit.resize(b.ids.size());
   const auto trim_start = Clock::now();
   State state(b, r.stats);
@@ -498,6 +586,8 @@ Result run(const std::vector<Input> &input, const Options &o) {
   return r;
 }
 bool same_decisions(const Result &a, const Result &b) {
-  return a.abort_rounds == b.abort_rounds && a.commit == b.commit && a.certificate == b.certificate;
+  return a.abort_rounds == b.abort_rounds && a.commit == b.commit && a.certificate == b.certificate &&
+      a.consideration_order == b.consideration_order && a.rejected_ids == b.rejected_ids &&
+      a.initial_degrees == b.initial_degrees;
 }
 } // namespace eas
