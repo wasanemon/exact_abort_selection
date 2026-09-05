@@ -2,14 +2,17 @@
   "schema_version": 1,
   "issue": 4,
   "status": "complete",
-  "status_scope": "research, implementation, experiments and local reproducibility complete; GitHub publication pending",
+  "status_scope": "research, implementation, experiments and local reproducibility complete; branch pushed and draft PR created",
   "publication": {
-    "status": "requires_explicit_user_approval_after_auto_review_rejection",
+    "status": "published_as_draft_pr",
     "destination": "wasanemon/exact_abort_selection",
     "head": "codex/issue-4-target-selection",
     "base": "codex/issue-3-policy-comparison",
-    "push_performed": false,
-    "pr_created": false
+    "push_performed": true,
+    "pr_created": true,
+    "pr_number": 6,
+    "pr_url": "https://github.com/wasanemon/exact_abort_selection/pull/6",
+    "draft": true
   },
   "base_commit": "d150211968ef6d61efda82f9f44f63e3bac28b44",
   "measured_commit": "4997e9193a38b1ce04b1766e00cc56bd4f7c29e9",

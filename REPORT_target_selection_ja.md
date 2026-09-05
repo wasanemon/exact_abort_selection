@@ -198,6 +198,6 @@ Issue #3の`next_stage.json`は過去の引継ぎ資料として変更せず、
 対象別No-Go理由と、再開に必要な実装・意味論・自然traceの証拠は [NO_GO.md](NO_GO.md) に残した。
 大規模移植、原著systemのend-to-end改善、重い本体/retry性能、新規性認定は行っていない。
 変更はIssue #4専用branch `codex/issue-4-target-selection` に記録した。
-GitHubへのpushは自動承認レビューが明示的な送信承認の不足を理由に拒否したため、
-PR作成は未実施。送信先の所有者と連携アカウントの一致・push権限を確認した後の再審査も同じ結果だった。
-ユーザーの明示承認後、#3ブランチに対する別PRとして提出する。自動mergeは行わない。
+ユーザーの明示承認後、GitHubへのpushを完了し、#3ブランチに対する
+[draft PR #6](https://github.com/wasanemon/exact_abort_selection/pull/6) として提出した。
+PRのbaseは指定コミット `d150211968ef6d61efda82f9f44f63e3bac28b44`。自動mergeは行わない。
