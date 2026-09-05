@@ -1,0 +1,30 @@
+{
+  "full": {
+    "archive": "experiments/eas/results/full/raw_data.tar.gz",
+    "sha256": "eba9fecd12be0fb7e46b91fb80477c61bd235efc645008a5720fdd9e36b3a8db",
+    "files": 5924,
+    "uncompressed_bytes": 67378141,
+    "compressed_bytes": 22687882,
+    "byte_comparison": "passed",
+    "contents": [
+      "raw",
+      "records",
+      "traces",
+      "logs"
+    ]
+  },
+  "smoke": {
+    "archive": "experiments/eas/results/smoke/raw_data.tar.gz",
+    "sha256": "a9cfc7f9d57adff4e621987afbb5659fbd39d8da0a2be9bf492cefbb46964177",
+    "files": 624,
+    "uncompressed_bytes": 620073,
+    "compressed_bytes": 69911,
+    "byte_comparison": "passed",
+    "contents": [
+      "raw",
+      "records",
+      "traces",
+      "logs"
+    ]
+  }
+}

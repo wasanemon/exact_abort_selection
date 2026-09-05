@@ -1,0 +1,88 @@
+{
+  "capacity_probes": "full only: constant arity 8 trace, max incidence 1, all EAS modes; expected unsupported",
+  "conditions": [
+    {
+      "arity": 2,
+      "batch_id": 776281256,
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 128,
+      "policy_k": 2,
+      "selector_only": false,
+      "suite": "main",
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1713923319,
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 128,
+      "policy_k": 2,
+      "selector_only": false,
+      "suite": "main",
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1247765411,
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "distribution": "identical",
+      "key_count": 10000,
+      "n": 256,
+      "policy_k": 1,
+      "selector_only": false,
+      "suite": "worst",
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 1,
+      "batch_id": 3985015542,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "distribution": "identical",
+      "key_count": 10000,
+      "n": 2,
+      "policy_k": 2,
+      "selector_only": false,
+      "suite": "zero_commit",
+      "workers": 1,
+      "zipf": 0.99
+    }
+  ],
+  "identity": {
+    "binary_sha256": "5bed87680cb44eeba64af9117c81b6ef1f23e4cca7cfe7449273e763765ce6d3",
+    "cpus": [
+      0,
+      2,
+      4,
+      6,
+      8
+    ],
+    "max_graph_bytes": 536870912,
+    "max_incidence": 8000000,
+    "memory_mib": 2048,
+    "plan_sha256": "c3df8ec5729ae669a94526348d13d4211247fa5d5dfe11bf9087263d85778d3c",
+    "runner_sha256": "98aac11c0052305e070b7ad141353dfd4106c95cf8e4a419754b04848d0d825f",
+    "seeds": [
+      11,
+      29,
+      47,
+      71,
+      101
+    ],
+    "smoke": true,
+    "suites": null,
+    "timeout": 120.0,
+    "total_seconds": 14400.0
+  },
+  "order_seed": 20260905,
+  "scope": "single batch one attempt; no retry; no simultaneous benchmark processes",
+  "timing": "benchmark intervals exclude generation, DB init, verification; process_wall_seconds is orchestration only",
+  "trace_generator": "Python Random version 2, per (seed,batch,id), duplicate redraw",
+  "warmup": "seed=7; one separate unmeasured process per condition/mode, before its five measurements"
+}

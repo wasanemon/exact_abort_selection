@@ -154,7 +154,8 @@ transaction本体の時間であり、独立したwall区間として二重加�
 生成・trace読込・DB初期化・worker起動・検査用開始状態コピー・全oracle/直接検査・JSON出力は
 `batch_ms` から除外する。selector単体は `batch_ms=null` とする。
 
-`peak_rss_kib` はプロセス全体（DB・入力・検査を含む）の高水位で、selectorだけの使用量ではない。
+`peak_rss_kib` はJSON生成開始時点までのプロセス全体（DB・入力・検査を含む）の高水位で、selectorだけの使用量ではない。
+`runner_peak_rss_kib` は外部の `/usr/bin/time` による終了時までの高水位で、JSON出力の確保も含む。日本語表では後者を優先する。
 各反復を別プロセスにして他方式の高水位を持ち越さない。`graph_bytes` はbitsetのpayload、
 `index_payload_bytes` は明記したsubset/posting等の部分的なpayload推定で、allocator・木node・
 hash bucket・全補助配列を含む完全な確保量ではない。要素数も併記し、RSSと混同しない。

@@ -1,0 +1,13 @@
+test_arrays_detect_changed_decisions_even_with_updated_hash (__main__.AuditFixtureTest) ... ok
+test_hash_corruption_sets_nonzero_exit (__main__.AuditFixtureTest) ... ok
+test_missing_and_timeout_are_unavailable (__main__.AuditFixtureTest) ... ok
+test_missing_manifest_is_not_reported_as_success (__main__.AuditFixtureTest) ... ok
+test_smoke_native_is_compared_only_with_same_mode (__main__.AuditFixtureTest) ... ok
+test_success_relocation_and_native_exclusion (__main__.AuditFixtureTest) ... ok
+test_trace_bytes_detect_difference_even_with_updated_hashes (__main__.AuditFixtureTest) ... ok
+test_worker_absent_from_manifest_is_explicit (__main__.AuditFixtureTest) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.128s
+
+OK

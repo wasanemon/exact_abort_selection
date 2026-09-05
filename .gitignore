@@ -34,3 +34,9 @@ cmake/*
 !README_eas.md
 **/__pycache__/
 *.pyc
+!.gitattributes
+# These exact bytes are versioned in each dataset's raw_data.tar.gz.
+/experiments/eas/results/*/raw/
+/experiments/eas/results/*/records/
+/experiments/eas/results/*/traces/
+/experiments/eas/results/*/logs/

@@ -1,0 +1,23 @@
+{
+  "completed_utc": "2026-09-05T04:42:00.241744+00:00",
+  "counts": {
+    "capacity_probe": {
+      "unsupported": 4
+    },
+    "measure": {
+      "ok": 945
+    },
+    "warmup": {
+      "ok": 189
+    }
+  },
+  "expected_jobs": 1138,
+  "pair_checks": {
+    "passed": 195
+  },
+  "prior_elapsed_seconds": 0.0,
+  "saved_jobs": 1138,
+  "successful_capacity_probes": 4,
+  "total_budget_seconds": 14400.0,
+  "wall_seconds_this_invocation": 792.8424690579996
+}

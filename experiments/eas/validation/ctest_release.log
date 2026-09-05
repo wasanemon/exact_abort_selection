@@ -1,0 +1,10 @@
+Internal ctest changing into directory: /home/wasanemon/project/exact_abort_selection/build
+Test project /home/wasanemon/project/exact_abort_selection/build
+    Start 1: eas_selector
+1/2 Test #1: eas_selector .....................   Passed    5.98 sec
+    Start 2: eas_integration
+2/2 Test #2: eas_integration ..................   Passed    0.06 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   6.04 sec

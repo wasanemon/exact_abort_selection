@@ -231,11 +231,16 @@ def make_figures(directory, summary, ratios):
         for row_index, arity in enumerate((2, 4)):
             for column, metric in enumerate(("selector_ms", "selector.degree_queries", "selector.switches")):
                 values = [row for row in worst if row["arity"] == arity and row["metric"] == metric and row["mode"] != "native"]
+                if metric == "selector.degree_queries":
+                    values = [row for row in values if row["mode"] in ("lazy", "adaptive")]
                 plot_lines(axes[row_index, column], values)
+                label = {"selector_ms": "selector time (ms)",
+                         "selector.degree_queries": "lazy degree questions",
+                         "selector.switches": "profile switches"}[metric]
                 axes[row_index, column].set(xscale="log", xlabel="Transactions per batch (n)",
-                                            ylabel="Median and IQR", title=f"Identical {arity}-key transactions: {metric}")
+                                            ylabel="Median and IQR", title=f"Identical keys, ell={arity}: {label}")
                 if metric != "selector.switches":
-                    axes[row_index, column].set_yscale("symlog", linthresh=.01 if metric.endswith("_ms") else 1)
+                    axes[row_index, column].set_yscale("log")
                 axes[row_index, column].legend(fontsize=8)
         save(fig, "worst_and_switch")
     constant = [row for row in summary if row["suite"] == "constant"]

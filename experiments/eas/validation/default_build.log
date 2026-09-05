@@ -1,0 +1,11 @@
+[ 25%] Building CXX object CMakeFiles/common.dir/common/Time.cpp.o
+[ 50%] Linking CXX static library libcommon.a
+[ 50%] Built target common
+[ 75%] Building CXX object CMakeFiles/bench_ycsb.dir/bench_ycsb.cpp.o
+[100%] Linking CXX executable bench_ycsb
+[100%] Built target bench_ycsb
+Consolidate compiler generated dependencies of target common
+[ 50%] Built target common
+[ 75%] Building CXX object CMakeFiles/bench_tpcc.dir/bench_tpcc.cpp.o
+[100%] Linking CXX executable bench_tpcc
+[100%] Built target bench_tpcc

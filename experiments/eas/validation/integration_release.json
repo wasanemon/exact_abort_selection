@@ -1,0 +1,1 @@
+{"status":"passed","engine_invocations":161,"requested_batches":181,"assertions":246,"workers":[1,2,4],"multi_batch_epochs":3,"direct_snapshot_private_write_full_state_checks":true}

@@ -1,0 +1,24 @@
+{
+  "status": "reviewed",
+  "base_sha": "d0508c393ec084582c12e6f3abadab63501eaedd",
+  "checks": [
+    "native default control flow retained",
+    "real Aria phase barriers and buffer lifetime",
+    "full-RMW disjoint parallel write application",
+    "frozen-k excludes candidates without deleting counts",
+    "profile light/heavy loops and linear present-profile links",
+    "adaptive round-boundary switch and memory release",
+    "timing parents and worker cumulative vs wall intervals"
+  ],
+  "findings_corrected": [
+    "canonical Batch accepted unused dense key IDs; rejected before State allocation",
+    "verification compared separately relabeled dense IDs; now directly compares logical triples"
+  ],
+  "not_claimed": [
+    "durability",
+    "distribution",
+    "retry progress",
+    "leak sanitizer passed",
+    "fixed-arity exponent optimality"
+  ]
+}

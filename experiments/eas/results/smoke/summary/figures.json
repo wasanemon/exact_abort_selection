@@ -1,0 +1,15 @@
+{
+  "files": [
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/main_timing.png",
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/main_timing.svg",
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/main_paired_ratios.png",
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/main_paired_ratios.svg",
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/worst_and_switch.png",
+    "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke/summary/figures/worst_and_switch.svg"
+  ],
+  "matplotlib_version": "3.10.9",
+  "missing": "No finite benchmark timings substituted for timeout/OOM/unsupported observations",
+  "ratio_direction": "greater than one means denominator mode is faster; graph compares same policy; native compares different policies",
+  "shading": "Interquartile range across five paired input seeds (or successful subset, see CSV count)",
+  "status": "ok"
+}

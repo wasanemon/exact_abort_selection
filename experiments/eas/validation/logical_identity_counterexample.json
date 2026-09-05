@@ -1,0 +1,9 @@
+{
+  "finding": "Separately normalizing actual and planned batches to dense IDs loses the identity of original logical keys.",
+  "actual": [{"id":1,"reads":[[0,0,0]],"writes":[[0,0,0]]}],
+  "planned": [{"id":1,"reads":[[0,0,1]],"writes":[[0,0,1]]}],
+  "both_dense_keys": [[0]],
+  "correction": "Hook::verify now uses same_logical_inputs to compare sorted/deduplicated original (table,partition,value) triples directly.",
+  "regression": "eas_integration_test checks that the dense labels coincide but the logical input comparison rejects equality.",
+  "scope": "Verification hole found in review before performance measurement; no selector policy change."
+}

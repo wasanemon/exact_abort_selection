@@ -47,6 +47,7 @@ mkdir -p experiments/eas/validation/reproduced
 ctest --test-dir build --verbose --output-on-failure > experiments/eas/validation/reproduced/ctest.log 2>&1
 python3 tests/test_hsc.py --output experiments/eas/validation/reproduced/hsc.json --log experiments/eas/validation/reproduced/hsc.log
 python3 experiments/eas/test_tools.py > experiments/eas/validation/reproduced/tools.log 2>&1
+python3 tests/test_audit_results.py > experiments/eas/validation/reproduced/audit_tools.log 2>&1
 ```
 
 CTest の `eas_selector` は独立 oracle との全中止round・commit mask・証明書比較、
@@ -83,7 +84,9 @@ benchmark は一つです。各プロセスで一バッチを一回だけ試行�
 worst の arity=2/n=256、zero_commit の4条件を使う120プロセスです。
 
 リポジトリには今回の `results/full` / `results/smoke` が含まれます。clean checkout
-から再実行するときは、次のように新しい出力先を指定してください。
+では多数の生データファイルを `raw_data.tar.gz` にまとめて保存しています。
+保存済みデータの集計・監査・個別trace再実行には、後述の展開手順を先に実行します。
+新しく性能実験を再実行するときは、次のように新しい出力先を指定してください。
 
 ```bash
 python3 experiments/eas/run.py --smoke --output experiments/eas/results/reproduce-smoke --timeout 120 --memory-mib 2048 --total-seconds 14400
@@ -135,10 +138,32 @@ CPU集合の指定です。
 `timeout`、`oom`、`unsupported`、その他の失敗を有限の性能時間に置き換えません。
 SIGKILLだけでOOMと断定せず、原因不明のkillは `killed_unknown` です。
 
+`raw/`、`records/`、`traces/`、`logs/` の4ディレクトリは、fullとsmokeそれぞれの
+`raw_data.tar.gz` に可逆圧縮してGitに保存しています。原本のJSON、TSV、ログの内容は
+無損失で、丸め・間引き・再集計への置換はしていません。展開済みファイルは作業環境にも
+保持しますが、Gitではignoreし、PRに数千の個別ファイルを並べない形にしています。
+`summary/` と、`environment.json`、`manifest.json`、`plan.json`、`run_summary.json`、
+`decision_checks.json`、`runs.jsonl` などのトップレベルファイルは通常のファイルとして保存します。
+
+clean checkoutから保存済みの生データを使う場合は、先に両アーカイブを展開します。
+
+```bash
+tar -xzf experiments/eas/results/full/raw_data.tar.gz -C experiments/eas/results/full
+tar -xzf experiments/eas/results/smoke/raw_data.tar.gz -C experiments/eas/results/smoke
+```
+
+展開後も各recordの `trace_sha256` と `raw_sha256` を使って原本との一致を検査できます。
+保存済み結果の独立監査は、次のコマンドで再実行します。
+
+```bash
+python3 experiments/eas/audit_results.py experiments/eas/results/full --smoke experiments/eas/results/smoke --output experiments/eas/validation/result_audit.json
+```
+
 各結果ディレクトリの主なファイルは次のとおりです。
 
 |場所|内容|
 |---|---|
+|`raw_data.tar.gz`|`raw/`、`records/`、`traces/`、`logs/`の無損失アーカイブ。以下の該当パスは展開後の場所|
 |`plan.json`, `manifest.json`, `environment.json`|保存計画、使用した予算・hash・条件、OS/CPU/affinity/メモリ/compiler/flags/git状態|
 |`commands.json`|実行順と各benchmarkの完全なargv・shell表現|
 |`traces/*.tsv`|warmupと各固定seedの有限入力。全方式で共有|
@@ -150,6 +175,7 @@ SIGKILLだけでOOMと断定せず、原因不明のkillは `killed_unknown` で
 |`summary/paired_graph.csv`, `summary/paired_native.csv`|同policyのgraph比較と、異policyのnative比較|
 |`summary/paired_observations.csv`, `summary/paired_ratios.csv`|seedごとの比とその集計。欠測したpairも保持|
 |`summary/facts.json`, `summary/figures/`|報告用の事実一覧、再生成可能なPNG/SVG|
+|`summary/tables_ja.md`|CSVから再生成する日本語報告用の数表|
 
 `peak_rss_kib` はDB・入力・検証を含むプロセス全体の高水位です。方式ごとの新しい
 プロセスで測り、以前の方式の高水位を持ち越しません。`runner_peak_rss_kib` は
@@ -178,7 +204,7 @@ generatorは `(seed,batch_id,transaction_id)` ごとのPython `random.Random`を
 batch IDはworkload条件から決め、worker数・方式・実行順では変更しません。
 値はキーから初期化する32 byteで、writeは読んだ値と固定IDに依存する共通の非自明な変換です。
 
-保存traceを一方式だけ再実行する例です。
+前節のアーカイブを展開した後、保存traceを一方式だけ再実行する例です。
 
 ```bash
 build/bench_eas --mode adaptive --trace experiments/eas/results/full/traces/main-l2-n8192-zipf-w1-k2-s11.tsv --k 2 --workers 1 --max-incidence 8000000 --max-graph-bytes 536870912 --output /tmp/eas-one-batch.json
@@ -189,14 +215,22 @@ modeは `native` / `graph` / `lazy` / `profile` / `adaptive` です。
 manager/workerで複数batchを実行できます。`--profile-B` と `--adaptive-budget` は
 特殊値の検証用であり、主実験runnerは変更しません。
 
-保存済み生データから集計だけを再生成できます。
+アーカイブの展開後、保存済み生データから集計と日本語表を再生成できます。
 
 ```bash
 python3 experiments/eas/summarize.py experiments/eas/results/full --output /tmp/eas-regenerated-summary
+python3 experiments/eas/report_tables.py /tmp/eas-regenerated-summary
 ```
 
 matplotlibなしでCSVだけを作る場合は `--no-plots` を追加します。生データディレクトリを
 別のcheckoutへコピーした場合も、集計はその中の `raw/` を優先して読みます。
+`report_tables.py` は既存CSVだけを読む軽い処理です。結果ディレクトリまたはその `summary/`
+を受け取り、既定で `summary/tables_ja.md` に出力します。出力先は `--output` で変更できます。
+保存済みCSVから表だけを作る場合は生データの展開も不要です。
+
+```bash
+python3 experiments/eas/report_tables.py experiments/eas/results/full --output /tmp/eas-tables_ja.md
+```
 
 ## 6. ASan/UBSan と TSan
 

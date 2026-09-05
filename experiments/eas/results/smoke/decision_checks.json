@@ -1,0 +1,406 @@
+{
+  "checks": [
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 11,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "adaptive",
+        "lazy",
+        "profile"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 29,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "profile",
+        "adaptive",
+        "lazy"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "profile",
+      "seed": 47,
+      "status": "passed",
+      "successful_modes": [
+        "profile",
+        "lazy",
+        "adaptive",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 71,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "profile",
+        "adaptive",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 101,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "graph",
+        "profile",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 11,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "profile",
+        "lazy",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 29,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "lazy",
+        "adaptive",
+        "profile"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "profile",
+      "seed": 47,
+      "status": "passed",
+      "successful_modes": [
+        "profile",
+        "lazy",
+        "adaptive",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 71,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "adaptive",
+        "profile",
+        "lazy"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 101,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 11,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "profile",
+        "adaptive",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "profile",
+      "seed": 29,
+      "status": "passed",
+      "successful_modes": [
+        "profile",
+        "lazy",
+        "graph",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 47,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "adaptive",
+        "graph",
+        "profile"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 71,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "graph",
+        "profile",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 101,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "graph",
+        "profile",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 11,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "adaptive",
+        "lazy",
+        "profile"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "adaptive",
+      "seed": 29,
+      "status": "passed",
+      "successful_modes": [
+        "adaptive",
+        "profile",
+        "lazy",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "profile",
+      "seed": 47,
+      "status": "passed",
+      "successful_modes": [
+        "profile",
+        "lazy",
+        "adaptive",
+        "graph"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "graph",
+      "seed": 71,
+      "status": "passed",
+      "successful_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "unavailable": {}
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "expected_modes": [
+        "graph",
+        "lazy",
+        "profile",
+        "adaptive"
+      ],
+      "mismatch_modes": [],
+      "reference_mode": "lazy",
+      "seed": 101,
+      "status": "passed",
+      "successful_modes": [
+        "lazy",
+        "profile",
+        "graph",
+        "adaptive"
+      ],
+      "unavailable": {}
+    }
+  ],
+  "comparison": "exact abort rounds, commit mask, certificate; native policy excluded",
+  "failed": 0
+}

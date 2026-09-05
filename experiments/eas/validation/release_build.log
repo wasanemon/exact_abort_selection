@@ -1,0 +1,20 @@
+Consolidate compiler generated dependencies of target eas_selector
+[ 11%] Built target common
+[ 29%] Built target eas_selector
+Consolidate compiler generated dependencies of target eas_engine
+[ 41%] Built target eas_selector_test
+[ 47%] Building CXX object CMakeFiles/bench_ycsb.dir/bench_ycsb.cpp.o
+[ 52%] Building CXX object CMakeFiles/bench_tpcc.dir/bench_tpcc.cpp.o
+[ 58%] Building CXX object CMakeFiles/eas_engine.dir/eas/Engine.cpp.o
+[ 64%] Linking CXX static library libeas_engine.a
+[ 64%] Built target eas_engine
+Consolidate compiler generated dependencies of target bench_eas
+Consolidate compiler generated dependencies of target eas_integration_test
+[ 70%] Linking CXX executable bench_eas
+[ 76%] Linking CXX executable eas_integration_test
+[ 88%] Built target bench_eas
+[ 88%] Built target eas_integration_test
+[ 94%] Linking CXX executable bench_ycsb
+[ 94%] Built target bench_ycsb
+[100%] Linking CXX executable bench_tpcc
+[100%] Built target bench_tpcc
