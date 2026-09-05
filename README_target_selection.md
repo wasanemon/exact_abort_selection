@@ -22,27 +22,36 @@ cd /tmp/eas-issue4-reproduce
 python3 experiments/target_selection/verify_sources.py
 python3 experiments/target_selection/build.py --output /tmp/issue4-release/validator
 /tmp/issue4-release/validator --self-test
+python3 experiments/target_selection/check_witnesses.py --binary /tmp/issue4-release/validator --output /tmp/issue4-fixed-witnesses.json
 python3 experiments/target_selection/build.py --sanitize --output /tmp/issue4-sanitize/validator
 ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 /tmp/issue4-sanitize/validator --self-test
 python3 experiments/target_selection/test_analyze.py
 ```
 
-必要なのは C++14対応g++ と Python 3、Linux の affinity/resource API。
+必要なのは C++14対応g++ と Python 3.9以上、Linux の affinity/resource API。
 図の再生成は matplotlib を使う。標準C++と既存selectorだけを直接linkするので、DBMSの
 glog/gflags/jemallocなどの依存は不要。`build.py` は完全compile command、flags、compiler、
 source SHA256、git commit/status、binary SHA256を `.build.json` に保存する。
 runnerは成功build・binary/source hash一致・build時のclean statusを確認する。
 SanitizerはASan+UBSanを同時有効化する。LSanのみ既存環境制約に合わせ無効化し、
 sanitizerの時間をRelease性能比に混ぜない。
+matplotlibの設定directoryが書込み不可なら、再集計コマンドの前に
+`MPLCONFIGDIR=/tmp/issue4-matplotlib` を指定する。
 
 ## 保存データの独立再集計
 
 ```bash
+python3 experiments/target_selection/verify_provenance.py --input experiments/target_selection/results/full
+python3 experiments/target_selection/verify_provenance.py --input experiments/target_selection/results/smoke
 python3 experiments/target_selection/analyze.py --input experiments/target_selection/results/full
 python3 experiments/target_selection/analyze.py --input experiments/target_selection/results/smoke
 ```
 
-metadataとraw/trace SHA256、予定jobの完備性、同一policyの全decision配列を照合する。
+`verify_provenance.py` はbuild・environment・manifest間のcommit/source/binary hashとclean statusを照合し、
+測定commitのGit objectでsource/runner/plan/gateを検証する。後続の報告commitのHEADとは比較しない。
+測定commitのGit objectがないshallow cloneでは失敗するため、そのcommitを含む履歴を取得する。
+測定時のbinaryも手元にある場合は `--binary /tmp/issue4-release/validator` を追加して実bytesを照合できる。
+`analyze.py` はjob metadataとraw/trace SHA256、予定jobの完備性、同一policyの全decision配列を照合する。
 `raw_data.tar.gz` は `raw/`, `traces/`, `logs/` を含む。analyzerはarchiveを展開せず読める。
 missing/error/timeoutを成功観測として補完せず、集計から黙って消さない。
 再集計は保存済み `summary/` を生成し直すので、元を保持する場合はdatasetを別directoryへcopyする。

@@ -1,0 +1,1 @@
+{"status":"ok","verification":"passed","exhaustive_inputs":4681,"random_rmw_inputs":1000,"random_directed_inputs":1000,"decision_comparisons":105258,"targeted_tests":9}

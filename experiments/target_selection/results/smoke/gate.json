@@ -1,0 +1,29 @@
+{
+  "base_commit": "d150211968ef6d61efda82f9f44f63e3bac28b44",
+  "date": "2026-09-05",
+  "eas_policy_advantage_assumed": false,
+  "gates": {
+    "baseline_relevance": "test accept_static_degree and accept_id; latter equals CFBS under fixed known-account complete-RMW contract",
+    "evaluability": "pass for independently implemented standalone algorithm; original author artifact not located in bounded search",
+    "need": "pass for paper validator graph construction and reordering bottleneck, sections 4, 4.3, 5.4; original deployment cost not measured here",
+    "policy_value": "conditional: preserve a specified published heuristic for reproduction; no established production requirement or cheap-policy quality superiority",
+    "semantic_fit": "pass only for viable same-snapshot complete point-RMW and explicit ID-descending tie extension; docs/ding_semantics_ja.md"
+  },
+  "issue_3_complete": true,
+  "limits": [
+    "not an original DBMS speedup",
+    "not generic R/W",
+    "not priority or retry preservation",
+    "not a claim of systems adoption readiness"
+  ],
+  "minimal_reproduction": "GO_LIMITED",
+  "proof": "docs/ding_semantics_ja.md",
+  "recorded_before_prototype_measurements": true,
+  "required_inputs_read": [
+    "REPORT_policy_comparison_ja.md",
+    "next_stage.json"
+  ],
+  "schema_version": 1,
+  "selected_minimal_candidate": "Ding Algorithm 2 complete-RMW standalone reproduction",
+  "system_port": "NO_GO"
+}

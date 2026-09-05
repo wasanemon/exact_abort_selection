@@ -1,0 +1,46 @@
+{
+  "measured_source_commit": "4997e9193a38b1ce04b1766e00cc56bd4f7c29e9",
+  "method": "Fresh directories containing only top-level metadata and archive; clean-source analyzer reads archive directly without extracting; exact CSV/Markdown/PNG and numerical facts comparison",
+  "datasets": [
+    {
+      "dataset": "full",
+      "archive_sha256": "56419b0c871d948d7a57398dbf30c24fc024e87c1d593adfae0e36b04c14a6e5",
+      "checked_members": 17820,
+      "checked_raw_files": 4410,
+      "checked_traces": 180,
+      "checks": {
+        "seed_metrics.csv": true,
+        "condition_metrics.csv": true,
+        "paired_seed.csv": true,
+        "observations.csv": true,
+        "paired_observations.csv": true,
+        "paired_conditions.csv": true,
+        "tables_ja.md": true,
+        "main.png": true,
+        "numeric_facts": true
+      },
+      "complete": true,
+      "archive_only": true
+    },
+    {
+      "dataset": "smoke",
+      "archive_sha256": "eb0b020c47c96fc6567273641eb46ef58be89517b68ae0c9492dd3e09fffbb26",
+      "checked_members": 4240,
+      "checked_raw_files": 1050,
+      "checked_traces": 40,
+      "checks": {
+        "seed_metrics.csv": true,
+        "condition_metrics.csv": true,
+        "paired_seed.csv": true,
+        "observations.csv": true,
+        "paired_observations.csv": true,
+        "paired_conditions.csv": true,
+        "tables_ja.md": true,
+        "main.png": true,
+        "numeric_facts": true
+      },
+      "complete": true,
+      "archive_only": true
+    }
+  ]
+}

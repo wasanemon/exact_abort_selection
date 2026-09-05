@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "issue": 4,
+  "status": "complete",
+  "base_commit": "d150211968ef6d61efda82f9f44f63e3bac28b44",
+  "measured_commit": "4997e9193a38b1ce04b1766e00cc56bd4f7c29e9",
+  "report": "REPORT_target_selection_ja.md",
+  "system_adoption": "NO_GO",
+  "minimal_reproduction": "completed_Ding_complete_RMW_only",
+  "eas_policy_superiority_demonstrated": false,
+  "original_system_speedup_demonstrated": false,
+  "full_measurements": 4410,
+  "smoke_measurements": 1050,
+  "full_trace_count": 180,
+  "full_decision_groups": 630,
+  "full_exact_policy_groups": 210,
+  "archive_reproduction_passed": true,
+  "sanitizers": "ASan/UBSan passed; LSan disabled",
+  "main_scale_k1_conditions": 34,
+  "adaptive_faster_than_paper_conditions": 15,
+  "adaptive_faster_than_eas_graph_conditions": 12,
+  "adaptive_validator_rate_beats_accept_id_conditions": 0,
+  "adaptive_validator_rate_beats_static_conditions": 9,
+  "adaptive_vs_static_commit_wins_ties_losses": [
+    0,
+    26,
+    8
+  ],
+  "quality_array_order": "adaptive wins, ties, losses vs static; condition paired medians",
+  "important_limits": [
+    "synthetic 8192-key universe differs from Issue3 10000-key universe",
+    "n40 matches paper batch size only, not original workload",
+    "paper tie-break is an explicit ID-descending extension",
+    "standalone validator rate is not DBMS throughput",
+    "generic directed EAS preservation unproved",
+    "counterexample timing not performance data"
+  ],
+  "next_problem_candidates": [
+    "Lantern general point-RW final-mask preservation against accepted-write union baseline",
+    "Native precedence/priority preservation with measured materialization cost",
+    "fixed-small-arity exact sequence and resource bounds, with explicit prior-art comparison"
+  ],
+  "new_system_port_performed": false
+}
