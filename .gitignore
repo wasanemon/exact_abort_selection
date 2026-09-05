@@ -24,3 +24,13 @@ cmake/*
 !database/
 !protocol/
 !scripts/
+
+# Opt-in EAS research sources and reproducible artifacts.
+!eas/
+!tests/
+!docs/
+!experiments/
+!REPORT_ja.md
+!README_eas.md
+**/__pycache__/
+*.pyc

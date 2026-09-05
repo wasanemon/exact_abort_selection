@@ -5,6 +5,7 @@
 #pragma once
 
 #include "core/Partitioner.h"
+#include "core/AriaExperiment.h"
 
 #include "common/Percentile.h"
 #include "core/Delay.h"
@@ -88,7 +89,11 @@ public:
       } while (status != ExecutorStatus::Aria_READ);
 
       n_started_workers.fetch_add(1);
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].read_begin = AriaExperiment::now();
       read_snapshot();
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].read_end = AriaExperiment::now();
       n_complete_workers.fetch_add(1);
       // wait to Aria_READ
       while (static_cast<ExecutorStatus>(worker_status.load()) ==
@@ -104,7 +109,11 @@ public:
         std::this_thread::yield();
       }
       n_started_workers.fetch_add(1);
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].commit_begin = AriaExperiment::now();
       commit_transactions();
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].commit_end = AriaExperiment::now();
       n_complete_workers.fetch_add(1);
       // wait to Aria_COMMIT
       while (static_cast<ExecutorStatus>(worker_status.load()) ==
@@ -193,7 +202,10 @@ public:
       transactions[i]->execute(id);
 
       // start reservation
+      auto reserve_start = context.aria_experiment ? AriaExperiment::now() : 0;
       reserve_transaction(*transactions[i]);
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].reservation += AriaExperiment::now() - reserve_start;
       if (count % context.batch_flush == 0) {
         flush_messages();
       }
@@ -322,6 +334,24 @@ public:
   }
 
   void commit_transactions() {
+    if (context.aria_experiment && context.aria_experiment->use_decisions) {
+      for (auto i = id; i < transactions.size(); i += context.worker_num) {
+        if (context.aria_experiment->decisions[i]) {
+          commit_and_record(*transactions[i]);
+          n_commit.fetch_add(1);
+          auto latency =
+              std::chrono::duration_cast<std::chrono::microseconds>(
+                  std::chrono::steady_clock::now() - transactions[i]->startTime)
+                  .count();
+          percentile.add(latency);
+        } else {
+          protocol.abort(*transactions[i], messages);
+          n_abort_lock.fetch_add(1);
+        }
+      }
+      flush_messages();
+      return;
+    }
     std::size_t count = 0;
     for (auto i = id; i < transactions.size(); i += context.worker_num) {
       if (transactions[i]->abort_no_retry) {
@@ -330,7 +360,10 @@ public:
 
       count++;
 
+      auto dependency_start = context.aria_experiment ? AriaExperiment::now() : 0;
       analyze_dependency(*transactions[i]);
+      if (context.aria_experiment)
+        context.aria_experiment->worker_times[id].dependency += AriaExperiment::now() - dependency_start;
       if (count % context.batch_flush == 0) {
         flush_messages();
       }
@@ -352,6 +385,8 @@ public:
 
       if (context.aria_read_only_optmization &&
           transactions[i]->is_read_only()) {
+        if (context.aria_experiment)
+          context.aria_experiment->committed[i] = 1;
         n_commit.fetch_add(1);
         auto latency =
             std::chrono::duration_cast<std::chrono::microseconds>(
@@ -368,7 +403,7 @@ public:
       }
 
       if (context.aria_snapshot_isolation) {
-        protocol.commit(*transactions[i], messages);
+        commit_and_record(*transactions[i]);
         n_commit.fetch_add(1);
         auto latency =
             std::chrono::duration_cast<std::chrono::microseconds>(
@@ -378,7 +413,7 @@ public:
       } else {
         if (context.aria_reordering_optmization) {
           if (transactions[i]->war == false || transactions[i]->raw == false) {
-            protocol.commit(*transactions[i], messages);
+            commit_and_record(*transactions[i]);
             n_commit.fetch_add(1);
             auto latency =
                 std::chrono::duration_cast<std::chrono::microseconds>(
@@ -395,7 +430,7 @@ public:
             n_abort_lock.fetch_add(1);
             protocol.abort(*transactions[i], messages);
           } else {
-            protocol.commit(*transactions[i], messages);
+            commit_and_record(*transactions[i]);
             n_commit.fetch_add(1);
             auto latency =
                 std::chrono::duration_cast<std::chrono::microseconds>(
@@ -412,6 +447,18 @@ public:
       }
     }
     flush_messages();
+  }
+
+  void commit_and_record(TransactionType &txn) {
+    auto *hook = context.aria_experiment;
+    if (!hook) {
+      protocol.commit(txn, messages);
+      return;
+    }
+    auto start = AriaExperiment::now();
+    protocol.commit(txn, messages);
+    hook->worker_times[id].apply += AriaExperiment::now() - start;
+    hook->committed[txn.tid_offset] = 1;
   }
 
   void setupHandlers(TransactionType &txn) {
