@@ -52,3 +52,9 @@ cmake/*
 /experiments/policy_comparison/baseline_smoke/traces/
 /experiments/policy_comparison/baseline_smoke/logs/
 /experiments/policy_comparison/quality/*.jsonl
+!REPORT_target_selection_ja.md
+!README_target_selection.md
+!NO_GO.md
+/experiments/target_selection/results/*/raw/
+/experiments/target_selection/results/*/traces/
+/experiments/target_selection/results/*/logs/

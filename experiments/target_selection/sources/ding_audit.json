@@ -1,0 +1,39 @@
+{
+  "audit_date": "2026-09-05",
+  "paper": {
+    "url": "https://www.vldb.org/pvldb/vol12/p169-ding.pdf",
+    "sha256": "41416f64c794c06e129c9781b9d014e925031eeffcf1f6a117ef1c866d7e00c0",
+    "title": "Improving Optimistic Concurrency Control Through Transaction Batching and Operation Reordering",
+    "publication": "PVLDB 12(2):169-182, 2018; VLDB 2019 presentation",
+    "read_scope": "all 14 pages; official PDF extracted with pypdf and web PDF text",
+    "anchors": {
+      "dependency_definition": "section 3.2 and section 4, printed p171",
+      "algorithm": "Algorithm 2, printed p172, zero-index PDF page3",
+      "prod_degree_and_priority": "section 4.2, printed p173",
+      "reordering_bottleneck": "section 4.3, printed p174, and section 5.4, printed p177",
+      "default_k2_and_mixed_rw": "section 5, printed p175",
+      "smallbank": "section 5.2, printed p177",
+      "cicada_thread_policy_and_dbmsx": "sections 5.5 and 5.6, printed p178"
+    },
+    "short_quote": "All our IBVR algorithms begin by constructing the dependency graph G.",
+    "quote_word_count": 12
+  },
+  "artifact_search": {
+    "queries": [
+      "\"Improving Optimistic Concurrency Control Through Transaction Batching\" code",
+      "\"GreedySortGraph\" implementation",
+      "\"GreedySortGraph\" github",
+      "\"Bailu Ding\" \"batching\" \"code\"",
+      "\"occ_batch_reorder\" github",
+      "\"Centiman\" source github"
+    ],
+    "primary_pages_checked": [
+      "https://bailuding.github.io/",
+      "https://www.microsoft.com/en-us/research/publication/improving-optimistic-concurrency-control-through-transaction-batching-and-operation-reordering/",
+      "https://www.vldb.org/pvldb/vol12/p169-ding.pdf"
+    ],
+    "result": "No original-author validator/Cicada patch/DBMS-X artifact located in these searches and publication links. Not proof of nonexistence. FabricSharp focc-latest is third-party related implementation, audited separately.",
+    "author_contacted": false,
+    "original_system_built": false
+  }
+}

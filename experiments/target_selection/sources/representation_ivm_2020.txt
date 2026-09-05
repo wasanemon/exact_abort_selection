@@ -1,0 +1,3357 @@
+=== PDF PAGE 1 ===
+arXiv:2004.03716v1  [cs.DB]  7 Apr 2020
+Maintaining Triangle Queries under Updates
+Ahmet Kara 1, Milos Nikolic 2, Hung Q. Ngo 3, Dan Olteanu 1, Haozhe Zhang 1
+1University of Oxford 2University of Edinburgh 3RelationalAI, Inc.
+Abstract
+We consider the problem of incrementally maintaining the tr iangle queries with arbitrary free variables
+under single-tuple updates to the input relations.
+We introduce an approach called IVM ǫ that exhibits a trade-oﬀ between the update time, the space,
+and the delay for the enumeration of the query result, such th at the update time ranges from the square
+root to linear in the database size while the delay ranges fro m constant to linear time.
+IVMǫ achieves Pareto worst-case optimality in the update-delay space conditioned on the Online
+Matrix-Vector Multiplication conjecture. It is strongly P areto optimal for the triangle queries with zero
+or three free variables and weakly Pareto optimal for the tri angle queries with one or two free variables.
+Acknowledgements This project has received funding from the European Union’s Horizo n 2020 research
+and innovation programme under grant agreement No 682588.
+1 Introduction
+In this article we consider the problem of incrementally maintaining tria ngle queries under single-tuple
+updates to the input relations. We introduce an approach to this pr oblem that expresses a trade-oﬀ between
+the update time, space, and enumeration delay. The update time is the time needed to maintain the data
+structure encoding the query result upon a single-tuple update. T he space is the overall memory needed by
+the used data structure. The enumeration delay is the maximal time needed from starting the enumeration
+or reporting one result tuple to reporting the next result tuple or e nding the enumeration.
+We consider the triangle queries written in F AQ notation [2]. Let R, S, and T be relations that have
+schemas ( A, B), ( B, C), and ( C, A), respectively, and are given as functions mapping tuples over the ir
+schemas to tuple multiplicities. The ternary triangle query
+△3(a, b, c) = R(a, b) · S(b, c) · T (c, a)
+returns each triangle and its multiplicity in the join of the three relatio ns. The binary triangle query
+△2(a, b) =
+∑
+c∈Dom(C)
+R(a, b) · S(b, c) · T (c, a)
+returns each ( A, B)-pair that occurs in a triangle and its multiplicity. The unary triangle query
+△1(a) =
+∑
+b∈Dom(B)
+∑
+c∈Dom(C)
+R(a, b) · S(b, c) · T (c, a)
+returns each A-value that occurs in a triangle and its multiplicity. Finally, the nullary triangle query
+△0() =
+∑
+a∈Dom(A)
+∑
+b∈Dom(B)
+∑
+c∈Dom(C)
+R(a, b) · S(b, c) · T (c, a)
+1
+=== PDF PAGE 2 ===
+returns the number of triangles. There are further unary and bin ary triangle queries, e.g., △1(b) or △2(b, c),
+yet they can be treated similarly since the join of the three relations is symmetric in A, B, and C.
+The ternary triangle query has served as a milestone for the worst -case optimality of join algorithms in
+the centralized and parallel settings. Likewise, the nullary triangle q uery is a working horse for randomized
+approximation schemes for data processing. They showcase the s uboptimality of mainstream join algorithms
+used currently by virtually all commercial database systems. For a database D consisting of relations R, S,
+and T , standard binary join plans implementing these queries may take O(|D|2) time, yet the ternary and
+nullary triangle queries can be solved in O(|D|
+3
+2 ) [32] and respectively O(|D|1.41) time [3]. This observation
+motivated a new line of work on worst-case optimal algorithms for ar bitrary join queries [32]. Triangle
+queries have also served as a yardstick for understanding the opt imal communication cost for parallel query
+evaluation in the Massively Parallel Communication model [29]. They ha ve witnessed the development of
+randomized approximation schemes with increasingly lower time and sp ace requirements [18].
+In our prior work we introduced a worst-case optimal approach fo r incrementally maintaining the exact
+result of the nullary triangle query [24]. This article extends that wor k with an investigation of Pareto
+worst-case optimality for the triangle queries in the update-delay s pace.
+Incremental maintenance algorithms may beneﬁt from a range of p rocessing techniques whose com-
+binations make it more challenging to reason about optimality. Such te chniques include algorithms for
+aggregate-join queries with low complexity developed for the non-in cremental case [32]; pre-materialization
+of views to reduce the maintenance of a query to that of subquerie s [26]; and delta processing that allows to
+only compute the change to the result instead of the entire result [ 12].
+1.1 Existing Incremental View Maintenance (IVM) Approache s
+The problem of incrementally maintaining triangle queries has received a fair amount of attention. We next
+discuss the na ¨ ıve approach, which recomputes the query result from scratch, and several IVM approaches.
+We consider the single-tuple update δR = {(α, β) ↦→m} to a binary relation R that maps the tuple ( α, β)
+to a nonzero multiplicity m, which is positive for inserts and negative for deletes.
+The na ¨ ıve approach incurs constant-time updates: Each update is executed on a relation of the input
+database D. Whenever we need the query result, we recompute it in time O(|D|
+3
+2 ) [3, 32]. The number of
+distinct tuples in the result is at most |D|
+3
+2 [30].
+We next exemplify the classical ﬁrst-order IVM [12] on the nullary tr iangle query △0 under the aforemen-
+tioned single-tuple update δR; all other triangle queries are treated similarly. The classical IVM ap proach
+materializes the query result, computes on the ﬂy a delta query δ△0, and then updates the query result:
+δ△0() = δR(α, β) ·
+∑
+c∈Dom(C)
+S(β, c) · T (c, α), △0() = △0() + δ△0().
+The delta computation takes O(|D|) time since it needs to intersect two lists of possibly linearly many C-
+values that are paired with β in S and with α in T (i.e., the multiplicity of such pairs in S and T is nonzero).
+Since the query result is materialized, it can be enumerated with cons tant delay.
+The recursive IVM [26] speeds up the delta computation by precomp uting three auxiliary views repre-
+senting the update-independent parts of the delta queries:
+VST (b, a) =
+∑
+c∈Dom(C)
+S(b, c) · T (c, a)
+VT R(c, b) =
+∑
+a∈Dom(A)
+T (c, a) · R(a, b)
+VRS(a, c) =
+∑
+b∈Dom(B)
+R(a, b) · S(b, c).
+These three views take O(|D|2) space but allow to compute the delta query for single-tuple update s to the
+input relations in O(1) time. Computing the delta δ△0() = δR(α, β) · VST (β, α) requires just a constant-
+time lookup in VST ; however, maintaining the views VRS and VT R, which refer to R, still requires O(|D|)
+2
+=== PDF PAGE 3 ===
+time. The factorized IVM [33] materializes only one of the three view s, for instance, VST . In this case, the
+maintenance under updates to R takes O(1) time, but the maintenance under updates to S and T still takes
+O(|D|) time.
+Further exact IVM approaches focus on acyclic conjunctive quer ies. For free-connex acyclic conjunctive
+queries, the dynamic Yannakakis approach allows for enumeration o f result tuples with constant delay after
+single-tuple updates in linear time [20]. For databases with or without in tegrity constraints, it is known that
+a strict, small subset of the class of acyclic conjunctive queries ad mit constant-time update, while all other
+conjunctive queries have update times dependent on the size of th e input database [6, 7].
+A line of work relevant to our result unveils structure in the PTIME co mplexity class by giving lower
+bounds on the complexity of problems under various conjectures [1 9, 39].
+Deﬁnition 1 (Online Matrix-Vector Multiplication ( OMv) [19]) . We are given an n × n Boolean matrix M
+and receive n column vectors of size n, denoted by v1, . . . ,vn, one by one; after seeing each vector vi, we
+output the product Mvi before we see the next vector.
+Conjecture 2 (OMv Conjecture, Theorem 2.4 in [19]) . For any γ > 0, there is no algorithm that solves
+OMv in time O(n3−γ ).
+The OMv conjecture has been used to exhibit conditional lower bounds for m any dynamic problems,
+including those previously based on other popular problems and conj ectures, such as 3SUM and combinatorial
+Boolean matrix multiplication [19]. This also applies to the nullary triangle q uery: For any γ > 0 and
+database of domain size n, there is no algorithm that incrementally maintains the query result u nder single-
+tuple updates with arbitrary preprocessing time, O(n1−γ) update time, and O(n2−γ) answer time, unless
+the OMv conjecture fails [6]. All aforementioned prior approaches to mainta ining triangle queries do not
+meet this (conditional) lower bound and are thus not worst-case op timal.
+1.2 Contributions of This Article
+This article introduces IVM ǫ, an IVM approach for triangle queries with arbitrary free variables that exhibits
+a trade-oﬀ between the update time, the space, and the enumera tion delay.
+Theorem 3. Given a database D and ǫ ∈ [0, 1], IVM ǫ incrementally maintains the triangle queries under
+single-tuple updates to D with O(|D|
+3
+2 ) preprocessing time and O(|D|max{ǫ,1−ǫ}) amortized update time. The
+space complexity and enumeration delay are given in Table 1:
+△0 △1 △2 △3
+Space O(|D|1+min{ǫ,1−ǫ}) O(|D|1+min{ǫ,1−ǫ}) O(|D|1+min{ǫ,1−ǫ}) O(|D|
+3
+2 )
+Enumeration delay O(1) O(|D|2 min{ǫ,1−ǫ}) O(|D|min{ǫ,1−ǫ}) O(1)
+Table 1: IVM ǫ’s space and enumeration delay for maintaining triangle queries.
+The preprocessing time is the time to compute the query result on th e initial database before the updates;
+if we start with the empty database, then this is O(1). IVM ǫ maintains triangle queries with repeating
+relation symbols with the same complexities from Theorem 3.
+IVMǫ uses a data structure that partitions each input relation based on the degrees of data values. The
+degree of an A-value a in relation R is the number of B-values paired with a in R. The degree of B- and
+C-values is deﬁned analogously. Depending on whether a combination o f relation parts includes data values
+with high or low degrees, IVM ǫ uses a diﬀerent maintenance strategy. Thanks to this degree-ba sed adaptive
+processing, the overall update time of IVM ǫ is kept sublinear. As the database evolves under updates,
+IVMǫ needs to rebalance the relation partitions to account for updated degrees of data values. While this
+rebalancing may take superlinear time, it remains sublinear per single- tuple update. The overall update time
+is therefore amortized.
+3
+=== PDF PAGE 4 ===
+0 1
+2
+1
+1
+2
+1
+3
+2
+ǫ
+Complexity
+O(|D|y)
+y
+△0, △3
+△2
+△1
+△3
+△0, △1, △2
+△0, △1, △2, △3
+Space
+y =
+{
+1 + min{ǫ, 1 − ǫ}, for △0, △1, △2
+3
+2 , for △3
+Amortized update time
+y = max{ǫ, 1 − ǫ} for △0, △1, △2, △3
+Enumeration delay
+y =
+
+
+
+0, for △0, △3
+2 min{ǫ, 1 − ǫ}, for △1
+min{ǫ, 1 − ǫ}, for △2
+optimal static for △3 classical IVM for △0, △1, △2, △3classical IVM for △0, △1, △2, △3
+Figure 1: IVM ǫ’s amortized update time, space, and enumeration delay for maintain ing triangle queries. |D|
+is the database size. The complexities are parameterized by ǫ. The space and enumeration delay depend
+on the arity of the query result. By setting ǫ to 0 or 1, IVM ǫ recovers classical ﬁrst-order IVM. For ǫ = 1
+2 ,
+IVMǫ computes the ternary triangle query worst-case optimally.
+We distinguish two types of relation partitioning. In single partitioning , relations are partitioned based
+on the degrees of data values in one column. In double partitioning , relations are partitioned based on the
+degrees of data values in two columns. Unary and binary triangle que ries require double partitioning to
+obtain the complexity results in Theorem 3. For the nullary and terna ry triangle queries, single partitioning
+suﬃces to obtain these complexity results. Nevertheless, double p artitioning can lower the space complexity
+in case of the nullary triangle query, as stated next.
+Proposition 4. Given a database D and ǫ ∈ [0, 1], IVM ǫ incrementally maintains the nullary triangle query
+under single-tuple updates to D with O(|D|
+3
+2 ) preprocessing time, O(|D|max{ǫ,1−ǫ}) amortized update time,
+O(|D|max{1,min{1+ǫ,2−2ǫ}}) space complexity, and O(1) enumeration delay.
+For ǫ = 0 and ǫ ≥ 1
+2 , the space complexity needed by IVM ǫ to maintain the nullary triangle query
+becomes linear; its maximum is O(|D|4/3) for ǫ = 1
+3 .
+As depicted in Figure 1, IVM ǫ deﬁnes a continuum of maintenance approaches that exhibit a trad e-oﬀ
+between amortized update time, enumeration delay, and space bas ed on the parameter ǫ, which ranges from
+0 to 1. We can recover the classical ﬁrst-order IVM for all triangle queries by setting ǫ to 0 or 1. For ǫ = 1
+2 ,
+IVMǫ recovers the worst-case optimal time O(|D|
+3
+2 ) of non-incremental algorithms for computing all tuples
+in the result of the ternary triangle query [32]. Whereas these stat ic algorithms are monolithic and require
+processing the input data in bulk and joining all relations at once, IVM ǫ achieves the same complexity by
+inserting |D| tuples one at a time in initially empty relations by using its update mechan ism and binary join
+plans. Using binary join plans in the static case is suboptimal, since the y can lead to intermediate results
+that are larger than the ﬁnal result [32].
+The following proposition shows that some combinations of update tim e and delay in the update-delay
+space are not possible, conditioned on the OMv Conjecture 2.
+Proposition 5. For any γ > 0 and database D, there is no algorithm that incrementally maintains the
+result of any triangle query under single-tuple updates to D with arbitrary preprocessing time, O(|D|
+1
+2 −γ)
+amortized update time, and O(|D|1−γ ) enumeration delay, unless the OMv conjecture fails.
+Figure 2 visualizes IVM ǫ’s trade-oﬀs between space complexity, amortized update time, an d enumeration
+delay for the maintenance of triangle queries. The preprocessing t ime is O(|D|
+3
+2 ) for all triangle queries. The
+gray cuboid is inﬁnite in the dimension of space complexity. Each point s trictly included in the gray cuboid
+4
+=== PDF PAGE 5 ===
+log|D|delay
+log|D|space
+log|D|update time
+0
+1
+0.5
+1
+0.5 1 1.5
+△3
+△0
+A
+△2
+B
+△1
+C
+ǫ Query Pareto Amortized Enumeration
+optimality update time delay
+1
+2 △0 and △3 strong ( A) O(|D|
+1
+2 ) O(1)
+1
+2 △2 weak ( B) O(|D|
+1
+2 ) O(|D|
+1
+2 )
+1
+2 △1 weak ( C) O(|D|
+1
+2 ) O(|D|)
+Figure 2: (left) IVM ǫ’s trade-oﬀs between space complexity, amortized update time, an d enumeration delay
+for the maintenance of triangle queries. The preprocessing time is O(|D|
+3
+2 ) for all triangle queries. There
+is no algorithm that can maintain a triangle query with update time and e numeration delay representing a
+point in the gray cuboid, unless the OMv conjecture fails (Proposition 5). The surface of the gray cuboid
+corresponds to Pareto worst-case optimal combinations of amor tized update time and enumeration delay.
+(right) IVM ǫ is strongly Pareto optimal at point A for △0 and △3 and weakly Pareto optimal at point B
+and C for △2 and respectively △1. ǫ = 1
+2 for points A, B, and C.
+corresponds to a combination of some space complexity, O(|D|
+1
+2 −γ) amortized update time, and O(|D|1−γ )
+enumeration delay for γ > 0 (note that γ may be diﬀerent for update and delay). Due to Proposition 5,
+there is no maintenance algorithm for triangle queries that admits a t rade-oﬀ corresponding to a point in the
+gray cuboid, unless the OMv conjecture fails. Each point on the surface of the gray cuboid cor responds to a
+Pareto worst-case optimal trade-oﬀ between the amortized upd ate time and enumeration delay. For ǫ = 1
+2 ,
+IVMǫ needs O(|D|
+1
+2 ) amortized update time and, depending on the query, an enumerat ion delay such that
+the trade-oﬀ between these two measures is Pareto optimal. For t he nullary and ternary triangle queries,
+the delay is O(1) (Point A in Figure 2). IVM ǫ is strongly Pareto worst-case optimal for these queries: There
+can be no tighter upper bound for any of the update time or delay me asures without loosening the upper
+bound for the other measure. For the unary and binary triangle qu eries, the delay is O(|D|) (Point C in
+Figure 2) and respectively O(|D|
+1
+2 ) (Point B in Figure 2). IVM ǫ is only weakly Pareto worst-case optimal
+for the unary and binary triangle queries: There are no tighter upp er bounds for both the update time and
+delay measures. Nevertheless, either the update time or the delay may still be lowered for the unary query
+without contradicting the OMv conjecture. As for the binary query, only the update time may be lo wered,
+since the delay is already below the O(|D|) threshold from Proposition 5.
+Corollary 6 summarizes the above discussion on the worst-case opt imality of IVM ǫ.
+Corollary 6 (Theorem 3 and Proposition 5) . Under a single-tuple update to the database D, IVM ǫ with
+ǫ = 1
+2 is strongly Pareto worst-case optimal for the nullary and te rnary triangle queries and weakly Pareto
+worst-case optimal for the unary and binary triangle querie s in the update-delay space, unless the OMv
+conjecture fails.
+1.3 Structure of This Article
+Section 2 introduces the preliminaries. Sections 3 to 6 introduce IVM ǫ for the nullary, ternary, binary,
+and unary triangle queries. IVM ǫ for the nullary triangle query needs three techniques to achieve th e
+complexities in Theorem 3: delta processing, materialization of auxiliar y views, and adaptive maintenance
+strategy depending on the degree of values in one of the columns of the input relations. For the ternary
+triangle query IVM ǫ additionally uses the concept of view trees. IVM ǫ for unary and binary triangle queries
+exploits the degree of values in both columns of relations. It also use s two union algorithms: one for
+enumerating the distinct tuples in projections of views and one for e numerating the distinct tuples in unions
+of views. The lower bound in Proposition 5 is proven in Section 9. Sectio n 10 details how IVM ǫ recovers
+5
+=== PDF PAGE 6 ===
+existing dynamic and static approaches for triangle queries. Sectio n 11 relates the results of this article to
+existing work. Section 12 discusses several extensions of IVM ǫ. Conclusion and future work are given in
+Section 13.
+2 Preliminaries
+2.1 Data Model and Query Language
+A schema X = (X1, . . . , Xn) is a tuple of distinct variables. Each variable Xi has a discrete domain Dom(Xi).
+By F ⊆ X, we mean that F is a schema that consists of a subset of the variables in X. A tuple x over
+schema X is an element from Dom(X) = Dom(X1) × . . . × Dom(Xn). We use uppercase letters for variables
+and lowercase letters for data values. Likewise, we use bold upperc ase letters for schemas and bold lowercase
+letters for tuples of data values.
+A relation K over schema X is a function K : Dom(X) → Z mapping tuples over X to integers such that
+K(x) ⁄= 0 for ﬁnitely many tuples x. A tuple x is in K, denoted by x ∈ K, if K(x) ⁄= 0. The value K(x)
+represents the multiplicity of x in K. The size |K| of K is the size of the set {x | x ∈ K}. A database D is
+a set of relations, and its size |D| is the sum of the sizes of the relations in D.
+Given a tuple x over schema X and F ⊆ X, we write x[F] to denote the restriction of x onto the
+variables in F such that the values in x[F] follow the ordering in F. For instance, if the tuple ( a, b, c) is
+over the schema ( A, B, C), then it holds ( a, b, c)[(C, A)] = ( c, a). For a relation K over X, and a tuple
+t ∈ Dom(F), σF=tK denotes the set of tuples in K that agree with t on the variables in F, that is,
+σF=tK = { x | x ∈ K ∧ x[F] = t }. We write πFK to denote the set of restrictions of the tuples in K onto
+F, that is, πFK = { x[F] | x ∈ K }.
+Query Language We express queries and view deﬁnitions in the language of functional aggregate queries
+(F AQ) [2]. Compared to the original F AQ deﬁnition that uses several commutative semirings, we deﬁne
+queries over the single commutative ring ( Z, +, ·, 0, 1) of integers with the usual addition and multiplication 1.
+A query Q has one of the two forms:
+1. Given a set {Xi}i∈[n] of variables and an index set S ⊆ [n], let XS denote a tuple ( Xi)i∈S of variables
+and xS denote a tuple of data values over the schema XS. Then,
+Q(x[f ]) =
+∑
+xf +1∈Dom(Xf +1)
+· · ·
+∑
+xn∈Dom(Xn)
+∏
+S∈M
+KS(xS), where:
+• M is a multiset of index sets.
+• For every index set S ∈ M, KS : Dom(XS) → Z is a relation over the schema XS.
+• X[f ] is the tuple of free variables of Q. The variables Xf +1, . . . , Xn are called bound.
+2. Q(x) = Q1(x) + Q2(x), where Q1 and Q2 are queries over the same tuple of free variables.
+In the following, we use ∑
+xi as a shorthand for ∑
+xi∈Dom(Xi).
+Updates and Delta Queries. An update δK to a relation K is a relation over the schema of K. A
+single-tuple update, written as δK = {x ↦→m}, maps the tuple x to the nonzero multiplicity m ∈ Z and
+any other tuple to 0; that is, |δK | = 1. The data model and query language make no distinction between
+1Previous work shows how the data-intensive computation of d iﬀerent applications can be captured by application-speci ﬁc
+rings [33].
+6
+=== PDF PAGE 7 ===
+inserts and deletes – these are updates represented as relations in which tuples have positive and negative
+multiplicities2.
+Given a query Q and an update δK , the delta query δQ deﬁnes the change in the query result after
+applying δK to the database. The rules for deriving delta queries follow from the associativity, commutativity,
+and distributivity of the ring operations. Recall that relations and q ueries are functions mapping tuples of
+data values to multiplicities.
+Query Q(x) Delta query δQ(x)
+Q1(x1) · Q2(x2) δQ1(x1) · Q2(x2) + Q1(x1) · δQ2(x2) + δQ1(x1) · δQ2(x2)∑
+x Q1(x1) ∑
+x δQ1(x1)
+Q1(x) + Q2(x) δQ1(x) + δQ2(x)
+K ′(x) δK (x) when K = K ′ and 0 otherwise
+2.2 Data Partitioning
+Our maintenance approach partitions each input relation based on t he degrees of its values and uses diﬀerent
+maintenance strategies for values of high and low frequency.
+Deﬁnition 7 (Single Relation Partition) . Given a relation K over schema X, a variable X from the schema
+X, and a threshold θ, the pair (K H, KL) of relations is a single partition of K on X with threshold θ if it
+satisﬁes the following conditions:
+(union) K(x) = K H(x) + K L(x) for x ∈ Dom(X)
+(domain partition) πX K H ∩ πX K L = ∅
+(heavy part) for all x ∈ πX K H : |σX=xK H| ≥ 1
+2 θ
+(light part) for all x ∈ πX K L : |σX=xK L| < 3
+2 θ
+The pair (K H, KL) is called a strict partition of K on X with threshold θ if it satisﬁes the union and domain
+partition conditions and the following strict versions of t he heavy and light part conditions:
+(strict heavy part) for all x ∈ πX K H : |σX=xK H| ≥ θ
+(strict light part) for all x ∈ πX K L : |σX=xK L| < θ
+The relations K H and K L are called the heavy and light parts of K.
+Deﬁnition 7 admits multiple ways to (non-strictly) partition a relation K with threshold θ. For instance,
+assume that |σX=xK| = θ for some X-value x in K. Then, all tuples in K with X-value x can be in either
+the heavy or light part of K; but they cannot be in both parts because of the domain partition c ondition. If
+the partition is strict, then all such tuples are in the heavy part of K. The strict partition of a relation K
+is unique for a given threshold and can be computed in time linear in the s ize of K.
+To improve the time and space complexity of our maintenance approa ch, we may partition input relations
+based on the degrees of values of two variables.
+Deﬁnition 8 (Double Relation Partition) . Given a relation K over schema X, distinct variables X and Y
+from the schema X, and a threshold θ, let (K H
+X , KL
+X) and (K H
+Y , KL
+Y ) be partitions of K on X and respectively
+on Y with threshold θ, and let K HH = K H
+X ∩ K H
+Y , K HL = K H
+X ∩ K L
+Y , K LH = K L
+X ∩ K H
+Y , and K LL = K L
+X ∩ K L
+Y .
+The tuple (K HH , KHL, KLH, KLL) is a double partition of K on (X, Y ) with threshold θ.
+Let ( K H, KL) be a single partition of a relation K on variable X and ( K HH , KHL, KLH, KLL) a double
+partition of K on the pair ( X, Y ) with some threshold θ. We say that X is heavy in K H, K HH and K HL
+2W e restrict the multiplicities of tuples in the input relati ons and views to be strictly positive. Multiplicity 0 means t he
+tuple is not present. Deletes are expressed using negative m ultiplicities. A delete request for tuple t with multiplicity −m is
+rejected if t’s multiplicity in the relation is less than m.
+7
+=== PDF PAGE 8 ===
+and light in K L, K LH, and K LL. Similarly, Y is heavy in K HH and K LH and light in K HL and K LL.
+Observe the following implications of Deﬁnitions 7 and 8 to the heavy va riables in relation parts. It holds
+|σX=xK H| ≥ 1
+2 θ for any X-value x in K H. However, if K ′ ∈ { K HH , KHL} and x is an X-value in K ′, this
+means that |σX=xK| ≥ 1
+2 θ, but not necessarily |σX=xK ′| ≥ 1
+2 θ. The same holds for the degrees of Y -values
+in K HH and K LH.
+Notation. Our maintenance approach focuses on triangle queries and constr ucts auxiliary views over parts
+of relations R, S, and T . We use an indexing scheme for such views to capture which parts of R, S, and
+T are used in their deﬁnition. We write V rst to denote a view V over the parts of R, S, and T speciﬁed
+by components r, s, and t, respectively. For component r, H means RH; L means RL; ( HH ) means RHH ;
+similarly for ( HL), ( LH), and ( LL); and symbol ⊟ means the entire relation R (i.e., the union of all parts of
+R). A similar convention holds for s and t .
+For example, V HHH denotes a view deﬁned over the heavy parts of R, S, and T ; V ⊟HL denotes a view
+deﬁned over R, SH , and T L; V (LH)⊟H denotes a view deﬁned over RLH, S, and T H.
+2.3 Computational Model
+We consider the RAM model of computation. Each relation (or mater ialized view) K over schema X
+is implemented by a data structure that stores key-value entries ( x, K(x)) for each tuple x over X with
+K(x) ⁄= 0 and needs space linear in the number of such tuples. We assume th at this data structure supports
+(1) looking up, inserting, and deleting entries in constant time, (2) e numerating all stored entries in K with
+constant delay, and (3) returning |K| in constant time. For instance, a hash table with chaining, where
+entries are doubly linked for eﬃcient enumeration, can support the se operations in constant time on average,
+under the assumption of simple uniform hashing.
+Given a relation K over schema X and a non-empty schema F ⊂ X, we assume there is an index structure
+on F that allows: for any t ∈ Dom(F), (4) enumerating all entries in K matching σF=tK with constant
+delay, (5) checking t ∈ πFK in constant time, and (6) returning |σF=tK| in constant time, and (7) inserting
+and deleting index entries in constant time. Such an index structure can be realized, for instance, as a hash
+table with chaining where each key-value entry stores a tuple t over F and a doubly-linked list of pointers
+to the entries in K having the F-value t. Looking up an index entry given a tuple t over schema F takes
+constant time on average, and its doubly-linked list enables enumera tion of the matching entries in K with
+constant delay. Inserting an index entry into the hash table additio nally prepends a new pointer to the
+doubly-linked list for a given t; overall, this operation takes constant time on average. For eﬃcie nt deletion
+of index entries, each entry in K also stores back-pointers to its index entries (as many back-point ers as
+there are index structures for K). When an entry is deleted from K, locating and deleting its index entries
+takes constant time per index.
+Computation Time Our maintenance approach ﬁrst constructs a data structure th at represents the
+result of a given triangle query on a database D and then maintains the data structure under a sequence
+of single-tuple updates. In our analysis, we consider the following co mputation times: (1) the preprocessing
+time is the time spent on initializing the data structure using D before any update is received, (2) the update
+time is the time spent on updating the data structure after one single-t uple update, and (3) the enumeration
+delay is the time spent until reporting the ﬁrst tuple, the time between re porting two consecutive tuples,
+and the time between reporting the last tuple and the end of enumer ation. For the nullary triangle query,
+the enumeration delay is the time spent on reporting the triangle cou nt. We consider two types of bounds
+on the update time: worst-case bounds, which limit the time each individual update takes in the worst case,
+and amortized worst-case bounds , which limit the average worst-case time taken by a sequence of upd ates.
+When referring to sublinear time, we mean O(|D|1−γ ) for some γ > 0, where |D| is the database size.
+8
+=== PDF PAGE 9 ===
+UnionNext(iterators I1, . . . , In) : tuple
+1 if (n = 1) return In.Next()
+2 if ( (t = UnionNext(I1, . . . , In−1)) ⁄= EOF )
+3 if ( In.Contains(t) )
+4 return In.Next()
+5 else
+6 return t
+7 return In.Next()
+Figure 3: Given iterators I1, . . . , In over (possibly non-disjoint) sets S1, . . . , Sn, UnionNext enumerates the
+distinct elements in ⋃
+i∈[n] Si. Each iterator Ii supports two functions: Ii.Next() returns the next element
+in Si if it exists and EOF otherwise; and Ii.Contains(t) checks whether element t exists in the set Si.
+2.4 Enumeration Algorithms
+2.4.1 Iterators over Materialized Views
+Each materialized view provides the iterator interface to allow the en umeration of its tuples. Each iterator
+maintains a pointer to the last reported tuple and supports two fun ctions: Next() returns the next tuple in
+the view with a non-zero multiplicity if it exists or EOF otherwise; Contains(x) checks if a tuple x exists
+in the view without altering the iterator’s pointer. The functions Next() and Contains(x) take constant
+time. Enumerating all tuples in a view amounts to repeatedly invoking t he function Next() on its iterator
+until reaching EOF.
+2.4.2 Enumerating Unions of Sets
+Given possibly non-disjoint sets S1, . . . , Sn the union algorithm enumerates the distinct elements in ⋃
+i∈[n] Si [17].
+Figure 3 shows the function UnionNext that takes as input the iterators over S1, . . . , Sn and based on the
+current iterator states (i.e., iterator pointers), returns the ne xt element in ⋃
+i∈[n] Si or EOF if none. The
+case n = 1 simply returns the next element in Sn. For n = 2, the algorithm returns elements from S1 only
+if they do not exist in S2 (Line 6); otherwise, it returns the next element from S2 (Line 4). The Next call
+in Line 4 always succeeds as it is made |S1 ∩ S2| times before exhausting S1. After S1 is exhausted, the
+algorithm returns the remaining elements from S2. The case n > 2 is reduced to the binary case by treating⋃
+i∈[n−1] Si as the ﬁrst set and Sn as the second set.
+Lemma 9. Let I1, . . . , In be iterators over sets S1, . . . , Sn, respectively, such that each iterator Ii al-
+lows lookups in Si in time O(l) and enumeration of the elements in Si with delay O(d). The function
+UnionNext(I1, . . . , In) enumerates ⋃
+i∈[n] Si with O(nl + nd) delay.
+Proof. The case n = 1 follows trivially from the algorithm. We consider the case n = 2. Each element
+in S1 − S2 is reported from S1 and all remaining elements from S2; hence, each element from S1 ∪ S2 is
+reported exactly once. In the worst case, we need one Contains() call in S2 and two Next() calls before
+reporting the next element. Thus, the enumeration delay is O(l + d). The general case n > 2 follows by
+simple induction.
+An alternative method for enumerating the distinct elements in a unio n of sets uses skip pointers [7].
+This method allows “jumping” over already reported values when iter ating over these sets. To capture
+this idea, we ﬁrst introduce the abstraction of a hop iterator, an e xtension of the classical iterator capable
+of invalidating values and omitting them during iteration. We then show how to enumerate the distinct
+elements in a union of sets using hop iterators.
+9
+=== PDF PAGE 10 ===
+OpenHop( )
+1 curr = BOF
+NextHop( ): value
+1 curr = Hop(C.Next(curr))
+2 return curr
+IsEmpty( ): bool
+1 ﬁrst = C.Next(BOF)
+2 return Hop(ﬁrst ) = EOF
+Hop(value x ): value
+1 if (x ∈ skipTo)
+2 return skipTo[x ]
+3 return x
+HopBack(value x ): value
+1 if (x ∈ skippedFrom)
+2 return skippedFrom[x ]
+3 return x
+Exclude(value x )
+1 if (not C .Contains(x )) return
+2 to = Hop(C.Next(x))
+3 from = HopBack(x )
+4 skipTo[from] = to
+5 skippedFrom[to] = from
+Figure 4: Hop iterator over a collection C of values with no duplicates. The iterator maintains a pointer
+curr to the current value and two initially-empty dictionaries skipTo and skippedFrom mapping values to
+values. BOF and EOF represent special values before the ﬁrst and after the last value in C. The collection
+C supports C.Contains(x) for checking the existence of x in C and C.Next(x) for ﬁnding the successor
+of x in C.
+2.4.3 Hop Iterators over Collections
+Consider a collection C of values with no duplicates. The collection supports C.Contains(x) for checking
+the existence of x in C and C.Next(x) for ﬁnding the successor of x in C. An iterator over C allows
+enumerating the values in C using the standard Volcano-style Open( ) and Next( ) functions. In addition
+to that, a hop iterator can invalidate an arbitrary value x in C using the Exclude(x) function. Such
+invalidated values are omitted during iteration. The hop iterator also ensures a constant amount of work
+per reported value.
+Figure 4 deﬁnes the operations of a hop iterator over collection C. The hop iterator maintains a pointer
+curr to the current value in C. Upon opening the iterator via OpenHop( ), curr points to before the ﬁrst
+element in C, denoted by BOF. The Next( ) function returns the next valid value from C if it exists or EOF
+otherwise. The Exclude(x) procedure invalidates x ∈ C and records this information using dictionaries
+skipTo and skippedFrom. The former consists of ( x, y) pairs encoding that x is invalid and its next value is
+y, while the latter is the inverse dictionary of the former. Exclude(x) computes a range of skipped values
+that includes x but potentially also values before and after x, ensuring there are no consecutive ranges of
+skipped values. This property guarantees that reporting the nex t valid value or EOF during iteration takes
+constant time.
+Lemma 10. Let C be a collection of values with no duplicates that allows look ups in time O(l) and returns
+the successor of a value in time O(d). Constructing a hop iterator over C takes constant time, and the hop
+iterator can exclude an arbitrary value from C in O(l + d) time and enumerate the non-excluded values from
+C with O(d) delay, using O(|C|) space.
+Proof. Figure 4 deﬁnes the operations of a hop iterator. OpenHop( ), Hop(x), and HopBack(x) run in
+constant time, assuming constant-time dictionary operations ove r skipTo and skippedFrom. Next( ) looks
+for the valid successor of the current value in O(d) time. Exclude(x) checks if x exists in C, ﬁnds the
+valid successor of x in C, and stores the range of skipped elements in O(l + d) total time. The iterator state
+includes the pointer curr of constant size and two dictionaries, skipTo and skippedFrom, of size at most
+the size of C. The pointer curr is initialized to BOF, and the two dictionaries are initially empty. Thus,
+constructing the iterator state takes constant time.
+2.4.4 Enumerating Unions of Sets using Hop Iterators
+We now design an iterator that uses hop iterators to enumerate th e distinct elements in the union ⋃
+i∈[n] Si
+of possibly non-disjoint sets S1, . . . Sn. This union iterator ﬁrst enumerates the elements from S1, then those
+10
+=== PDF PAGE 11 ===
+Iterator state
+buckets[i] = iterator over elements of set Si, i ∈ [n]
+Ibuckets = iterator over buckets,
+Icurrent = iterator over elements of current bucket
+Open( )
+1 buckets = allocate iterators for sets {Si}i∈ [n]
+2 Ibuckets = create iterator over buckets
+3 Ibuckets .OpenHop( )
+4 Icurrent = Ibuckets .NextHop( )
+5 Icurrent.OpenHop( )
+Next( ): tuple
+1 t = Icurrent.NextHop( )
+2 if (t = EOF)
+3 Icurrent = Ibuckets.NextHop( )
+4 if (Icurrent = EOF) return EOF
+5 Icurrrent.OpenHop( )
+6 t = Icurrrent.NextHop( )
+7 foreach i ∈ CandidateBuckets(t)
+8 buckets[i].Exclude(t)
+9 if (buckets[i].IsEmpty( ))
+10 Ibuckets .Exclude(buckets[i])
+11 return t
+Figure 5: Iterator for enumerating the distinct elements in the unio n ⋃
+i∈[n] Si of (possibly non-disjoint)
+sets S1, . . . , Sn using hop iterators. Each set Si is an iterable collection (bucket) of values. The function
+CandidateBuckets parameterizes the iterator and serves to restrict the set of buc kets that may contain a
+given element t; the default implementation of this function returns the set [ n] for any element t.
+from S2 − S1, then those from S3 − S2 − S1, and so on. Using classical iterators, this strategy would incur an
+enumeration delay linear in the size of these sets. Using hop iterator s, however, this strategy can skip over
+already reported elements, for example, omit the elements from S2 that also exist in S1 when enumerating
+S2 − S1. The enumeration delay in this case would depend on the time needed t o exclude a just reported
+element from those sets containing that element.
+Figure 5 deﬁnes the iterator for enumerating the distinct elements in the union of sets S1, . . . Sn. The
+iterator state includes a collection of hop iterators, one for each s et Si, called buckets, an iterator Ibuckets
+over this collection, and an iterator Icurrent denoting the current hop iterator in this collection. The Open( )
+procedure allocates the buckets and initializes Icurrent with the hop iterator for S1. The hop iterators are
+lazily initialized on their ﬁrst access to allow Open( ) to run in constant time. The Next( ) function reports
+the next valid element using Icurrent. On exhausting the current iterator, Icurrent moves on to the next
+bucket if it exists or returns EOF otherwise (Lines 2-6).
+For each returned element t, Next( ) also excludes t from all the buckets containing t (Lines 7-10).
+The CandidateBuckets(t) function identiﬁes the set of buckets to be examined when excludin g t. This
+function is a parameter of the union iterator. Its default implement ation returns the set [ n] for any element
+t, as in prior work [7]. However, providing a context-speciﬁc implement ation of this function may restrict
+the number of buckets that need to be examined to exclude t, further improving the enumeration delay, as
+demonstrated in Sections 5.4 and 6.4. Excluding t may leave a hop iterator with no valid elements. In this
+case, the hop iterator itself is also excluded from the collection of ho p iterators (Lines 9-10).
+Lemma 11. Let S1, . . . , Sn be collections of elements with no duplicates such that each collection Si allows
+lookups in time O(l) and returns the successor of a value in time O(d). Let CandidateBuckets(t) be a
+function that returns a set B ⊆ [n] in time O(b), for any value t. Constructing an iterator as per Figure 5
+takes constant time, and the iterator can enumerate the elem ents from ⋃
+i∈[n] Si with O(|B|l + |B|d + b)
+delay, using O(∑
+i∈[n] |Si|) space.
+Proof. Open( ) creates a hop iterator buckets[i] with a unique index i for each collection Si. The hop
+iterators form an array with index-based constant-time lookup an d successor operations. Each hop iterator
+is initialized on its ﬁrst access. Opening the iterator Ibuckets and getting the ﬁrst hop iterator from the array
+take constant time. Overall, Open( ) runs in constant time.
+The Next( ) function gets the next tuple from Icurrent in O(d) time, per Lemma 10 (Lines 1 and 6).
+11
+=== PDF PAGE 12 ===
+V
+A B
+a1 b1
+a1 b2
+a1 b3
+a2 b1
+a2 b4
+a2 b5
+a3 b2
+a3 b3
+a3 b5
+a4 b4
+a4 b6
+buckets[1]
+State after reporting B-values in
+V (a1, B) = {b1, b2, b3}
+skippedFrom[EOF]
+skipTo[b1]
+V (a1, B) V (a2, B) V (a3, B) V (a4, B)
+b1
+b2
+b3
+b4
+b1
+b5
+b2
+b5
+b3
+EOF
+b6
+b4
+State after reporting B-values in
+V (a2, B) − V (a1, B) = {b4, b5}
+skippedFrom[V (a4, B)] skipTo[V (a3, B)]
+V (a1, B) V (a2, B) V (a3, B) V (a4, B)
+b1
+b2
+b3
+b4
+b1
+b5
+b2
+b5
+b3
+EOF
+b6
+b4
+EOF
+Figure 6: Using a hop-based iterator to enumerate the distinct B-values from the non-materialized view V
+over schema ( A, B). Solid arrows represent the successor relationship among the va lues of V . Dotted and
+bold dashed arrows are hops and back hops added by the iterator d uring the enumeration of the distinct
+B-values in πBV .
+Moving on to the next bucket if it exists or returning EOF otherwise take constant time (Lines 3-5). The
+loop (Lines 7-10) runs |B| times, and each loop iteration takes O(l + d) time to exclude t from a bucket (Line
+8), O(d) time to check if the bucket is empty (Line 9), and constant time to e xclude that bucket (Line 10),
+per Lemma 10. Given that CandidateBuckets runs in O(b) time, Next( ) takes O(|B|l + |B|d + b) total
+time. The overall space complexity directly follows from Lemma 10.
+Example 12. We illustrate the iterators for enumerating unions of sets using hop iterators described in
+Figures 4 and 5. Given the non-materialized view V with schema ( A, B) presented in Figure 6, we show how
+a hop-based iterator can enumerate the distinct B-values in πBV . We assume that the set {πBσA=ai V |
+ai ∈ πAV } and each set V (ai, B) = πBσA=ai V of B-values for i ∈ [4] support the operators Next(x) for
+returning the successor of x and Contains(x) for checking the existence of x.
+Figure 6 visualizes two states of the hop-based iterator during the enumeration of the distinct B-values
+from the given view V . A vertical or horizontal solid arrow from x to y means Next(x) = y. Dotted and
+bold dashed arrows visualize hops: a dotted arrow from x to y represents skipTo[x] = y, while a bold dashed
+arrow from y to x represents skippedFrom[y] = x.
+The B-values are reported in three stages. In Stage 1, the iterator fo r πBV reports all B-values paired
+with a1; in Stage 2, it reports all B-values paired with a2 but not with a1; in Stage 3, it reports all B-values
+paired with a4 but not with a1, a2, or a3. Since all B-values paired with a3 are also paired with a1 or a2,
+there is no stage for reporting B-values paired with a3. The ﬁrst state in Figure 6 visualizes the hop iterators
+at the end of Stage 1, and the second state shows the hop iterato rs at the end of Stages 2 and 3. We explain
+the three stages in more detail.
+Stage 1: The Open procedure from Figure 4 initializes the iterator state by allocating an iterator
+buckets[i] for each set in {V (ai, B)}i∈[4] and positioning Ibuckets at buckets[1] and Icurrent before b1 in
+the bucket for V (a1, B). The iterator then reports b1, b2, and b3 from V (a1, B) and excludes b1 from
+buckets[2], and b2 and b3 from buckets[3] by adding hops to their candidate buckets. At the end of Stage
+1, buckets[2] contains skipTo[b1] = b5 and skippedFrom[b5] = b1, and buckets[3] contains skipTo[b2] = b5,
+skippedFrom[b5] = b2, skipTo[b3] = EOF, and skippedFrom[EOF] = b3.
+Stage 2: The iterator moves Ibuckets to buckets[2] and Icurrent to b4 in V (a2, B). Then, it reports the
+values b4 and b5 in V (a2, B) but skips b1 using the hop at this value. It excludes b4 from buckets[4] and b5
+from buckets[3]; for the latter, since b5 has a hop back to b2, and its successor b3 has a hop to EOF, the
+iterator connects b2 and EOF. Since all the B-values in buckets[3] are now excluded, the iterator excludes
+V (a3, B) from Ibuckets.
+12
+=== PDF PAGE 13 ===
+Materialized View Deﬁnition Space Complexity
+△0() = ∑
+r,s,t∈{H,L}
+∑
+a,b,c
+Rr(a, b) · Ss(b, c) · T t(c, a) O(1)
+VRS(a, c) = ∑
+b RH(a, b) · S L(b, c) O(|D|1+min { ǫ,1−ǫ })
+VST (b, a) = ∑
+c S H(b, c) · T L(c, a) O(|D|1+min { ǫ,1−ǫ })
+VT R(c, b) = ∑
+a T H(c, a) · RL(a, b) O(|D|1+min { ǫ,1−ǫ })
+Figure 7: The deﬁnition and space complexity of the materialized views V = {△0, VRS, VST , VT R} for the
+nullary triangle query. The set V is part of an IVM ǫ state of a database D partitioned for ǫ ∈ [0, 1].
+Stage 3: The iterator Ibuckets skips V (a3, B) and reaches V (a4, B). The iterator then reports b6 while
+skipping b4. The value b6 does not appear under other A-value, hence, no hop has to be added. Since the
+set of A-values is exhausted, the iterator returns EOF and terminates.
+3 Maintaining the Nullary Triangle Query
+In this section, we present our strategy for maintaining the nullary triangle query
+△0() =
+∑
+a,b,c
+R(a, b) · S(b, c) · T (c, a)
+under a single-tuple update. We start with a high-level overview. Co nsider a database D consisting of three
+relations R, S, and T with schemas ( A, B), ( B, C), and ( C, A), respectively. We partition R, S, and T on
+variables A, B, and C, respectively, for a given threshold. We then decompose the nullar y triangle query
+into eight skew-aware views expressed over these relation parts:
+△rst
+0 () =
+∑
+a,b,c
+Rr(a, b) · Ss(b, c) · T t(c, a), for r, s, t ∈ { H, L}.
+The nullary triangle query is then the sum of these skew-aware views : △0() = ∑
+r,s,t∈{H,L} △rst
+0 ().
+IVMǫ adapts its maintenance strategy to each skew-aware view △rst
+0 to allow for amortized update time
+that is sublinear in the database size. While most of these views may ad mit sublinear delta computation
+over the relation parts, few exceptions require linear-time mainten ance in worst case. For these exceptions,
+IVMǫ precomputes the update-independent parts of the delta queries as auxiliary materialized views and
+then exploits these views to speed up the delta computation.
+One such exception is the view △HHL
+0 . Consider a single-tuple update δRH = {(α, β) ↦→m} to the heavy
+part RH of relation R, where α and β are ﬁxed data values. Computing the delta view δ△HHL
+0 () = δRH(α, β)·∑
+c S H(β, c) · T L(c, α) requires iterating over all the C-values c paired with β in S H and with α in T L; the
+number of such C-values can be linear in the size of the database. To avoid this iteratio n, IVM ǫ precomputes
+the view VST (b, a) = ∑
+c S H(b, c) · T L(c, a) and uses this view to evaluate δ△HHL
+0 () = δRH(α, β) · VST (β, α)
+in constant time.
+Such auxiliary views, however, also require maintenance. All such vie ws created by IVM ǫ can be main-
+tained in sublinear time under single-tuple updates to the input relatio ns. Figure 7 summarizes these views
+used by IVM ǫ to maintain the nullary triangle query: VRS, VST and VT R. They serve to avoid linear-time
+delta computation for updates to T , R, and S, respectively. IVM ǫ also materializes the result of the nullary
+triangle query, which ensures constant enumeration delay.
+We now describe our strategy in detail. We start by deﬁning the stat e that IVM ǫ initially creates and
+maintains upon each update. Then, we specify the procedure for p rocessing a single-tuple update to any input
+13
+=== PDF PAGE 14 ===
+relation, followed by the space complexity analysis of IVM ǫ. Section 7 gives the procedure for rebalancing
+the partitions after a sequence of such updates.
+Deﬁnition 13 (IVMǫ State). Let D = {R, S, T } be a database, △ a triangle query and ǫ ∈ [0, 1]. An IVM ǫ
+state of D supporting the maintenance of △ is a tuple Z = (ǫ, N, P, V), where:
+• N is a natural number such that the size invariant
+⌊ 1
+4 N
+⌋
+≤ | D| < N holds. N is called the threshold
+base.
+• P = R ∪ S ∪ T where R, S, and T are partitions of the database relations R, S, and T , respectively,
+with threshold θ = N ǫ.
+• V is a set of materialized views.
+The initial state Z of D has N = 2 · |D| + 1 and the three partitions R, S, and T are strict.
+By construction, |P| = |D|. The size invariant implies |D| = Θ( N ) and, together with the heavy and
+light part conditions, it facilitates the amortized analysis of IVM ǫ in Section 8.
+For the nullary triangle query, the IVM ǫ state has: the partitions P = {RH, RL, SH, SL, T H, T L} of R, S,
+and T on variables A, B, and C; and the set of materialized views V = {△0, VRS, VST , VT R} as deﬁned in
+Figure 7. Deﬁnition 7 provides two essential upper bounds for each relation partition in an IVM ǫ state: The
+number of distinct A-values in RH is at most N
+1
+2 N ǫ = 2 N 1−ǫ, that is, |πARH| ≤ 2N 1−ǫ, and the number of
+tuples in RL with an A-value a is less than 3
+2 N ǫ, that is, |σA=aRL| < 3
+2 N ǫ, for any a ∈ Dom(A). The same
+bounds hold for B-values in {S H, SL} and C-values in {T H, T L}.
+3.1 Preprocessing Stage
+The preprocessing stage for the nullary triangle query construct s the initial IVM ǫ state given a database D
+and ǫ ∈ [0, 1].
+Proposition 14. Given a database D and ǫ ∈ [0, 1], constructing the initial IVM ǫ state of D supporting the
+maintenance of the nullary triangle query takes O(|D|
+3
+2 ) time.
+Proof. We analyze the time to construct the initial state Z = (ǫ, N, P, V) of D. Retrieving the size |D| and
+computing N = 2 · |D| + 1 take constant time. Strictly partitioning the input relations from D using the
+threshold N ǫ, as described in Deﬁnition 7, takes O(|D|) time. Computing the result of the nullary triangle
+query on D (or P) using the algorithms Leapfrog TrieJoin or Recursive-Join takes O(|D|
+3
+2 ) time [32].
+Computing the auxiliary views VRS, VST , and VT R takes O(|D|1+min{ǫ,1−ǫ}) time, as shown next. Consider
+the view VRS(a, c) = ∑
+b RH(a, b) · S L(b, c). To compute VRS, one can iterate over all ( a, b) pairs in RH and
+then ﬁnd the C-values in S L for each b. The relation part S L contains at most N ǫ distinct C-values for
+any B-value, which gives an upper bound of |RH| · N ǫ on the size of VRS. Alternatively, one can iterate
+over all ( b, c) pairs in S L and then ﬁnd the A-values in RH for each b. The relation part RH contains at
+most N 1−ǫ distinct A-values, which gives an upper bound of |S L| · N 1−ǫ on the size of VRS. The number of
+steps needed to compute this result is upper-bounded by min { |RH| · N ǫ, |S L| · N 1−ǫ } < min{ N · N ǫ, N ·
+N 1−ǫ } = N 1+min{ǫ,1−ǫ}. From |D| = Θ( N ) follows that computing VRS on the database partition P takes
+O(|D|1+min{ǫ,1−ǫ}) time; the analysis for VST and VT R is analogous. Note that max ǫ∈[0,1]{1+min {ǫ, 1−ǫ}} =
+3
+2 . Overall, the initial state Z of D can be constructed in O(|D|
+3
+2 ) time.
+The preprocessing stage of IVM ǫ happens before any update is received. In case we start from an empty
+database, the preprocessing cost of IVM ǫ is O(1).
+14
+=== PDF PAGE 15 ===
+3.2 Space Complexity
+We analyze the space complexity of the IVM ǫ maintenance strategy for the nullary triangle query.
+Proposition 15. Given a database D and ǫ ∈ [0, 1], an IVM ǫ state of D supporting the maintenance of the
+nullary triangle query takes O(|D|1+min{ǫ,1−ǫ}) space.
+Proof. We consider a state Z = ( ǫ, N, P, V) of database D. N and ǫ take constant space and |P| = |D|.
+Figure 7 summarizes the space complexity of the materialized views △0, VRS, VST , and VT R from V.
+The result of △0 takes constant space. As discussed in the proof of Proposition 14 , to compute the view
+VRS(a, c) = ∑
+b RH(a, b) · S L(b, c), we can use either RH or S L as the outer relation:
+|VRS| ≤ min{ |RH| · max
+b∈πB SL
+|σB=bS L|, |S L| · max
+b∈πB RH
+|σB=bRH| } < min{ N · 3
+2 N ǫ, N · 2N 1−ǫ }
+The size of VRS is thus O(N 1+min{ǫ,1−ǫ}). From |D| = Θ( N ) follows that VRS takes O(|D|1+min{ǫ,1−ǫ}) space;
+the space analysis for VST and VT R is analogous. Overall, the state Z of D supporting the maintenance of
+the nullary triangle query takes O(|D|1+min{ǫ,1−ǫ}) space.
+3.3 Processing a Single-Tuple Update
+We describe the IVM ǫ strategy for maintaining the nullary triangle query under a single-tu ple update to
+the relation R. This update can aﬀect either the heavy or light part of R partitioned on A, hence we write
+δRr, where r stands for H or L. We can check in constant time whether the update aﬀects RH or RL (cf.
+computational model in Section 2.3). The update is represented as a relation δRr = { (α, β) ↦→m }, where
+α and β are data values and m ∈ Z. Due to the symmetry of the nullary triangle query and auxiliary views ,
+updates to S and T are handled similarly.
+Figure 8 gives the procedure ApplyUpdate that takes as input a current IVM ǫ state Z and the update
+δRr, and returns a new state that results from applying δRr to Z. The procedure computes the deltas
+of the skew-aware views referencing Rr, which are δ△rHH
+0 (Line 3), δ△rHL
+0 (Line 4), δ△rLH
+0 (Line 5), and
+δ△rLL
+0 (Line 6), and uses these deltas to maintain the nullary triangle query (Line 7). These skew-aware
+views are not materialized, but their deltas facilitate the maintenanc e of the nullary triangle query. If the
+update aﬀects the heavy part RH of R, the procedure maintains VRS (Line 9) and RH (Line 12); otherwise,
+it maintains VT R (Line 11) and RL (Line 12). The view VST remains unchanged as it has no reference to
+RH or RL.
+Figure 8 also gives the time complexity of computing these deltas and a pplying them to Z. This com-
+plexity is either constant or dependent on the number of C-values for which matching tuples in the parts of
+S and T have nonzero multiplicities.
+Proposition 16. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the mainte-
+nance of the nullary triangle query, IVM ǫ maintains Z under a single-tuple update to any input relation
+in O(|D|max{ǫ,1−ǫ}) time.
+Proof. We analyze the running time of the procedure from Figure 8 given a sin gle-tuple update δRr =
+{(α, β) ↦→m} and a state Z = ( ǫ, N, P, V) of D. Since the query and auxiliary views are symmetric, the
+analysis for updates to S and T is similar.
+We ﬁrst analyze the evaluation strategies for the deltas of the ske w-aware views △rst
+0 :
+• (Line 3) Computing δ△rHH
+0 requires summing over C-values ( α and β are ﬁxed). The minimum
+degree of each C-value in T H is 1
+2 N ǫ, which means the number of distinct C-values in T H is at most
+N
+1
+2 N ǫ = 2N 1−ǫ. Thus, this delta evaluation takes O(N 1−ǫ) time.
+• (Line 4) Computing δ△rHL
+0 requires constant-time lookups in δRr and VST .
+15
+=== PDF PAGE 16 ===
+ApplyUpdate(update δRr, state Z ) Time
+1 let δRr = {(α, β) ↦→m}
+2 let Z = (ǫ, N, {RH, RL, SH, SL, T H, T L}, {△0, VRS, VST , VT R})
+3 δ△rHH
+0 () = δRr(α, β) · ∑
+c S H(β, c) · T H(c, α) O(|D|1−ǫ)
+4 δ△rHL
+0 () = δRr(α, β) · VST (β, α) O(1)
+5 δ△rLH
+0 () = δRr(α, β) · ∑
+c S L(β, c) · T H(c, α) O(|D|min {ǫ,1−ǫ})
+6 δ△rLL
+0 () = δRr(α, β) · ∑
+c S L(β, c) · T L(c, α) O(|D|ǫ)
+7 △0() = △0() + δ△rHH
+0 () + δ△rHL
+0 () + δ△rLH
+0 () + δ△rLL
+0 () O(1)
+8 if (r is H)
+9 VRS(α, c) = VRS(α, c) + δRH(α, β) · S L(β, c) O(|D|ǫ)
+10 else
+11 VT R(c, β) = VT R(c, β) + T H(c, α) · δRL(α, β) O(|D|1−ǫ)
+12 Rr(α, β) = Rr(α, β) + δRr(α, β) O(1)
+13 return Z
+Total update time: O(|D|max{ǫ,1−ǫ})
+Figure 8: (left) Maintaining the nullary triangle query under a single-t uple update. ApplyUpdate takes as
+input an update δRr to one of the parts RH and RL of relation R, hence r ∈ { H, L}, and the current IVM ǫ
+state Z of a database D partitioned using ǫ ∈ [0, 1]. It returns a new state that results from applying δRr
+to Z. Lines 3-6 compute the deltas of the aﬀected skew-aware views, a nd Line 7 maintains △0. Lines 9 and
+11 maintain the auxiliary views VRS and VT R, respectively. Line 12 maintains the aﬀected part Rr. (right)
+The time complexity of computing and applying deltas. The evaluation s trategy for computing δ△rLH
+0 in
+Line 5 may choose either S L or T H to bound C-values, depending on ǫ. The total time is the maximum of
+all individual times. The maintenance procedures for S and T are similar.
+• (Line 5) Computing δ△rLH
+0 can be done in two ways, depending on ǫ: either sum over at most 2 N 1−ǫ
+C-values in T H for the given α or sum over at most 3
+2 N ǫ C-values in S L for the given β. This delta
+computation takes at most min {2N 1−ǫ, 3
+2 N ǫ} constant-time operations, thus O(N min {ǫ,1−ǫ}) time.
+• (Line 6) Computing δ△rLL
+0 requires summing over at most 3
+2 N ǫ C-values in S L for the given β. This
+delta computation takes O(N ǫ) time.
+Maintaining the nullary triangle query using these deltas takes const ant time (Line 7). The views VRS and
+VT R are maintained for updates to distinct parts of R. Maintaining VRS requires iterating over at most 3
+2 N ǫ
+C-values in S L for the given β (Line 9); similarly, maintaining VT R requires iterating over at most 2 N 1−ǫ
+C-values in T H for the given α (Line 11). Finally, maintaining the part of R aﬀected by δRr takes constant
+time (Line 12). The total update time is O(max{1, N ǫ, N 1−ǫ, N min{ǫ,1−ǫ}}) = O(N max{ǫ,1−ǫ}). From the
+invariant |D| = Θ( N ) follows the claimed time complexity O(|D|max{ǫ,1−ǫ}).
+3.4 Improving Space by Double Partitioning
+We show how the space complexity of maintaining △0 can be improved to O(|D|max{1,min{1+ǫ,2−2ǫ}}) by
+double partitioning each input relation (cf. Proposition 4). This part itioning strategy allows us to obtain
+tighter bounds on the sizes of the materialized views. For ǫ = 0 and ǫ ≥ 1
+2 , the space complexity becomes
+linear; for ǫ = 1
+3 it reaches its maximum O(|D|4/3). Recall that the maximum space complexity under single
+partitioning is O(|D|3/2) (Proposition 15).
+We double partition the input relations R, S, and T on ( A, B), ( B, C), and ( C, A), respectively, with the
+16
+=== PDF PAGE 17 ===
+Materialized View Deﬁnition Space Complexity
+△0() = ∑
+r,s,t∈{H,L}2
+∑
+a,b,c
+Rr(a, b) · Ss(b, c) · T t(c, a) O(1)
+VRS(a, c) = ∑
+b RHL(a, b) · S LH(b, c) O(|D|min{1+ǫ,2−2ǫ})
+VST (b, a) = ∑
+c S HL(b, c) · T LH(c, a) O(|D|min{1+ǫ,2−2ǫ})
+VT R(c, b) = ∑
+a T HL(c, a) · RLH(a, b) O(|D|min{1+ǫ,2−2ǫ})
+Figure 9: The deﬁnition and space complexity of the materialized views for the nullary triangle query under
+double partitioning. The set of views are part of an IVM ǫ state of database D partitioned for ǫ ∈ [0, 1].
+threshold N ǫ. We decompose the nullary triangle query into a union of skew-aware views:
+△rst
+0 () =
+∑
+a,b,c
+Rr(a, b) · Ss(b, c) · T t(c, a), for r, s, t ∈ {H, L}2.
+Figure 9 gives the deﬁnitions of the materialized views under double pa rtitioning. Under this reﬁned
+partitioning strategy, each of the auxiliary views VRS, VST , and VT R has both of its free variables heavy in
+one of the relation parts deﬁning the view. For instance, the view VRS has the free variable A heavy in RHL
+and the free variable C heavy in S LH.
+The IVM ǫ state supporting the maintenance of the nullary triangle query und er double partitioning has
+the partitions P = {Rr, Ss, T t}r,s,t∈{H,L}2 of R, S, and T on ( A, B), ( B, C), and ( C, A), respectively; and
+the materialized views V = {△0, VRS, VST , VT R} deﬁned in Figure 9.
+The complexity analysis of maintaining the nullary triangle query under double partitioning is similar
+to that from the proofs of Propositions 14, 15, and 16. The prepr ocessing time and the maintenance time
+under a single-tuple update are the same as in the case of single part itioning. But the space complexity
+under double partitioning is improved.
+Proposition 17. Let D be a database and ǫ ∈ [0, 1].
+• The initial IVM ǫ state with double partitioning for the maintenance of the nu llary triangle query can
+be constructed in O(|D|
+3
+2 ) time.
+• Any IVM ǫ state with double partitioning for the maintenance of the nu llary triangle query takes
+O(|D|max{1,min{1+ǫ,2−2ǫ}}) space.
+Proof. Consider an IVM ǫ state Z = ( ǫ, N, P, V) of D with double partitioning. Assume ﬁrst that Z is the
+initial IVM ǫ state. We analyze the time to construct Z. Retrieving the database size |D| and computing
+N = 2 · |D| + 1 take constant time. For each input relation, strictly partitioning on both variables and
+then intersecting the relation parts to form the double partition (s ee Deﬁnition 8) take linear time. Thus,
+computing the partitions from P takes linear time. The materialized views in V can be computed in time
+O(N
+3
+2 ) using the same strategies as in the proof of Proposition 14 and tre ating R, S, and T as partitioned
+only on A, B, and C, respectively.
+Now, assume that Z is any IVMǫ state of D. We investigate its space complexity. The components
+ǫ and N need constant space, and |P| = |D|. Figure 9 gives the deﬁnition and space complexity of each
+materialized view from V. The size of △0 is constant.
+We analyze the space complexity of the view VRS(a, c) = ∑
+b RHL(a, b) · S LH(b, c). From the proof of
+Proposition 15 follows that the size of VRS under single partitioning is bounded by O(N 1+min{ǫ,1−ǫ}). The
+double partitioning of R and S tightens this upper bound. Since A is heavy in RHL and C is heavy in
+S LH, the number of ( A, C)-values in the result of VRS is bounded by 2 N 1−ǫ · 2N 1−ǫ = 4 N 2−2ǫ. Then, the
+size of VRS is O(min{N 1+min{ǫ,1−ǫ}, N 2−2ǫ}), which simpliﬁes to O(N min{1+ǫ,2−2ǫ}) since 2 − 2ǫ ≤ 2 − ǫ for
+ǫ ∈ [0, 1]. The analyses for VST and VT R are similar.
+17
+=== PDF PAGE 18 ===
+Considering all the components of state Z, the size of Z is O(max{1, N, N min{1+ǫ,2−2ǫ}}), which simpliﬁes
+to O(N max{1,min{1+ǫ,2−2ǫ}}).
+From |D| = Θ( N ) follows the claimed preprocessing time and space complexity.
+Proposition 18. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the maintenance
+of the nullary triangle query with double partitioning, IVM ǫ maintains Z under a single-tuple update to any
+input relation in O(|D|max{ǫ,1−ǫ}) time.
+Proof. Consider an IVM ǫ state Z = (ǫ, N, P, V) and an update δRr = {(α, β) ↦→m}, for r ∈ {H, L}2. Most
+deltas of the skew-aware views can be computed in time O(N max{ǫ,1−ǫ}) using the same strategies as in the
+proof of Proposition 16 and treating the relations as single partition ed. The reﬁned partitioning strategy
+splits the problematic case involving S H and T L into new cases involving S HH and S HL on one side and T LH
+and T LL on the other side. We next analyze the complexity of computing the d eltas in these four cases:
+• Computing δ△r(HH )(LH)
+0 and δ△r(HH )(LL)
+0 requires summing over at most 2 N 1−ǫ C-values paired with
+β in S HH ; thus, computing these deltas takes O(N 1−ǫ) time.
+• Computing δ△r(HL)(LL)
+0 requires summing over less than 3
+2 N ǫ C-values paired with α in T LL; thus,
+computing this delta takes O(N ǫ) time.
+• Computing δ△r(HL)(LH)
+0 requires a constant-time lookup in the view VST from Figure 9.
+From |D| = Θ( N ) follows that Z can be maintained in time O(|D|max{ǫ,1−ǫ}) under the single-tuple
+update δRr. The analyses for updates to S and T are analogous.
+3.5 Summing Up
+Materializing the query result in the IVM ǫ state ensures constant-delay enumeration of the result. Then,
+our main result in Theorem 3 for the nullary triangle query follows from Propositions 14, 15, and 16 shown
+in the previous subsections, complemented by Proposition 33, which shows that the amortized rebalancing
+time is O(|D|max{ǫ,1−ǫ}).
+Proposition 4, which gives an improved space complexity for the maint enance of the nullary triangle
+query using double partitioning, follows from Propositions 17, 18, an d 33.
+4 Maintaining the Ternary Triangle Query
+We now focus on the maintenance of the ternary triangle query
+△3(a, b, c) = R(a, b) · S(b, c) · T (c, a)
+under a single-tuple update. We employ a similar adaptive maintenance strategy as with the nullary triangle
+query. We ﬁrst partition the relations R, S, and T on variables A, B, and C, respectively, with the threshold
+N ǫ. We then decompose △3 into skew-aware views deﬁned over the relation parts:
+△HHH
+3 (a, b, c) = RH(a, b) · S H(b, c) · T H(c, a),
+△LLL
+3 (a, b, c) = RL(a, b) · S L(b, c) · T L(c, a),
+△⊟HL
+3 (a, b, c) =
+∑
+r∈{H,L}
+Rr(a, b) · S H(b, c) · T L(c, a),
+△L⊟H
+3 (a, b, c) =
+∑
+s∈{H,L}
+RL(a, b) · Ss(b, c) · T H(c, a),
+△HL ⊟
+3 (a, b, c) =
+∑
+t∈{H,L}
+RH(a, b) · S L(b, c) · T t(c, a).
+18
+=== PDF PAGE 19 ===
+Materialized View Deﬁnition Space Complexity
+△HHH
+3 (a, b, c) = RH(a, b) · S H(b, c) · T H(c, a) O(|D|
+3
+2 )
+△LLL
+3 (a, b, c) = RL(a, b) · S L(b, c) · T L(c, a) O(|D|
+3
+2 )
+View tree for △HL ⊟
+3 (a, b, c) = ∑
+t∈{H,L} RH(a, b) · S L(b, c) · T t(c, a)
+VRS(a, b, c) = RH(a, b) · S L(b, c) O(|D|1+min { ǫ,1−ǫ })
+ˆVRS(a, c) = ∑
+b VRS(a, b, c) O(|D|1+min { ǫ,1−ǫ })
+V HL ⊟(a, c) = ∑
+t∈{H,L} ˆVRS(a, c) · T t(c, a) O(|D|)
+View tree for △⊟HL
+3 (a, b, c) = ∑
+r∈{H,L} Rr(a, b) · S H(b, c) · T L(c, a)
+VST (b, c, a) = S H(b, c) · T L(c, a) O(|D|1+min { ǫ,1−ǫ })
+ˆVST (b, a) = ∑
+c VST (b, c, a) O(|D|1+min { ǫ,1−ǫ })
+V ⊟HL(a, b) = ∑
+r∈{H,L} Rr(a, b) · ˆVST (b, a) O(|D|)
+View tree for △L⊟H
+3 (a, b, c) = ∑
+s∈{H,L} RL(a, b) · Ss(b, c) · T H(c, a)
+VT R(c, a, b) = T H(c, a) · RL(a, b) O(|D|1+min { ǫ,1−ǫ })
+ˆVT R(c, b) = ∑
+a VT R(c, a, b) O(|D|1+min { ǫ,1−ǫ })
+V L⊟H(b, c) = ∑
+s∈{H,L} Ss(b, c) · ˆVT R(c, b) O(|D|)
+View tree for △HL ⊟
+3
+V HL ⊟(a, c)
+ˆVRS(a, c)
+∑
+t∈{H,L}
+T t(c, a)
+VRS(a, b, c)
+RH(a, b) S L(b, c)
+View tree for △⊟HL
+3
+V ⊟HL(a, b)
+ˆVST (b, a)
+∑
+r∈{H,L}
+Rr(a, b)
+VST (b, c, a)
+S H(b, c) T L(c, a)
+View tree for △L⊟H
+3
+V L⊟H(b, c)
+ˆVT R(c, b)
+∑
+s∈{H,L}
+Ss(b, c)
+VT R(c, a, b)
+T H(c, a) RL(a, b)
+Figure 10: (top) The materialized views V = {△HHH
+3 , △LLL
+3 , VRS, ˆVRS, V HL ⊟, VST , ˆVST , V ⊟HL, VT R, ˆVT R, V L⊟H}
+supporting the maintenance of the ternary triangle query. The se t V is part of an IVM ǫ state of database D.
+The views △HHH
+3 and △LLL
+3 are materialized, while the views △HL ⊟
+3 , △⊟HL
+3 , and △L⊟H
+3 allow for enumeration
+with constant delay using their auxiliary views denoted by indentation . (bottom) The view trees supporting
+the maintenance and enumeration of the results of △HL ⊟
+3 , △⊟HL
+3 , and △L⊟H
+3 .
+The result of △3 is the union of the disjoint results of these skew-aware views. To en umerate the result of
+△3, we can thus enumerate the results of these views one after the o ther.
+As with the nullary triangle query, IVM ǫ customizes the maintenance strategy for each of these skew-
+aware views and relies on auxiliary views to speed up the view maintenan ce.
+The IVM ǫ strategy for the nullary triangle query, however, fails to achieve s ublinear maintenance time
+for most of these skew-aware views. Consider for instance the vie w △⊟HL
+3 and a single-tuple update δRH =
+{(α, β) ↦→m} to the heavy part RH of relation R. The delta δ△⊟HL
+3 (α, β, c) = δRH(α, β) · S H(β, c) · T L(c, α)
+iterates over linearly many C-values in the worst case. Precomputing the view VST (b, c, a) = S H(b, c)·T L(c, a)
+and rewriting the delta as δ△⊟HL
+3 (α, β, c) = δRH(α, β) · VST (β, c, α) makes no improvement in the worst-case
+running time. In contrast, for the nullary triangle query, the view VST (b, a) = S H(b, c) · T L(c, a) enables
+computing δ△HHL
+0 in constant time.
+The skew-aware views of the ternary triangle query can be maintain ed in sublinear time by avoiding
+19
+=== PDF PAGE 20 ===
+the listing (tabular) form of the view results. For that purpose, th e result of a skew-aware view can be
+maintained in factorized form : Instead of using one materialized view, a hierarchy of materialized v iews
+is created such that each of them admits sublinear maintenance time and all of them together guarantee
+constant-delay enumeration of the result of the skew-aware view . Factorized evaluation has been previously
+used in the context of incremental view maintenance [6, 20, 33].
+Figure 10 (top) presents the views used by IVM ǫ to maintain the ternary triangle query under updates
+to the base relations. The results of the skew-aware views △HHH
+3 and △LLL
+3 are materialized in listing
+form. The remaining skew-aware views △HL ⊟
+3 , △⊟HL
+3 , and △L⊟H
+3 avoid materialization altogether but ensure
+constant-delay enumeration of their results using other auxiliary m aterialized views (denoted by indentation).
+Figure 10 (bottom) shows for each of the skew-aware views △HL ⊟
+3 , △⊟HL
+3 , and △L⊟H
+3 , the materialized
+auxiliary views needed to maintain the results of the skew-aware view in factorized form. These auxiliary
+views make a view tree with input relations as leaves and updates prop agating in a bottom-up manner. The
+result of △HL ⊟
+3 is distributed among two auxiliary materialized views, V HL ⊟ and VRS. The former stores all
+(a, c) pairs that would appear in the result of △HL ⊟
+3 , while the latter provides the matching B-values for each
+(a, c) pair. The two views together provide constant-delay enumeratio n of the result of △HL ⊟
+3 . In addition
+to them, the view ˆVRS serves to support constant-time updates to T t. The view trees for △⊟HL
+3 and △L⊟H
+3
+are analogous.
+The IVM ǫ state supporting the maintenance of the ternary triangle query h as the partitions P =
+{RH, RL, SH, SL, T H, T L} of R, S, and T on variables A, B, and C; and the materialized views V =
+{△HHH
+3 , △LLL
+3 , VRS, ˆVRS, V HL ⊟, VST , ˆVST , V ⊟HL, VT R, ˆVT R, V L⊟H}.
+4.1 Preprocessing Stage
+The preprocessing stage builds the initial IVM ǫ state Z = ( ǫ, P, V, N) of database D. This step partitions
+the input relations and computes the materialized views in V from Figure 10 before processing any update.
+Proposition 19. Given a database D and ǫ ∈ [0, 1], constructing the initial IVM ǫ state of D supporting the
+maintenance of the ternary triangle query takes O(|D|
+3
+2 ) time.
+Proof. Partitioning the input relations takes O(|D|) time. The queries △HHH
+3 and △LLL
+3 can be computed
+using a worst-case optimal join algorithm like Leapfrog TrieJoin or Re cursive-Join in O(|D|
+3
+2 ) time [32]. The
+remaining skew-aware views △HL ⊟
+3 , △⊟HL
+3 , and △L⊟H
+3 are not materialized but represented using auxiliary
+views. Consider the views in the view tree for △HL ⊟
+3 . Computing VRS and ˆVRS takes O(|D|1+min{ǫ,1−ǫ})
+time, as explained in the proof of Proposition 14. The view V HL ⊟ is computed by intersecting ˆVRS and T in
+linear time. The same holds for the views in the view trees of △⊟HL
+3 and △L⊟H
+3 . Overall, the preprocessing
+time is O(|D|
+3
+2 ).
+4.2 Space Complexity
+We analyze the space complexity of the IVM ǫ maintenance strategy for the ternary triangle query.
+Proposition 20. Given a database D, an IVM ǫ state of D supporting the maintenance of the ternary
+triangle query takes O(|D|
+3
+2 ) space.
+Proof. Let Z = ( ǫ, P, V, N) be a state of D. The size of ǫ and N is constant while the size of P is
+O(|D|). Figure 10 summarizes the space complexities of the materialized vie ws in V. The size of each of
+the skew-aware views △HHH
+3 and △LLL
+3 is upper-bounded by N
+3
+2 , the maximum number of triangles in a
+database of size N [30]. The space complexity of the auxiliary views VRS, ˆVRS, VST , ˆVST , VT R, and ˆVT R is
+O(N 1+min{ǫ,1−ǫ}), as discussed in the proof of Proposition 15. The sizes of the auxilia ry views V HL ⊟, V ⊟HL,
+and V L⊟H are upper-bounded by the sizes of T , R, and S, respectively; hence, these auxiliary views take
+O(|D|) space. From the invariant |D| = Θ( N ) follows the claimed space complexity O(|D|
+3
+2 ).
+20
+=== PDF PAGE 21 ===
+ApplyUpdate(update δRr, state Z ) Time
+1 let δRr = {(α, β) ↦→m}
+2 let Z = (ǫ, N, {RH, RL, SH, SL, T H, T L},
+{△HHH
+3 , △LLL
+3 , VRS, ˆVRS, V HL ⊟, VST , ˆVST , V ⊟HL, VT R, ˆVT R, V L⊟H})
+3 if (r is H)
+4 △HHH
+3 (α, β, c) = △HHH
+3 (α, β, c) + δRH(α, β) · S H(β, c) · T H(c, α) O(|D|1−ǫ)
+5 VRS(α, β, c) = VRS(α, β, c) + δRH(α, β) · S L(β, c) O(|D|ǫ)
+6 ˆVRS(α, c) = ˆVRS(α, c) + δRH(α, β) · S L(β, c) O(|D|ǫ)
+7 V HL ⊟(α, c) = V HL ⊟(α, c) + ∑
+t∈{H,L} δRH(α, β) · S L(β, c) · T t(c, α) O(|D|ǫ)
+8 else
+9 △LLL
+3 (α, β, c) = △LLL
+3 (α, β, c) + δRL(α, β) · S L(β, c) · T L(c, α) O(|D|ǫ)
+10 VT R(c, α, β) = VT R(c, α, β) + T H(c, α) · δRL(α, β) O(|D|1−ǫ)
+11 ˆVT R(c, β) = ˆVT R(c, β) + T H(c, α) · δRL(α, β) O(|D|1−ǫ)
+12 V L⊟H(β, c) = V L⊟H(β, c) + ∑
+s∈{H,L} T H(c, α) · δRL(α, β) · Ss(β, c) O(|D|1−ǫ)
+13 V ⊟HL(α, β) = V ⊟HL(α, β) + ˆVST (β, α) · δRr(α, β) O(1)
+14 Rr(α, β) = Rr(α, β) + δRr(α, β) O(1)
+15 return Z
+Total update time: O(|D|max{ǫ,1−ǫ})
+Figure 11: (left) Maintaining an IVM ǫ state under a single-tuple update to support constant-delay enu mer-
+ation of the result of the ternary triangle query. ApplyUpdate takes as input an update δRr to the heavy
+or light part of R, hence r ∈ { H, L}, and the current IVM ǫ state Z of database D. It returns a new state
+that results from applying δRr to Z. (right) The time complexity of computing and applying deltas. The
+procedures for updates to S and T are similar.
+4.3 Processing a Single-Tuple Update
+Figure 11 shows the procedure for maintaining a current state Z of the ternary triangle query under an
+update δRr(a, b). If the update aﬀects the heavy part RH of R, the procedure maintains △HHH
+3 (Line 4) and
+propagates δRH through the view tree for △HL ⊟
+3 (Lines 5-7). If the update aﬀects the light part RL of R,
+the procedure maintains △LLL
+3 (Line 9) and propagates δRL through the view tree for △L⊟H
+3 (Lines 10-12).
+Finally, it updates V ⊟HL (Line 13) and the part of R aﬀected by δRr (Line 14). The views VST and ˆVST
+remain unchanged as they have no reference to RH or RL.
+Proposition 21. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the mainte-
+nance of the ternary triangle query, IVM ǫ maintains Z under a single-tuple update to any input relation in
+O(|D|max{ǫ,1−ǫ}) time.
+Proof. Figure 11 shows the time complexity of each maintenance statement in the ApplyUpdate procedure,
+for a given single-tuple update δRr = {(α, β) ↦→m} with r ∈ { H, L} and a state Z = ( ǫ, P, V, N) of D.
+This complexity is determined by the number of C-values that need to be iterated over during computing
+and applying the deltas of skew-aware views.
+We ﬁrst analyze the case when δRr aﬀects the heavy part RH of R. The skew-aware view △HHH
+3 (Line 4)
+is maintained by iterating over C-values paired with α in T H and for each such C-value, doing constant-
+time lookups in the other relations and views in the maintenance state ment. Since T H is heavy on C,
+the number of distinct C-values iterated over in T H is at most 2 N 1−ǫ. Hence, the maintenance requires
+21
+=== PDF PAGE 22 ===
+O(N 1−ǫ) time. Each of the auxiliary views VRS, ˆVRS, and V HL ⊟ (Lines 5-7) is maintained by iterating over
+the C-values paired with β in S L and doing constant-time lookups in the remaining relations and views in
+the corresponding maintenance statement. Since S L is light on B, the B-value β is paired with less than
+3
+2 N ǫ C-values in S L. Thus, the auxiliary views VRS, ˆVRS, and V HL ⊟ are maintained in O(N ǫ) time.
+We now consider the case when δRr aﬀects the light part RL of R. Maintaining △LLL
+3 (Line 9) requires
+iterating over less than 3
+2 N ǫ distinct C-values paired with β in S L, which means that the maintenance
+requires O(N ǫ) time. Maintaining each of the auxiliary views VT R, ˆVT R, and V L⊟H (Line 10) requires
+iterating over at most 2 N 1−ǫ distinct C-values paired with α in T H. Thus, these views can be maintained
+in time O(N 1−ǫ).
+Maintaining V ⊟HL and the part of R aﬀected by δRr takes constant time. Then, the total execution time
+of the procedure ApplyUpdate in Figure 11 is O(N max{ǫ,1−ǫ}). From the invariant |D| = Θ( N ) follows
+the claimed time complexity O(|D|max{ǫ,1−ǫ}). Due to the symmetry of the triangle query, the analysis for
+updates to parts of relations S and T is similar.
+4.4 Enumeration Delay
+The materialized views stored in an IVM ǫ state allow us to enumerate the tuples in the result of the ternary
+triangle query with constant delay.
+Proposition 22. Given an IVM ǫ state Z supporting the maintenance of the ternary triangle query, I VMǫ
+enumerates the result of the query from Z with O(1) delay.
+Proof. The results of skew-aware views are disjoint, so the result of the t ernary triangle query can be
+enumerated by enumerating the result of each skew-aware view, o ne after the other. Since the number of
+such skew-aware views is independent of the data size, it suﬃces to show that the result of each skew-aware
+view can be enumerated with constant delay to achieve an overall co nstant delay enumeration for the ternary
+triangle query.
+The results of the skew-aware views △HHH
+3 and △LLL
+3 are materialized using the listing representation,
+so they admit constant-delay enumeration.
+We next focus on the enumeration of the result of the skew-aware view △HL ⊟
+3 . The remaining skew-aware
+views, △⊟HL
+3 and △L⊟H
+3 , are treated similarly. The enumeration of the result of △HL ⊟
+3 is supported by the
+materialized views in its view tree from Figure 10 (left). The root V HL ⊟ materializes the set of all tuples
+(a, c) in the projection of the result of △HL ⊟
+3 onto ( A, C). The view VRS serves to retrieve all B-values in
+the result that are paired with a given tuple ( a, c). Thus, enumerating the result of △HL ⊟
+3 requires iterating
+over the ( A, C)-values in V HL ⊟, and for each such tuple ( a, c), iterating over the B-values paired with ( a, c)
+in VRS. Based on our computational model (see Section 2.3), the B-values paired with ( a, c) in VRS are
+enumerable with constant delay. For each obtained triple ( a, b, c), IVM ǫ retrieves the correct multiplicity by
+looking up the multiplicities of the tuples ( a, b), ( b, c), and ( c, a) in the leaf relations RH, S L, and T (i.e.,
+the sum of the multiplicities of ( c, a) in T H and T L), respectively, and multiplying them. These lookups are
+constant-time operations. Hence, the overall enumeration delay is constant.
+4.5 Summing Up
+Our main result in Theorem 3 for the ternary triangle query follows fr om Propositions 19, 20, 21, and
+22 shown in the previous subsections, complemented by Proposition 33, which shows that the amortized
+rebalancing time is O(|D|max{ǫ,1−ǫ}).
+5 Maintaining the Binary Triangle Query
+We now consider the maintenance of the binary triangle query
+△2(a, b) =
+∑
+c
+R(a, b) · S(b, c) · T (c, a)
+22
+=== PDF PAGE 23 ===
+Materialized View Deﬁnition Space Complexity
+△HHH
+2 (a, b) = ∑
+s,t∈{H,L}
+∑
+c RH(a, b) · S Hs(b, c) · T Ht(c, a) O(|D|min{1,2−2ǫ})
+△LLL
+2 (a, b) = ∑
+s,t∈{H,L}
+∑
+c RL(a, b) · S Ls(b, c) · T Lt(c, a) O(|D|)
+△
+H(LL)⊟
+2 (a, b) = ∑
+t∈{H,L}2
+∑
+c RH(a, b) · S LL(b, c) · T t(c, a) O(|D|)
+△
+L⊟(HH )(a,b)=∑
+s∈{ H,L} 2
+∑
+c RL(a,b)·Ss(b,c)·T HH (c,a)
+2 O(|D|)
+View tree for △
+H(LH)⊟
+2 (a, b) = ∑
+t∈{H,L}2
+∑
+c RH(a, b) · S LH(b, c) · T t(c, a)
+VRS(a, b, c) = RH(a, b) · S LH(b, c) O(|D|1+min { ǫ,1−ǫ })
+ˆVRS(a, c) = ∑
+b VRS(a, b, c) O(|D|1+min { ǫ,1−ǫ })
+V H(LH)⊟(a, c) = ∑
+t∈{H,L}2 ˆVRS(a, c) · T t(c, a) O(|D|)
+ˆV H(LH)⊟(c) = ∑
+a V H(LH)⊟(a, c) O(|D|1−ǫ)
+View tree for △⊟HL
+2 (a, b) = ∑
+r,s∈{H,L}
+∑
+c Rr(a, b) · S Hs(b, c) · T L(c, a)
+VST (b, a) = ∑
+s,t∈{H,L}
+∑
+c S Hs(b, c) · T Lt(c, a) O(|D|1+min { ǫ,1−ǫ })
+V ⊟HL(a, b) = ∑
+r∈{H,L} Rr(a, b) · VST (b, a) O(|D|)
+View tree for △
+L⊟(HL)
+2 (a, b) = ∑
+s∈{H,L}2
+∑
+c RL(a, b) · Ss(b, c) · T HL(c, a)
+VT R(c, a, b) = T HL(c, a) · RL(a, b) O(|D|1+min { ǫ,1−ǫ })
+ˆVT R(c, b) = ∑
+a VT R(c, a, b) O(|D|1+min { ǫ,1−ǫ })
+V L⊟(HL)(b, c) = ∑
+s∈{H,L}2 Ss(b, c) · ˆVT R(c, b) O(|D|)
+ˆV L⊟(HL)(c) = ∑
+b V L⊟H (b, c) O(|D|1−ǫ)
+View tree for △
+H(LH)⊟
+2
+ˆV H(LH)⊟(c)
+V H(LH)⊟(a, c)
+ˆVRS(a, c)
+∑
+t∈{H,L}2
+T t(c, a)
+VRS(a, b, c)
+RH(a, b) S LH(b, c)
+View tree for △⊟HL
+2
+V ⊟HL(a, b)
+∑
+r∈{H,L}
+Rr(a, b)VST (b, a)
+∑
+s∈{H,L}
+S Hs(b, c) ∑
+t∈{H,L}
+T Lt(c, a)
+View tree for △
+L⊟(HL)
+2
+ˆV L⊟(HL)(c)
+V L⊟(HL)(b, c)
+ˆVT R(c, b)
+∑
+s∈{H,L}2
+Ss(b, c)
+VT R(c, a, b)
+T HL(c, a) RL(a, b)
+Figure 12: (top) The materialized views V = {△HHH
+2 , △LLL
+2 , △
+H(LL)⊟
+2 , △
+L⊟(HH )
+2 , V RS, ˆVRS, V H(LH)⊟,
+ˆV H(LH)⊟, VST , V ⊟HL, V T R, ˆVT R, V L⊟(HL), ˆV L⊟(HL)} supporting the maintenance of the binary triangle query.
+The set V is part of an IVM ǫ state of database D. (bottom) The view trees supporting the maintenance
+and enumeration of the results of △
+H(LH)⊟
+2 , △⊟HL
+2 , and △
+L⊟(HL)
+2 .
+under a single-tuple update. Compared to the strategy for the te rnary triangle query, the maintenance
+of the binary query faces two new challenges. First, the results of the skew-aware views are not disjoint
+anymore, which causes diﬃculties in the enumeration of distinct ( A, B)-values with correct multiplicities.
+Second, among the view trees created for the ternary triangle qu ery from Figure 10, only the view tree for
+23
+=== PDF PAGE 24 ===
+△⊟HL
+3 allows constant-delay enumeration of ( A, B)-values, while the view trees for △HL ⊟
+3 and △L⊟H
+3 allow
+constant-delay enumeration of ( A, C)- and respectively ( B, C)-values but not ( A, B)-values.
+To overcome the ﬁrst diﬃculty, we use the union algorithm [17] prese nted in Section 2.4.2. We modify
+this algorithm to report distinct tuples in the union of the skew-awar e views together with their multiplicity.
+Since the number of skew-aware views is independent of the data siz e, the overall enumeration delay is the
+maximum delay of the individual skew-aware views.
+To overcome the second diﬃculty, we observe that the view trees f or △HL ⊟
+3 and △L⊟H
+3 from Figure 10 both
+support constant-time lookups and constant-delay enumeration of ( A, B)-values for a ﬁxed C-value. Based
+on this observation, we can decompose each of the two view trees in to a union of view trees instantiated for
+the distinct C-values appearing at its root view. For each union of instantiated vie w trees, we can use the
+union algorithm to enumerate the distinct ( A, B) pairs with the delay that is linear in the number of these
+view trees, that is, the number of distinct C-values at the root view. In the view tree for △HL ⊟
+3 , the number
+of distinct C-values at the root can be linear in the database size; thus, the enu meration delay for △HL ⊟
+3 is
+O(N ). In the view tree for △L⊟H
+3 , the number of distinct C-values is at most 2 N 1−ǫ due to the heavy part
+condition on C in T H; thus, the enumeration delay for △L⊟H
+3 is O(N 1−ǫ). Overall, the enumeration delay in
+this case is linear.
+We can improve this enumeration delay using the enumeration algorith m with hop iterators described in
+Section 2.4.4. In this case, this algorithm can enumerate the distinct (A, B) pairs with the delay determined
+by the CandidateBuckets function, see Lemma 11. The CandidateBuckets function takes any ( A, B)-
+value and returns a set of indices that identify the instantiated view trees that may contain the given ( A, B)-
+value. The default implementation of this function considers all such view trees, but exploiting the skew
+information can asymptotically reduce their number. For the view tr ee for △HL ⊟
+3 and a ﬁxed ( A, B)-value,
+CandidateBuckets can compute the matching C-values in the materialized view VRS joining RH and S L
+and retain only those C-values that exist in the root V HL ⊟. For a ﬁxed ( A, B)-value, the number of such C-
+values is less than 3
+2 N ǫ due to the light part condition on B in S L, which gives the O(N ǫ) enumeration delay
+for the view △HL ⊟
+3 . Similarly, for the view tree for △L⊟H
+3 and a ﬁxed ( A, B)-value, CandidateBuckets
+can compute the matching C-values in the materialized view VT R joining T H and RL and retain only those
+C-values that exist in the root V L⊟H . The number of such C-values is at most 2 N 1−ǫ due to the heavy
+part condition on C in T H, which gives the O(N 1−ǫ) enumeration delay for the view △L⊟H
+3 . Overall, the
+enumeration algorithm with hop pointers in this case gives O(N max{ǫ,1−ǫ}) delay.
+To further improve the enumeration delay to O(N min{ǫ,1−ǫ}) in both cases, we reﬁne our partitioning
+strategy to use double partitioning for S on (B, C) and for T on (C, A). This reﬁnement allows us to further
+decompose the skew-aware view △HL ⊟
+3 into two parts: one part that involves S LH and ensures the number
+of distinct C-values paired with any ( A, B)-value, thus also the enumeration delay, is O(N min{ǫ,1−ǫ}); and
+another part that involves S LL and ensures the number of B-values paired with any C-value in S LL is
+O(N ǫ), which enables the materialization of this reﬁned skew-aware view a nd enumeration with constant
+delay. Similarly, we decompose the skew-aware view △L⊟H
+3 into one part that involves T HL and guarantees
+O(N min{ǫ,1−ǫ}) enumeration delay, and another part that involves T HH and enables its materialization and
+constant-delay enumeration. Overall, our maintenance strategy for the binary triangle query that uses double
+partitioning for S and T achieves O(N min{ǫ,1−ǫ}) enumeration delay.
+We explain the IVM ǫ strategy for the binary triangle query in more detail. The strategy uses single
+partitioning for relation R and double partitioning for relations S and T . The partition threshold is the
+same as for the nullary triangle query. Figure 12 shows the deﬁnition and space complexity of the views
+supporting the maintenance of the binary triangle query. The skew -aware views △HHH
+2 , △LLL
+2 , △
+H(LL)⊟
+2 ,
+△
+L⊟(HH )
+2 , and △⊟HL
+2 are materialized and enumerable with constant delay. The views △
+H(LH)⊟
+2 and △
+L⊟(HL)
+2
+are represented as view trees consisting of auxiliary views that sup port the maintenance and enumeration of
+the results of △
+H(LH)⊟
+2 and △
+L⊟(HL)
+2 .
+The IVMǫ state supporting the maintenance of the binary triangle query has the partitions P = {RH, RL,
+S HH , SHL, SLH, SLL, T HH , T HL, T LH, T LL} of R on A, of S on (B, C), and of T on (C, A); V = {△HHH
+2 , △LLL
+2 ,
+△
+H(LL)⊟
+2 , △
+L⊟(HH )
+2 , VRS, ˆVRS, V H(LH)⊟, ˆV H(LH)⊟, VST , V ⊟HL, VT R, ˆVT R, V L⊟(HL), ˆV L⊟(HL)}.
+The following complexity results follow mainly from the analysis of the IV Mǫ algorithm for the ternary
+24
+=== PDF PAGE 25 ===
+triangle query in the proofs of Propositions 19, 20, and 21.
+5.1 Preprocessing Stage
+The preprocessing stage builds the initial IVM ǫ state Z = (ǫ, P, V, N) of database D supporting the main-
+tenance of the binary triangle query. This step ﬁrst partitions R on A, S on ( B, C), and T on ( C, A) and
+then computes the materialized views in V from Figure 12 before processing any update.
+Proposition 23. Given a database D and ǫ ∈ [0, 1], constructing the initial IVM ǫ state of D supporting the
+maintenance of the binary triangle query takes O(|D|
+3
+2 ) time.
+Proof. Partitioning the input relations takes O(N ) time. The materialized skew-aware views △
+H(LL)⊟
+2 and
+△
+L⊟(HH )
+2 can be computed in time O(N 3/2) using Leapfrog TrieJoin or Recursive-Join [32]. All other ma-
+terialized views can be computed using the same strategies as in the p roof of Proposition 19 and ignoring
+that S and T are double partitioned. Overall, the initial IVM ǫ state can be computed in time O(N
+3
+2 ) and
+the result follows from N = Θ( |D|).
+5.2 Space Complexity
+We analyze the space complexity of the IVM ǫ maintenance strategy for the binary triangle query.
+Proposition 24. Given a database D and ǫ ∈ [0, 1], an IVM ǫ state of D supporting the maintenance of the
+binary triangle query takes O(|D|1+min{ǫ,1−ǫ}) space.
+Proof. Figure 12 gives the space complexity of the materialized views. The sp ace complexities of the auxiliary
+views follow from the proof of Proposition 20. The sizes of V H(LH)⊟, V ⊟HL, and V L⊟(HL) are upper bounded
+by the sizes of T , R, and S, respectively, while the sizes of ˆV H(LH)⊟ and ˆV L⊟(HL) are upper bounded by the
+number of distinct C-values in S LH and respectively T HL.
+5.3 Processing a Single-Tuple Update
+We analyze the time complexity of maintaining an IVM ǫ state for the binary triangle query under a single-
+tuple update.
+Proposition 25. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the mainte-
+nance of the binary triangle query, IVM ǫ maintains Z under a single-tuple update to any input relation
+in O(|D|max{ǫ,1−ǫ}) time.
+Proof. Almost all the materialized views from Figure 12 can be maintained in time O(N max{ǫ,1−ǫ}) under
+single-tuple updates by following the maintenance strategies descr ibed in the proof of Proposition 21. The
+only new challenge is to maintain the reﬁned views △
+H(LL)⊟
+2 and △
+L⊟(HH )
+2 .
+We analyze the maintenance time for △
+H(LL)⊟
+2 . For updates to RH, we need to iterate over less than 3
+2 N ǫ
+C-values in S LL for a ﬁxed B-value from δRH and do lookups in T . For updates to T , we need to iterate
+over less than 3
+2 N ǫ B-values in S LL for a ﬁxed C-value from δT and do lookups in RH. For updates to S LL,
+we need to iterate over at most 2 N 1−ǫ distinct A-values in RH and do lookups in T . Thus, △
+H(LL)⊟
+2 can be
+maintained in O(N max{ǫ,1−ǫ}) time.
+We now consider the maintenance time for △
+L⊟(HH )
+2 . For updates to RL, we need to iterate over at
+most 2 N 1−ǫ C-values in T HH and do lookups in S. For updates to S, we need to iterate over at most
+2N 1−ǫ A-values in T HH and do lookups in RL. For updates to T HH , we need to iterate over less than 3
+2 N ǫ
+B-values in RL for a ﬁxed A-value from δT HH and do lookups in S. Thus, △
+L⊟(HH )
+2 can be maintained in
+O(N max{ǫ,1−ǫ}) time.
+The proposition follows from the above analysis and the invariant N = Θ( |D|).
+25
+=== PDF PAGE 26 ===
+EnumerateBinary(state Z)
+1 let Z = ( ǫ, N, {RH, RL, SHH , SHL, SLH, SLL, T HH , T HL, T LH, T LL},
+{ △HHH
+2 , △LLL
+2 , △
+H(LL)⊟
+2 , △
+L⊟(HH )
+2 , V ⊟HL } ∪ V )
+2 I1 = { △HHH
+2 .iter (), △LLL
+2 .iter (), △
+H(LL)⊟
+2 .iter (), △
+L⊟(HH )
+2 .iter (), V ⊟HL.iter () }
+3 I2 = {△
+H(LH)⊟
+2 .iter
+(
+CandidateBucketsH(LH)⊟
+)
+, △
+L⊟(HL)
+2 .iter
+(
+CandidateBucketsL⊟(HL)
+)
+}
+4 while ( ((α, β) = UnionNext( I1 ∪ I2 )) ⁄= EOF )
+5 m1 = △HHH
+2 (α, β) + △LLL
+2 (α, β) + △
+H(LL)⊟
+2 (α, β) + △
+L⊟(HH )
+2 (α, β) + V ⊟HL(α, β)
+6 m2 = ∑
+t∈{H,L}2
+∑
+c RH(α, β) · S LH(β, c) · T t(c, α)
+7 m3 = ∑
+s∈{H,L}2
+∑
+c RL(α, β) · Ss(β, c) · T HL(c, α)
+8 output (α, β) ↦→(m1 + m2 + m3)
+Figure 13: Enumerating the result of the binary triangle query given an IVM ǫ state of database
+D. Line 2 creates iterators over materialized skew-aware views. Line 3 creates hop-based itera-
+tors over the non-materialized skew-aware views, parameterized by the CandidateBucketsH(LH)⊟
+and
+CandidateBucketsL⊟(HL) functions. Lines 5-7 compute the multiplicity of pair ( α, β) reported by the
+union algorithm.
+5.4 Enumeration Delay
+We construct an iterator for each skew-aware view of the binary t riangle query and use the union algorithm
+from Section 2.4.2 to enumerate the distinct tuples in the union of the se views. For the materialized skew-
+aware views △HHH
+2 , △LLL
+2 , △
+H(LL)⊟
+2 , △
+L⊟(HH )
+2 , and △⊟HL
+2 (materialized by V ⊟HL), we construct iterators
+with constant lookup time and enumeration delay (see Section 2.4.1). For each of the non-materialized views
+△
+H(LH)⊟
+2 and △
+L⊟(HL)
+2 , we ﬁrst instantiate its view tree for the distinct C-values appearing at its root and
+then construct a hop-based iterator (see Section 2.4.4) to enume rate the distinct ( A, B)-values in the union
+of these instantiated view trees.
+Given a materialized view V , we write V.iter ( ) to denote the iterator for V . We also call the function
+△
+H(LH)⊟
+2 .iter (CandidateBucketsH(LH)⊟
+) to get the hop-based iterator for △
+H(LH)⊟
+2 parameterized by the
+CandidateBucketsH(LH)⊟
+function. This function intersects the C-values from the root ˆV H(LH)⊟ and the
+C-values paired with a given ( A, B)-value in the view VRS. Similarly, the hop-based iterator for △
+L⊟(HL)
+2
+uses the CandidateBucketsL⊟(HL) function that intersects the C-values from the root ˆV L⊟(HL) and the
+C-values paired with a given ( A, B)-value in the view VT R. Both functions return a set of indices that
+identify the view trees instantiated for the computed C-values.
+The procedure EnumerateBinary from Figure 13 enumerates the result of the binary triangle query
+given an IVM ǫ state Z. The procedure ﬁrst creates the iterators over the (possibly no n-disjoint) results of
+the skew-aware views. The union algorithm from Figure 3 takes thes e iterators as input and reports distinct
+(A, B)-values as output. For each reported ( a, b), EnumerateBinary computes the multiplicity of ( a, b) by
+summing up the multiplicities in each skew-aware view.
+Proposition 26. Given a database D, ǫ ∈ [0, 1], an IVM ǫ state Z of D supporting the maintenance
+of the binary triangle query, IVM ǫ enumerates the result of the query with O(|D|min{ǫ,1−ǫ}) delay and
+O(|D|1+min{ǫ,1−ǫ}) additional space.
+Proof. We analyze the procedure EnumerateBinary in Figure 13. Creating the iterators over materialized
+views takes constant time (Line 2); the same holds for the hop-bas ed iterators in I2, per Lemma 10 (Line 3).
+The iterators in I1 allow constant-time lookups and constant-delay enumeration of ( A, B)-values. The hop-
+based iterator for △
+H(LH)⊟
+2 is over at most 2 N 1−ǫ view trees instantiated for the distinct C-values appearing
+26
+=== PDF PAGE 27 ===
+at the root ˆV H(LH)⊟. Each view tree supports constant-time lookups and constant-d elay enumeration of
+(A, B)-values. CandidateBucketsH(LH)⊟
+intersects at most min { 3
+2 N ǫ, 2N 1−ǫ} C-values from VRS for a
+ﬁxed ( A, B)-value and at most 2 N 1−ǫ C-values from ˆV H(LH)⊟; thus, the returned set of indices is of size
+at most min { 3
+2 N ǫ, 2N 1−ǫ}. This function runs in O(N min{ǫ,1−ǫ}) time. Per Lemma 11, the enumeration
+delay of the hop-based iterator for △
+H(LH)⊟
+2 is O(N min{ǫ,1−ǫ}). A similar analysis for △
+L⊟(HL)
+2 gives the same
+enumeration delay.
+The iterators over materialized views need constant space during e numeration. The hop-based iterators
+over △
+H(LH)⊟
+2 and △
+L⊟(HL)
+2 need space linear in the total number of their ( A, B)-values, per Lemma 10.
+This number is upper bounded by the size of VRS for the former and by the size of VT R for the latter. By
+Proposition 24, both of these views take O(N 1+min{ǫ,1−ǫ}) space.
+Computing the total multiplicity m of a pair ( α, β) requires computing the multiplicity of ( α, β) in the
+result of each skew-aware view. For the materialized views with sche ma (A, B), this operation takes constant
+time (Line 5). For the non-materialized views △
+H(LH)⊟
+2 and △
+L⊟(HL)
+2 , computing the multiplicities of ( α, β)
+requires iterating over the matching C-values in S LH and respectively T HL (Lines 6-7). In both cases, the
+number of distinct C-values for a ﬁxed ( α, β) is at most min { 3
+2 N ǫ, 2N 1−ǫ}. Thus, the multiplicity of the
+pair ( α, β) can be computed in O(N min{ǫ,1−ǫ}) time.
+Overall, EnumerateBinary enumerates the result of △2 from Z with O(N min{ǫ,1−ǫ}) delay and
+O(N 1+min{ǫ,1−ǫ}) additional space. The proposition follows from the invariant N = Θ( |D|).
+5.5 Summing Up
+The additional space used during the enumeration of the result of t he binary triangle query is linear in the
+size of the maintained views. Hence, our main result in Theorem 3 for t he binary triangle query follows from
+Propositions 23, 24, 25, and 26 shown in the previous subsections, complemented by Proposition 33, which
+shows that the amortized rebalancing time is O(|D|max{ǫ,1−ǫ}).
+6 Maintaining the Unary Triangle Query
+We now focus on the maintenance and enumeration of the unary tria ngle query
+△1(a) =
+∑
+b,c
+R(a, b) · S(b, c) · T (c, a)
+under a single-tuple update. As with the binary triangle query, the r esults of the skew-aware views in the
+unary case are not necessarily disjoint. To report only the distinct A-values in the union of skew-aware
+views, we again rely on the union algorithm, presented in Section 2.4.2.
+We discuss the enumeration of distinct A-values in the result of skew-aware views that are not materialized
+but represented as view trees. As a starting point for our discuss ion, we consider the view trees created for
+the ternary triangle query, see Figure 10. The view trees for △HL ⊟
+3 and △⊟HL
+3 contain A-values at the root,
+thus they can support the enumeration of A-values in constant time. The view tree T for △L⊟H
+3 , however,
+contains ( B, C)-values at its root, meaning that we need to ﬁnd the distinct A-values that occur under
+(B, C)-values. The number of distinct ( B, C)-values paired with any given A-value can be linear, meaning
+that a hop-based iterator from Section 2.4.4 would enumerate distin ct A-values with at least linear delay.
+To improve the enumeration delay for the skew-aware view △L⊟H
+3 , we reﬁne our partitioning strategy to
+get a tighter bound on the number of ( B, C)-values paired with any given A-value. We double partition
+relation R on ( A, B) and relation T on ( C, A) while keeping S partitioned on B. This reﬁnement further
+divides △L⊟H
+3 into three skew-aware views. One skew-aware view involves RLH and T HL and ensures that
+the number of distinct ( B, C)-values paired with any A-value is bounded by O(N 2 min{ǫ,1−ǫ}) since A is light
+in both relation parts and each of the variables B and C is heavy in at least one of the relation parts. The
+other two skew-aware views either involve RLL or involve RLH and T HH , which enables their materialization
+27
+=== PDF PAGE 28 ===
+Materialized View Deﬁnition Space Complexity
+△HHH
+1 (a) = ∑
+r,t∈{H,L}
+∑
+b,c RHr(a, b) · S H(b, c) · T Ht(c, a) O(|D|1−ǫ)
+△LLL
+1 (a) = ∑
+r,t∈{H,L}
+∑
+b,c RLr(a, b) · S L(b, c) · T Lt(c, a) O(|D|)
+△(LL)⊟H
+1 (a) = ∑
+s,t∈{H,L}
+∑
+b,c RLL(a, b) · Ss(b, c) · T Ht(c, a) O(|D|)
+△(LH)⊟(HH )
+1 (a) = ∑
+s∈{H,L}
+∑
+b,c RLH(a, b) · Ss(b, c) · T HH (c, a) O(|D|1−ǫ)
+View tree for △HL ⊟
+1 (a) = ∑
+r∈{H,L}
+∑
+t∈{H,L}2
+∑
+b,c RHr(a, b) · S L(b, c) · T t(c, a)
+VRS(a, c) = ∑
+r∈{H,L}
+∑
+b RHr(a, b) · S L(b, c) O(|D|1+min { ǫ,1−ǫ })
+V HL ⊟(a) = ∑
+t∈{H,L}2
+∑
+c VRS(a, c) · T t(c, a) O(|D|1−ǫ)
+View tree for △⊟HL
+1 (a) = ∑
+r∈{H,L}2
+∑
+t∈{H,L}
+∑
+b,c Rr(a, b) · S H(b, c) · T Lt(c, a)
+VST (b, a) = ∑
+t∈{H,L}
+∑
+c S H(b, c) · T Lt(c, a) O(|D|1+min { ǫ,1−ǫ })
+V ⊟HL(a) = ∑
+r∈{H,L}2
+∑
+b Rr(a, b) · VST (b, a) O(|D|)
+View tree for △(LH)⊟(HL)
+1 (a) = ∑
+s∈{H,L}
+∑
+b,c RLH(a, b) · Ss(b, c) · T HL(c, a)
+VT R(c, a, b) = T HL(c, a) · RLH(a, b) O(|D|1+min { ǫ,1−ǫ })
+ˆVT R(c, b) = ∑
+a VT R(c, a, b) O(|D|1+min { ǫ,1−2ǫ })
+V (LH)⊟(HL)(b, c) = ∑
+s∈{H,L} Ss(b, c) · ˆVT R(c, b) O(|D|min{1,2−2ǫ})
+View tree for △HL ⊟
+1
+V HL ⊟(a)
+∑
+t∈{H,L}2
+T t(c, a)VRS(a, c)
+∑
+r∈{H,L}
+RHr(a, b) S L(b, c)
+View tree for △⊟HL
+1
+V ⊟HL(a)
+∑
+r∈{H,L}2
+Rr(a, b)VST (b, a)
+S H(b, c)
+∑
+t∈{H,L}
+T Lt(c, a)
+View tree for △(LH)⊟(HL)
+1
+V (LH)⊟(HL)(b, c)
+ˆVT R(c, b)
+∑
+s∈{H,L}
+Ss(b, c)
+VT R(c, a, b)
+T HL(c, a) RLH(a, b)
+Figure 14: (top) The materialized views V = {△HHH
+1 , △LLL
+1 , △(LL)⊟H
+1 , △(LH)⊟(HH )
+1 , VRS, V HL ⊟, VST , V ⊟HL, VT R, ˆVT R,
+V (LH)⊟(HL)} supporting the maintenance of the unary triangle query. The set V is part of an IVM ǫ state of
+database D. (bottom) The view trees supporting the maintenance of △HL ⊟
+1 , △⊟HL
+1 , and △(LH)⊟(HL)
+1 .
+and enumeration with constant delay. Overall, our maintenance str ategy for the unary triangle query with
+double partitioning for R and T achieves O(N 2 min{ǫ,1−ǫ}) enumeration delay, which is sublinear for ǫ ⁄= 1
+2 .
+Figure 14 shows the deﬁnition and space complexity of the views supp orting the maintenance of the unary
+triangle query. The IVM ǫ state supporting the maintenance of the unary triangle query has the partitions
+P = {RHH , RHL, RLH, RLL, SH, SL, T HH , T HL, T LH, T LL} of R on ( A, B), of S on B, and of T on ( C, A);
+V = {△HHH
+1 , △LLL
+1 , △(LL)⊟H
+1 , △(LH)⊟(HH )
+1 , VRS, V HL ⊟, VST , V ⊟HL, VT R, ˆVT R, V (LH)⊟(HL)}.
+6.1 Preprocessing Stage
+The preprocessing stage builds the initial IVM ǫ state Z = (ǫ, P, V, N) of database D supporting the main-
+tenance of the unary triangle query.
+28
+=== PDF PAGE 29 ===
+Proposition 27. Given a database D and ǫ ∈ [0, 1], constructing the initial IVM ǫ state of D supporting the
+maintenance of the unary triangle query takes O(|D|
+3
+2 ) time.
+Proof. The proof is similar to the proof of Proposition 23.
+6.2 Space Complexity
+We analyze the space complexity of the IVM ǫ maintenance strategy for the unary triangle query.
+Proposition 28. Given a database D and ǫ ∈ [0, 1], an IVM ǫ state of D supporting the maintenance of the
+unary triangle query takes O(|D|1+min{ǫ,1−ǫ}) space.
+Proof. Figure 14 gives the deﬁnition and space complexity of the materialized views. The complexity results
+follow mainly from the proof of Proposition 20. The remaining views tak e either linear space because of their
+unary schema or sublinear space because of the heavy part condit ion on A in one of the relation parts. Two
+notable cases are the views ˆVT R and V (LH)⊟(HL). The size of ˆVT R is upper bounded by the size of VT R, which
+is O(N 1+min{ǫ,1−ǫ}) as discussed in the proof of Proposition 20, but also by at most 4 N 2−2ǫ (B, C)-values
+created by pairing the distinct heavy B-values from RLH and the distinct heavy C-values from T HL. Thus,
+the view ˆVT R takes O(N 1+min{ǫ,1−2ǫ}) space. The view view V (LH)⊟(HL) is further upper bounded by the
+size of S, which gives its O(N min{1,2−2ǫ}) space. The proposition follows from the invariant N = O(|D|).
+6.3 Processing a Single-Tuple Update
+We analyze the time complexity of maintaining an IVM ǫ state for the unary triangle query under a single-
+tuple update.
+Proposition 29. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the mainte-
+nance of the unary triangle query, IVM ǫ maintains Z under a single-tuple update to any input relation
+in O(|D|max{ǫ,1−ǫ}) time.
+Proof. Almost all materialized views in Figure 14 can be maintained following the s ame strategies as in the
+proof of Proposition 21 and by ignoring the double partitioning of R and T . The only notable cases are the
+reﬁned skew-aware views △(LL)⊟H
+1 and △(LH)⊟(HH )
+1 , considered next.
+We analyze the time to maintain △(LL)⊟H
+1 . For updates to RLL, we need to iterate over at most 2 N 1−ǫ
+C-values in T H and do lookups in S. For updates to S, we need to iteration over less than 3
+2 N ǫ A-values
+in RLL for a ﬁxed B-value from δS and do lookups in T H. For updates to T H, we need to iterate over less
+than 3
+2 N ǫ B-values for a ﬁxed A-value from δT H and do lookups in S. Thus, maintaining △(LL)⊟H
+1 takes
+O(N max{ǫ,1−ǫ}) time.
+The maintenance strategies for △(LH)⊟(HH )
+1 diﬀer from the strategies above only in case of updates to S.
+For an update S, we iterate over at most 2 N 1−ǫ A-values in T HH and do lookups in RLH. This implies that
+the maintenance time is O(N 1−ǫ).
+Hence, the overall maintenance time is O(N max{ǫ,1−ǫ}). The result follows from N = O(|D|).
+6.4 Enumeration Delay
+The enumeration procedure for the unary triangle query is similar to that of the binary triangle query.
+The skew-aware views from Figure 14 are all materialized except △(LH)⊟(HL)
+1 . For each materialized view,
+we construct an iterator with constant lookup time and enumeratio n delay. For the non-materialized view
+△(LH)⊟(HL)
+1 , we ﬁrst instantiate its view tree for the distinct ( B, C)-values appearing at the root V (LH)⊟(HL)
+and then construct a hop-based iterator for enumerating the dis tinct A-values in the union of these view
+trees. The hop-based iterator is parameterized by the CandidateBuckets(LH)⊟(HL) function that restricts
+the set of instantiated view trees to be explored during enumeratio n for a ﬁxed A-value. This function ﬁrst
+29
+=== PDF PAGE 30 ===
+EnumerateUnary(state Z)
+1 let Z = ( ǫ, N, {RHH , RHL, RLH, RLL, SH, SL, T HH , T HL, T LH, T LL},
+{ △HHH
+1 , △LLL
+1 , △(LL)⊟H
+1 , △(LH)⊟(HH )
+1 , V HL ⊟, V ⊟HL } ∪ V )
+2 I1 = { △HHH
+1 .iter (), △LLL
+1 .iter (), △(LL)⊟H
+1 .iter (), △(LH)⊟(HH )
+1 .iter (), V HL ⊟.iter (), V ⊟HL.iter (), }
+3 I2 = { △(LH)⊟(HL)
+1 .iter
+(
+CandidateBuckets(LH)⊟(HL)
+)
+}
+4 while ( (α = UnionNext( I1 ∪ I2 )) ⁄= EOF )
+5 m1 = △HHH
+1 (α) + △LLL
+1 (α) + △(LL)⊟H
+1 (α) + △(LH)⊟(HH )
+1 (α) + V HL ⊟(α) + V ⊟HL(α)
+6 m2 = ∑
+s∈{H,L}
+∑
+b,c RLH(α, b) · Ss(b, c) · T HL(c, α)
+7 output α ↦→(m1 + m2)
+Figure 15: Enumerating the result of the unary triangle query given an IVM ǫ state of database D. Line 2
+creates six iterators over the results of materialized views with sch ema A. Line 3 creates a hop-based iterator
+over the non-materialized skew-aware view △(LH)⊟(HL)
+1 , parameterized by the CandidateBuckets(LH)⊟(HL)
+function. Lines 5 and 6 compute the multiplicity of α reported by the union algorithm.
+computes the ( B, C)-values that exist in both the materialized view VT R for the given A-value and the root
+V (LH)⊟(HL), and then returns a set of indices that identify the view trees insta ntiated for those ( B, C)-values.
+The procedure EnumerateUnary from Figure 15 enumerates the result of the unary triangle query
+given an IVM ǫ state Z. The procedure ﬁrst creates the iterators for all skew-aware v iews (Lines 2-3). The
+union algorithm (see Section 2.4.2) takes these iterators as input an d reports distinct A-values as output. For
+each reported A-value α, EnumerateUnary sums up the multiplicity of α in each of the skew-aware views,
+which involves lookups in the materialized views with schema A (Line 5) and an aggregation of ( B, C)-values
+over the relation parts from △(LH)⊟(HL)
+1 (Line 6).
+Proposition 30. Given a database D, ǫ ∈ [0, 1], an IVM ǫ state Z of D supporting the maintenance
+of the unary triangle query, IVM ǫ enumerates the query result from Z with O(|D|2 min{ǫ,1−ǫ}) delay and
+O(|D|1+min{ǫ,1−ǫ}) additional space.
+Proof. Creating the iterators over materialized and the hop-based iterat or over △(LH)⊟(HL)
+1 takes constant
+time (Line 2-3), The iterators over the materialized views with schem a A allow constant-time lookups and
+constant-delay enumeration of A-values. The hop-based iterator reports the distinct A-values from the union
+of at most min {N, 4N 2(1−ǫ)} view trees instantiated for the distinct ( B, C)-values in the root V (LH)⊟(HL).
+Each such a view tree allows constant-time lookups and constant-d elay enumeration of A-values.
+The CandidateBuckets(LH)⊟(HL) function, which parameterizes the hop-based iterator, ﬁrst inte rsects
+the ( B, C)-values from VT R for a ﬁxed A-value and from the root V (LH)⊟(HL). The number of ( B, C)-values
+in VT R is at most 4 N 2−2ǫ due to the heavy part conditions on B in RLH and on C in T HL, and less than
+9
+4 N 2ǫ for a ﬁxed A-value due to the light part conditions on A in RLH and on A in T HL. The number of
+(B, C)-values in V (LH)⊟(HL) is further upper bounded by the size of S. Thus, computing the intersection and
+returning a set of indices that identify the matching view trees take O(N 2 min{ǫ,1−ǫ}) time. The returned
+set of indices is of size at most min {N, 4N 2−2ǫ, 9
+4 N 2ǫ}. Per Lemma 11, the enumeration delay for the view
+△(LH)⊟(HL)
+1 is O(N 2 min{ǫ,1−ǫ}).
+The iterators over materialized views require constant space durin g enumeration. The hop-based iterator
+over △(LH)⊟(HL)
+1 requires space linear in the total number of its A-value, per Lemma 10. This number is
+upper bounded by the size of VT R, which takes O(N 1+min{ǫ,1−ǫ}) space by Proposition 28.
+Computing the total multiplicity of each reported A-value α requires constant-time lookups in the ma-
+terialized views with schema A (Line 5) and iteration over the distinct ( B, C)-values appearing in the join
+30
+=== PDF PAGE 31 ===
+of RLH, S, and T HL (Line 6); since A is light in RLH and T HL, and each of the variables B and C is heavy
+in one of these relation parts, the number of such ( B, C)-values is O(N 2 min {ǫ,1−ǫ}). Thus, the multiplicity
+of the output value α can be computed in O(N 2 min {ǫ,1−ǫ}) time.
+Overall, EnumerateUnary enumerates the result of △1 from Z with O(N 2 min {ǫ,1−ǫ}) delay and
+O(N 1+min {ǫ,1−ǫ}) additional space. The proposition follows from the invariant |D| = Θ( N ).
+6.5 Summing Up
+The additional space used by the enumeration algorithm for the una ry triangle query is linearly bounded
+by the overall space complexity of maintained views. We conclude tha t our main result in Theorem 3 for
+the unary triangle query follows from Propositions 27, 28, 29, and 3 0 shown in the previous subsections,
+complemented by Proposition 33, which shows that the amortized re balancing time is O(|D|max{ǫ,1−ǫ}).
+7 Rebalancing Relation Partitions
+The partition of a relation may change after updates. For instance , an insert δRL = {(α, β) ↦→1} may violate
+the size invariant
+⌊ 1
+4 N
+⌋
+≤ |D| < N in an IVM ǫ state or may violate the light part condition |σA=αRL| < 3
+2 N ǫ
+on data value α and require moving all tuples with A-value α from RL to RH. As the database evolves under
+updates, IVM ǫ performs major and minor rebalancing steps to ensure that the size invariant and the heavy
+and light part conditions always hold. This rebalancing also ensures th at the upper bounds on the number
+of data values, such as the number of B-values paired with α in RL and the number of distinct A-values in
+RH, are valid. The rebalancing cost is amortized over multiple updates.
+The rebalancing procedures introduced in this section operate on I VMǫ states supporting any triangle
+query discussed in the previous sections. The maintenance proced ure ApplyUpdate used by major and
+minor rebalancing is polymorphic in the sense that its deﬁnition depend s on the maintained triangle query
+and used partitioning scheme (single or double partitioning). Section s 3.3 and 4.3 show the procedures
+ApplyUpdate for the nullary triangle query under single partitioning and respectiv ely the ternary triangle
+query. Sections 3.4, 5.3, and 6.3 describe how to adapt these proce dures for the nullary triangle query under
+double partitioning, the binary triangle query, and the unary triang le query, respectively.
+Major Rebalancing If an update causes the database size to fall below ⌊ 1
+4 N ⌋ or reach N , IVM ǫ halves or,
+respectively, doubles the threshold base N , and calls the procedure MajorRebalance shown in Figure 16.
+The procedure strictly repartitions the database relations with th e new threshold N ǫ (Line 2) and recomputes
+the materialized views using the new relation parts (Line 3).
+Proposition 31. Given a database D, major rebalancing of an IVM ǫ state of D supporting the maintenance
+of any triangle query takes O(|D|
+3
+2 ) time.
+Proof. Let Z = ( ǫ, N, P, V) be an IVM ǫ state supporting the maintenance of any triangle query. Consider
+the procedure MajorRebalance from Figure 16. The procedure strictly repartitions the relations in P
+using the threshold N ǫ and recomputes the materialized views in V based on the new relation partitions.
+Strictly partitioning the input relations takes O(|D|) time. Propositions 14, 17, 19, 23, and 27 state that the
+computation of the initial IVM ǫ state supporting the maintenance of any triangle query takes O(|D|
+3
+2 ) time.
+From the proofs of these propositions follows that the views in V can be recomputed in O(|D|
+3
+2 ) time.
+The superlinear time of major rebalancing is amortized over Ω( N ) updates. After a major rebalancing
+step, it holds that |D| = 1
+2 N (after doubling), or |D| = 1
+2 N − 1
+2 or |D| = 1
+2 N − 1 (after halving, i.e., setting N
+to
+⌊ 1
+2 N
+⌋
+− 1; the two options are due to the ﬂoor functions in the size invariant and halving expression). To
+violate the size invariant
+⌊ 1
+4 N
+⌋
+≤ | D| < N and trigger another major rebalancing, the number of required
+updates is at least 1
+4 N . Section 8 proves the amortized O(|D|
+1
+2 ) time of major rebalancing.
+31
+=== PDF PAGE 32 ===
+MajorRebalance(state Z)
+1 let Z = (ǫ, N, P, V)
+2 P = StrictPartition(P, N ǫ)
+3 V = Recompute(V, P)
+4 return Z
+MoveTuples(variable X, value x, Ksrc /shortrightarrowKdst , state Z)
+foreach x ∈ σX=xKsrc do
+Z = ApplyUpdate(δKdst = { x ↦→Ksrc(x) }, Z)
+Z = ApplyUpdate(δKsrc = { x ↦→ −Ksrc(x) }, Z)
+return Z
+MinorRebalance(relation K, variable X, value x, variable Y, value y, state Z)
+1 if (K is single partitioned)
+2 if ( x ∈ πX K H and |σX=xK H| < 1
+2 N ǫ)
+3 Z = MoveTuples(X, x, KH /shortrightarrowK L, Z)
+4 else if ( x ∈ πX K L and |σX=xK L| ≥ 3
+2 N ǫ)
+5 Z = MoveTuples(X, x, KL /shortrightarrowK H, Z)
+6 else if (K is double partitioned)
+7 if ( x ∈ (πX K HH ∪ πX K HL) and |σX=xK| < 1
+2 N ǫ)
+8 Z = MoveTuples(X, x, KHH /shortrightarrowK LH, Z); Z = MoveTuples(X, x, KHL /shortrightarrowK LL, Z)
+9 else if ( x ∈ (πX K LH ∪ πX K LL) and |σX=xK| ≥ 3
+2 N ǫ)
+10 Z = MoveTuples(X, x, KLH /shortrightarrowK HH , Z); Z = MoveTuples(X, x, KLL /shortrightarrowK HL, Z)
+11 if ( y ∈ (πY K HH ∪ πY K LH) and |σY =yK| < 1
+2 N ǫ)
+12 Z = MoveTuples(Y, y, K HH /shortrightarrowK HL, Z); Z = MoveTuples(Y, y, K LH /shortrightarrowK LL, Z)
+13 else if ( y ∈ (πY K HL ∪ πY K LL) and |σY =yK| ≥ 3
+2 N ǫ)
+14 Z = MoveTuples(Y, y, K HL /shortrightarrowK HH , Z); Z = MoveTuples(Y, y, K LL /shortrightarrowK LH, Z)
+15 return Z
+Figure 16: MajorRebalance(Z) performs major rebalancing on a state Z = ( ǫ, N, P, V) supporting the
+maintenance of a triangle query. StrictPartition(P, N ǫ) strictly repartitions the relations in P with
+threshold N ǫ, and Recompute(V, P) recomputes the views in V using the partitions in P. Given a
+relation K with schema ( X, Y ), an X-value x and a Y -value y, MinorRebalance(K, X, x, Y, y, Z) moves
+tuples between relation parts to ensure that the heavy and light pa rt conditions on values x and y hold.
+MoveTuples(X, x, Ksrc /shortrightarrowKdst , Z) uses ApplyUpdate to move all tuples with X-value x from relation
+part Ksrc to relation part Kdst . ApplyUpdate depends on the maintained triangle query, see Sections 3.3,
+3.4, 4.3, 5.3, and 6.3.
+Minor Rebalancing After each update δR = {(α, β) ↦→m}, IVM ǫ checks whether the light and heavy
+part conditions still hold for α and β. If R is partitioned on variable A, the relation partition consists of
+the heavy part RH and the light part RL. By Deﬁnition 7, the heavy and light part conditions on α are
+|σA=αRH| ≥ 1
+2 N ǫ and |σA=αRL| < 3
+2 N ǫ, respectively. If the ﬁrst condition is violated, all tuples in RH
+with the A-value α are moved to RL and the aﬀected views are updated; similarly, if the second condition is
+violated, all tuples with the A-value α are moved from RL to RH, followed by updating the aﬀected views.
+If R is double partitioned on ( A, B), the relation partition consists of the parts RHH , RHL, RLH, and
+RLL. Then, the heavy and light part conditions must be checked not only for the A-value α but also for the
+B-value β. From Deﬁnition 8, the heavy and light part conditions on α are |σA=αR| ≥ 1
+2 N ǫ and respectively
+|σA=αR| < 3
+2 N ǫ, where R is obtained by taking the union of the parts of R. If the update δR violates
+the ﬁrst condition, all tuples with A-value α are moved from the relation parts in which A is heavy to the
+relation parts in which A is light, that is, from RHH and RHL to RLH and RLL, respectively. If the update
+violates the second condition, all tuples with A-value α are moved in the opposite direction, from RLH and
+RLL to RHH and RHL. In both cases, the aﬀected views are updated. The heavy and ligh t part conditions
+32
+=== PDF PAGE 33 ===
+on B-value β are ensured in a similar way. As a result of an update, both values α and β might change from
+light to heavy or vice-versa, but it is impossible that one value change s from light to heavy and the other
+one from heavy to light. The minor rebalancing steps followed by upda tes to the other relations S and T
+are analogous.
+The procedure MinorRebalance in Figure 16 describes a minor rebalancing step on an IVM ǫ state
+following an update δK = {(x, y) ↦→m} to a relation K over schema ( X, Y ). If K is single partitioned, the
+heavy and light part conditions are checked for X-value x only (Lines 1-5). If it is double partitioned, the
+conditions are checked for both X-value x and Y -value y (Lines 6-14). Tuples are moved between relation
+parts using the procedure MoveTuples in Figure 16. Given a variable X in the schema of relation K, an X-
+value x, a source relation part Ksrc, and a target relation part Kdst , the procedure MoveTuples moves all
+tuples with X-value x from Ksrc to part Kdst . A tuple x is moved from Ksrc to Kdst by using the procedure
+ApplyUpdate that updates the multiplicities of x in Kdst and Ksrc and maintains the materialized views
+in the IVM ǫ state. Sections 3.3, 3.4, 4.3, 5.3, and 6.3 give the deﬁnition of ApplyUpdate for each triangle
+query. If K is single partitioned, MoveTuples is called at most once in MinorRebalance. If K is double
+partitioned, MoveTuples can be called up to four times, two times per x and y, to meet the heavy and
+light part conditions.
+Proposition 32. Given a database D and ǫ ∈ [0, 1] minor rebalancing of an IVM ǫ state of D supporting
+the maintenance of any triangle query takes O(|D|ǫ+max{ǫ,1−ǫ}) time.
+Proof. Consider an IVM ǫ state Z = ( ǫ, N, P, V) and an update δR = {(α, β) ↦→m} to relation R. The
+analysis for updates to S and T is similar. If R is single partitioned, MinorRebalance calls MoveTuples
+at most once; if R is double partitioned, MinorRebalance calls MoveTuples at most four times. Consider
+the worst case when R is double partitioned and both values α and β change from heavy to light or vice-
+versa. If they change from heavy to light, the procedure moves f ewer than 1
+2 N ǫ tuples with A-value α and
+fewer than 1
+2 N ǫ tuples with B-value β. If the two values change from light to heavy, the procedure move s
+fewer than 3
+2 N ǫ + 1 tuples with A-value α and fewer than 3
+2 N ǫ + 1 tuples with B-value β. Each tuple move
+performs one delete and one insert by executing ApplyUpdate. From Propositions 16, 18, 21, 25, and
+29 follows that, regardless of the maintained triangle query, ApplyUpdate runs in time O(|D|max{ǫ,1−ǫ}).
+Since there are O(N ǫ) such operations, the procedure MinorRebalance requires O(|D|ǫ+max{ǫ,1−ǫ}) time.
+As |D| = Θ( N ), minor rebalancing runs in time O(|D|ǫ+max{ǫ,1−ǫ}).
+The (super)linear time of minor rebalancing is amortized over Ω( N ǫ) updates. This lower bound on the
+number of updates comes from the relation partition conditions (se e Deﬁnition 7), namely from the gap
+between the two thresholds in these conditions. Section 8 proves t he amortized O(|D|max{ǫ,1−ǫ}) time of
+minor rebalancing.
+Figure 17 gives the trigger procedure OnUpdate that maintains an IVM ǫ state of a database D under a
+single-tuple update δR = {(α, β) ↦→m} to relation R and, if necessary, rebalances partitions; the procedures
+for updates to S and T are analogous. The procedure ﬁrst calls AffectedPart to determine in constant
+time which part Rr of R is aﬀected by the update. We ﬁrst consider the case when R is single partitioned.
+The update targets RH if this relation part already contains a tuple with the same A-value α, or ǫ is set to 0;
+otherwise, the update targets RL. When ǫ = 0, all tuples are in RH, while RL remains empty. Although this
+behavior is not required by IVM ǫ (without the condition ǫ = 0, RL would contain only tuples whose A-values
+have the degree of 1, and RH would contain all other tuples), it allows us to recover existing IVM ap proaches,
+such as classical IVM for the nullary and ternary triangle queries; b y setting ǫ to 0, IVM ǫ ensures that all
+tuples are in RH. The case when R is double partitioned is analogous. The update targets RHH if RHH
+contains the tuple ( α, β) or ǫ = 0; the update targets RHL or RLH if they already contain ( α, β); otherwise,
+the update targets RLL. The procedure OnUpdate then invokes ApplyUpdate. If the update causes a
+violation of the size invariant
+⌊ 1
+4 N
+⌋
+≤ | D| < N , the procedure invokes MajorRebalance from Figure 16
+to recompute the relation partitions and auxiliary views. Otherwise, if any heavy or light part condition
+is violated, it calls MinorRebalance from Figure 16 to move tuples between the parts of relation R and
+ensure that these conditions hold again.
+33
+=== PDF PAGE 34 ===
+OnUpdate(update δR, state Z)
+1 let δR = {(α, β) ↦→m}
+2 let Z = (ǫ, N, P, V)
+3 let Rr = AffectedPart(δR, Z)
+4 ApplyUpdate(δRr = {(α, β) ↦→m}, Z)
+5 if (|D| = N )
+6 N = 2N
+7 Z = MajorRebalance(Z)
+8 else if (|D| <
+⌊ 1
+4 N
+⌋
+)
+9 N =
+⌊ 1
+2 N
+⌋
+− 1
+10 Z = MajorRebalance(Z)
+11 else if (A is light in Rr and |σA=αR| ≥ 3
+2 N ǫ or
+12 B is light in Rr and |σB=βR| ≥ 3
+2 N ǫ or
+13 A is heavy in Rr and |σA=αR| < 1
+2 N ǫ or
+14 B is heavy in Rr and |σB=βR| < 1
+2 N ǫ)
+15 Z = MinorRebalance(R, A, α, B, β, Z)
+16 return Z
+AffectedPart(update δR, state Z)
+1 let δR = {(α, β) ↦→m}
+2 let Z = (ǫ, N, P, V)
+3 if (R is single partitioned)
+4 if (α ∈ πARH or ǫ = 0)
+5 return RH
+6 else
+7 return RL
+8 else if (R is double partitioned)
+9 if ((α, β) ∈ RHH or ǫ = 0)
+10 return RHH
+11 else if ((α, β) ∈ RHL)
+12 return RHL
+13 else if ((α, β) ∈ RLH)
+14 return RLH
+15 else
+16 return RLL
+Figure 17: Maintaining an IVM ǫ state supporting the maintenance of any triangle query under a sin gle-
+tuple update and performing rebalancing. The procedure OnUpdate takes as input an update δR and an
+IVMǫ state Z of database D and returns a new state that results from applying δR to Z and, if necessary,
+rebalancing partitions. The procedure AffectedPart determines the relation part in Z aﬀected by the
+update. ApplyUpdate depends on the maintained triangle query, see Sections 3.3, 3.4, 4.3, 5.3, and 6.3.
+MajorRebalance and MinorRebalance are given in Figure 16. The OnUpdate procedures for updates
+to S and T are analogous.
+8 Amortizing Rebalancing Time
+Sections 3-6 show that any IVM ǫ state supporting the maintenance of a triangle query can be mainta ined in
+sublinear time under a single-tuple update. The sublinear maintenanc e time requires that the size invariant
+and the heavy and light part conditions are preserved for the relat ion partitions in IVM ǫ states. To guarantee
+this, IVM ǫ performs major and minor rebalancing steps, which can take super linear time as stated in
+Propositions 31 and 32. We nevertheless show in this section that th e amortized rebalancing costs and
+thus the overall amortized maintenance time over a sequence of up dates remains sublinear.
+Proposition 33. Given a database D, ǫ ∈ [0, 1], and an IVM ǫ state Z of D supporting the maintenance
+of any triangle query, IVM ǫ maintains Z under a single-tuple update to any input relation and perfor ms
+rebalancing in O(|D|max{ǫ,1−ǫ}) amortized time.
+Proof. Let Z0 = (ǫ, N0, P0, V0) be the initial IVM ǫ state of a database D0 and u0, u1, . . . ,un−1 a sequence
+of arbitrary single-tuple updates. The application of this update se quence to Z0 yields a sequence Z0
+u0
+− →
+Z1
+u1
+− →. . .
+un− 1
+− → Zn of IVM ǫ states, where Zi+1 is the result of executing the procedure OnUpdate(ui, Zi)
+from Figure 17, for 0 ≤ i < n . Let ci denote the actual execution cost of OnUpdate(ui, Zi). For some
+Γ > 0, we can decompose each ci as:
+ci = capply
+i + cmajor
+i + cminor
+i + Γ , for 0 ≤ i < n,
+where capply
+i , cmajor
+i , and cminor
+i are the actual costs of the subprocedures ApplyUpdate, MajorRebal-
+ance, and MinorRebalance, respectively, in OnUpdate. If update ui causes no major rebalancing, then
+34
+=== PDF PAGE 35 ===
+cmajor
+i = 0; similarly, if ui causes no minor rebalancing, then cminor
+i = 0. These actual costs admit the
+following worst-case upper bounds:
+capply
+i ≤ γN max{ǫ,1−ǫ}
+i (by Propositions 16, 18, 21, 25, 29),
+cmajor
+i ≤ γN
+3
+2
+i (by Proposition 31), and
+cminor
+i ≤ γN ǫ+max{ǫ,1−ǫ}
+i (by Proposition 32),
+where γ is a constant derived from their asymptotic bounds, and Ni is the threshold base of Zi. The costs
+of major and minor rebalancing can be superlinear in the database siz e.
+The crux of this proof is to show that assigning a sublinear amortized cost ˆci to each update ui accumulates
+enough budget to pay for expensive but less frequent rebalancing procedures. For any sequence of n updates,
+our goal is to show that the accumulated amortized cost is no smaller than the accumulated actual cost:
+n−1∑
+i=0
+ˆci ≥
+n−1∑
+i=0
+ci. (1)
+The amortized cost assigned to an update ui is ˆci = ˆcapply
+i + ˆcmajor
+i + ˆcminor
+i + Γ, where
+ˆcapply
+i = γN max{ǫ,1−ǫ}
+i , ˆcmajor
+i = 4γN
+1
+2
+i , ˆcminor
+i = 4γN max{ǫ,1−ǫ}
+i , and
+Γ and γ are the constants used to upper bound the actual cost of OnUpdate. As it will be explained in
+more detail, the number of updates between a major rebalancing st ep caused by update ui and the previous
+major rebalancing step can be as less as 1
+4 Ni. In order to accumulate enough budget to pay for the major
+rebalancing cost triggered by update ui, the amortized cost ˆ cmajor
+i is deﬁned as γN
+3
+2
+i / 1
+4 Ni = 4 γN
+1
+2
+i . Given
+that ui is of the form δR = {(α, β) ↦→m} and invokes minor rebalancing for α, the number of updates since
+the previous minor rebalancing step for α can be as less as 1
+2 N ǫ. Hence, to pay for the minor rebalancing
+step for α invoked by ui, our budget must be at least γN ǫ+max{ǫ,1−ǫ}
+i / 1
+2 N ǫ = 2γN max{ǫ,1−ǫ}
+i . Since we also
+need to take the rebalancing costs for β into account, we deﬁne the amortized minor rebalancing cost ˆ cminor
+i
+as 4 γN max{ǫ,1−ǫ}
+i . In contrast to the actual costs cmajor
+i and cminor
+i , the amortized costs ˆ cmajor
+i and ˆcminor
+i
+are always nonzero.
+We prove that such amortized costs satisfy Inequality (1). Since ˆ capply
+i ≥ capply
+i for 0 ≤ i < n , it suﬃces
+to show that the following inequalities hold:
+(amortizing major rebalancing)
+n−1∑
+i=0
+ˆcmajor
+i ≥
+n−1∑
+i=0
+cmajor
+i and (2)
+(amortizing minor rebalancing)
+n−1∑
+i=0
+ˆcminor
+i ≥
+n−1∑
+i=0
+cminor
+i . (3)
+We prove Inequalities (2) and (3) by induction on the length n of the update sequence.
+Major rebalancing.
+• Base case: We show that Inequality (2) holds for n = 1. The preprocessing stage sets N0 = 2 · |D0| + 1.
+If the initial database D0 is empty, then N0 = 1 and u0 triggers major rebalancing (and no minor
+rebalancing). The amortized cost ˆ cmajor
+0 = 4 γN
+1
+2
+0 = 4 γ suﬃces to cover the actual cost cmajor
+0 ≤
+γN
+1+ 1
+2
+0 = γ. If the initial database is nonempty, u0 cannot trigger major rebalancing (i.e., violate the
+size invariant) because
+⌊ 1
+4 N0
+⌋
+=
+⌊ 1
+2 |D0|
+⌋
+≤ |D0| − 1 (lower threshold) and |D0| + 1 < N 0 = 2 · |D0| + 1
+(upper threshold); then, ˆcmajor
+0 ≥ cmajor
+0 = 0. Thus, Inequality (2) holds for n = 1.
+35
+=== PDF PAGE 36 ===
+• Inductive step: Assumed that Inequality (2) holds for all update sequences of len gth up to n−1, we show
+it holds for update sequences of length n. If update un−1 causes no major rebalancing, then ˆ cmajor
+n−1 =
+4γN
+1
+2
+n−1 ≥ 0 and cmajor
+n−1 = 0, thus Inequality (2) holds for n. Otherwise, if applying un−1 violates the
+size invariant, the database size |Dn| is either
+⌊ 1
+4 Nn−1
+⌋
+− 1 or Nn−1. Let Zj be the state created after
+the previous major rebalancing or, if there is no such step, the initia l state. For the former ( j > 0), the
+major rebalancing step ensures |Dj| = 1
+2 Nj after doubling and |Dj| = 1
+2 Nj − 1
+2 or |Dj | = 1
+2 Nj − 1 after
+halving the threshold base Nj; for the latter ( j = 0), the preprocessing stage ensures |Dj| = 1
+2 Nj − 1
+2 .
+The threshold base Nj changes only with major rebalancing, thus Nj = Nj+1 = . . . = Nn−1. The
+number of updates needed to change the database size from |Dj| to |Dn| (i.e., between two major
+rebalancing) is at least 1
+4 Nn−1 since min { 1
+2 Nj − 1 − (
+⌊ 1
+4 Nn−1
+⌋
+− 1), Nn−1 − 1
+2 Nj} ≥ 1
+4 Nn−1. Then,
+n−1∑
+i=0
+ˆcmajor
+i ≥
+j−1∑
+i=0
+cmajor
+i +
+n−1∑
+i=j
+ˆcmajor
+i (by induction hypothesis)
+=
+j−1∑
+i=0
+cmajor
+i +
+n−1∑
+i=j
+4γN
+1
+2
+n−1 (Nj = . . . = Nn−1)
+≥
+j−1∑
+i=0
+cmajor
+i + 1
+4 Nn−1 4γN
+1
+2
+n−1 (at least 1
+4 Nn−1 updates)
+=
+j−1∑
+i=0
+cmajor
+i + γN
+3
+2
+n−1
+≥
+j−1∑
+i=0
+cmajor
+i + cmajor
+n−1 =
+n−1∑
+i=0
+cmajor
+i (cmajor
+j = . . . = cmajor
+n−2 = 0).
+Thus, Inequality (2) holds for update sequences of length n.
+Minor rebalancing. When the degree of a value in a partition changes such that the heav y or light part
+condition no longer holds, minor rebalancing moves the aﬀected tuple s between the relation parts. To prove
+Inequality (3), we decompose the cost of minor rebalancing per rela tion and data value over a variable in
+the schema of the relation.
+cminor
+i =
+∑
+a∈Dom(A)
+(cR,a
+i + cT,a
+i ) +
+∑
+b∈Dom(B)
+(cR,b
+i + cS,b
+i ) +
+∑
+c∈Dom(C)
+(cT,c
+i + cR,c
+i )
+ˆcminor
+i =
+∑
+a∈Dom(A)
+(ˆcR,a
+i + ˆcT,a
+i ) +
+∑
+b∈Dom(B)
+(ˆcR,b
+i + ˆcS,b
+i ) +
+∑
+c∈Dom(C)
+(ˆcT,c
+i + ˆcR,c
+i )
+We write cR,α
+i and ˆcR,α
+i to denote the actual and respectively amortized costs of minor re balancing caused
+by update ui, for relation R and an A-value α. Recall that if update ui is of the form δR = {(α, β) ↦→m}
+and R is single partitioned, the update can cause minor rebalancing for A-value α. If R is double partitioned,
+the update can cause minor rebalancing for A-value α, or B-value β, or for both. Hence, if ui is of the form
+δR = {(α, β) ↦→m} and causes any rebalancing, we have cR,α
+i + cR,β
+i = cminor
+i ≤ γN ǫ+max{ǫ,1−ǫ}
+i ; otherwise,
+cR,α
+i = cR,β
+i = 0. If ui is of the form δR = {(α, β) ↦→m}, we set ˆcR,α
+i = ˆcR,β
+i = 1
+2 ˆcminor
+i = 2 γN max{ǫ,1−ǫ}
+i
+regardless of whether ui causes minor rebalancing or not; otherwise, ˆ cR,α
+i = ˆcR,β
+i = 0. The actual costs cS,b
+i ,
+cS,c
+i , cT,c
+i , and cT,a
+i and the amortized costs ˆcS,b
+i , ˆcS,c
+i , ˆcT,c
+i , and ˆcT,a
+i are deﬁned similarly.
+We prove that for R and any a ∈ Dom(A), the following inequality holds:
+n−1∑
+i=0
+ˆcR,a
+i ≥
+n−1∑
+i=0
+cR,a
+i . (4)
+36
+=== PDF PAGE 37 ===
+The proof of the inequality ∑ n−1
+i=0 ˆcR,b
+i ≥ ∑ n−1
+i=0 cR,b
+i for any b ∈ Dom(B) and the inequalities for the other
+two relations S and T are analogous. Inequality (3) follows directly from these inequalities .
+We prove Inequality (4) for an arbitrary a ∈ Dom(A) by induction on the length n of the update sequence.
+• Base case : We show that Inequality (4) holds for n = 1. Assume that update u0 is of the form
+δR = {(α, β) ↦→m}; otherwise, ˆcR,α
+0 = cR,α
+0 = 0, and Inequality (4) follows trivially for n = 1. If
+the initial database is empty, u0 triggers major rebalancing but no minor rebalancing, thus ˆ cR,α
+0 =
+2γN max{ǫ,1−ǫ}
+0 ≥ cR,α
+0 = 0. If the initial database is nonempty, each relation is partitioned u sing the
+threshold N ǫ
+0. For update u0 to trigger minor rebalancing for A-value α, the degree of α in R has to
+either decrease from ⌈N ǫ
+0⌉ to
+⌈ 1
+2 N ǫ
+0
+⌉
+− 1 (heavy to light) or increase from ⌈N ǫ
+0⌉ − 1 to
+⌈ 3
+2 N ǫ
+0
+⌉
+(light
+to heavy). The former happens only if ⌈N ǫ
+0⌉ = 1 and update u0 removes the last tuple with the A-
+value α from R, thus no minor rebalancing is needed; the latter cannot happen sinc e update u0 can
+increase |σA=αR| to at most ⌈N ǫ
+0⌉, and ⌈N ǫ
+0⌉ <
+⌈ 3
+2 N ǫ
+0
+⌉
+. In any case, ˆ cR,α
+0 ≥ cR,α
+0 , which implies that
+Inequality (4) holds for n = 1.
+• Inductive step : Assumed that Inequality (4) holds for all update sequences of len gth up to n − 1,
+we show that it holds for update sequences of length n. Consider that update un−1 is of the form
+δR = {(α, β) ↦→m} and causes minor rebalancing for α; otherwise, ˆcR,α
+n−1 ≥ 0 and cR,α
+n−1 = 0, and
+Inequality (4) follows trivially for n. Let Zj be the state created after the previous major rebalancing
+or, if there is no such step, the initial state. The threshold change s only with major rebalancing, thus
+Nj = Nj+1 = . . . = Nn−1. Depending on whether there exist minor rebalancing steps since st ate Zj,
+we distinguish two cases:
+Case 1: There is no minor rebalancing caused by an update of the for m δR = {(α, β′) ↦→m ′} since state
+Zj; thus, we have cR,α
+j = . . . = cR,α
+n−2 = 0. From state Zj to state Zn, the number of tuples with
+the A-value α either decreases from at least
+⌈
+N ǫ
+j
+⌉
+to
+⌈ 1
+2 N ǫ
+n−1
+⌉
+−1 (heavy to light) or increases from
+at most
+⌈
+N ǫ
+j
+⌉
+− 1 to
+⌈ 3
+2 N ǫ
+n−1
+⌉
+(light to heavy). For this change to happen, the number of update s
+needs to be greater than 1
+2 N ǫ
+n−1 since Nj = Nn−1 and min {
+⌈
+N ǫ
+j
+⌉
+− (
+⌈ 1
+2 N ǫ
+n−1
+⌉
+− 1),
+⌈ 3
+2 N ǫ
+n−1
+⌉
+−
+(
+⌈
+N ǫ
+j
+⌉
+− 1)} > 1
+2 N ǫ
+n−1.
+Case 2: There is at least one minor rebalancing step for α caused by an update of the form δR = {(α, β′) ↦→
+m ′} since state Zj. Let Zℓ denote the state created after the previous minor rebalancing fo r α
+caused by an update of this form; thus, cR,α
+ℓ = . . . = cR,α
+n−2 = 0. The minor rebalancing steps
+creating Zℓ and Zn move tuples with the A-value a between the relation parts of R in opposite
+directions with respect to heavy and light. From state Zℓ to state Zn, the number of such tuples
+either decreases from
+⌈ 3
+2 N ǫ
+l
+⌉
+to
+⌈ 1
+2 N ǫ
+n−1
+⌉
+− 1 (heavy to light) or increases from
+⌈ 1
+2 N ǫ
+l
+⌉
+− 1 to⌈ 3
+2 N ǫ
+n−1
+⌉
+(light to heavy). For this change to happen, the number of update s needs to be greater
+than N ǫ
+n−1 since Nl = Nn−1 and min {
+⌈ 3
+2 N ǫ
+l
+⌉
+− (
+⌈ 1
+2 N ǫ
+n−1
+⌉
+− 1),
+⌈ 3
+2 N ǫ
+n−1
+⌉
+− (
+⌈ 1
+2 N ǫ
+l
+⌉
+− 1)} > N ǫ
+n−1.
+Let k = j if Case 1 holds and k = ℓ if Case 2 holds. By the above analysis, there must be more than
+1
+2 N ǫ
+n−1 updates between Zk and Zn. Hence,
+37
+=== PDF PAGE 38 ===
+n−1∑
+i=0
+ˆcR,α
+i ≥
+k−1∑
+i=0
+cR,α
+i +
+n−1∑
+i=k
+ˆcR,α
+i (by induction hypothesis)
+=
+k−1∑
+i=0
+cR,α
+i +
+n−1∑
+i=k
+2γN max{ǫ,1−ǫ}
+n−1 (Nk = . . . = Nn−1)
+>
+k−1∑
+i=0
+cR,α
+i + 1
+2 N ǫ
+n−12γN max{ǫ,1−ǫ}
+n−1 (more than 1
+2 N ǫ
+n−1 updates)
+≥
+k−1∑
+i=0
+cR,α
+i + cR,α
+n−1 =
+n−1∑
+i=0
+cR,α
+i (cR,α
+k = . . . = cR,α
+n−2 = 0).
+This implies that Inequality (4) holds for update sequences of length n.
+The inductive analysis shows that Inequality (1) holds when the amor tized cost of OnUpdate(ui, Zi) is
+ˆci = γN max{ǫ,1−ǫ}
+i + 4γN
+1
+2
+i + 4γN max{ǫ,1−ǫ}
+i + Γ , for 0 ≤ i < n,
+where Γ and γ are constants. The amortized cost ˆ cmajor
+i of major rebalancing is 4 γN
+1
+2
+i , and the amortized
+cost ˆcminor
+i of minor rebalancing is 4 γN max{ǫ,1−ǫ}
+i . From the size invariant
+⌊ 1
+4 Ni
+⌋
+≤ | Di| < N i follows that
+|Di| < N i < 4(|Di| + 1) for 0 ≤ i < n , where |Di| is the database size before update ui. This implies that for
+any database D, the amortized major rebalancing time is O(|D|
+1
+2 ), the amortized minor rebalancing time is
+O(|D|max{ǫ,1−ǫ}), and the overall amortized update time of IVM ǫ is O(|D|max{ǫ,1−ǫ}).
+9 A Lower Bound on the Maintenance of Triangle Queries
+In this section we prove Proposition 5, which states a lower bound on the trade-oﬀ between amortized update
+time and enumeration delay for the maintenance of triangle queries, conditioned on the OMv conjecture [19].
+Proposition 5. For any γ > 0 and database D, there is no algorithm that incrementally maintains the
+result of any triangle query under single-tuple updates to D with arbitrary preprocessing time, O(|D|
+1
+2 −γ)
+amortized update time, and O(|D|1−γ ) enumeration delay, unless the OMv conjecture fails.
+The proof relies on the Online Vector-Matrix-Vector Multiplication ( OuMv) conjecture, which is implied
+by the OMv conjecture (Conjecture 2). First, we give the deﬁnition of the OuMv problem and state the
+corresponding conjecture.
+Deﬁnition 34 (Online Vector-Matrix-Vector Multiplication ( OuMv) [19]) . We are given an n × n Boolean
+matrix M and receive n pairs of Boolean column-vectors of size n, denoted by (u1, v1), . . . ,(un, vn); after
+seeing each pair (ui, vi), we output the product uT
+i Mvi before we see the next pair.
+Conjecture 35 (OuMv Conjecture, Theorem 2.7 in [19]) . For any γ > 0, there is no algorithm that solves
+OuMv in time O(n3−γ).
+The following proof of Proposition 5 reduces the OuMv problem to the problem of incrementally main-
+taining a triangle query. This reduction implies that if there is an algorit hm that incrementally maintains a
+triangle query under single-tuple updates with arbitrary preproce ssing time, O(|D|
+1
+2 −γ) amortized update
+time, and O(|D|1−γ ) enumeration delay for some γ > 0 and database D, then the OuMv problem can be
+solved in subcubic time. This contradicts the OuMv conjecture and, consequently, the OMv conjecture.
+Proof of Proposition 5. The proof is inspired by the lower bound proof for maintaining non-hie rarchical
+Boolean conjunctive queries [6]. Let △ be a triangle query of arbitrary arity. For the sake of contradictio n,
+38
+=== PDF PAGE 39 ===
+SolveOuMv(matrix M, vectors u1, v1, . . . ,un, vn)
+1 let Z = initial IVM ǫ state of the empty database
+2 foreach (i, j) ∈ M do
+3 δS = { (i, j) ↦→M(i, j) }
+4 Z = OnUpdate(δS, Z)
+5 foreach r = 1, . . . , n do
+6 foreach i = 1, . . . , n do
+7 δR = { (a, i) ↦→(ur(i) − R(a, i)) }
+8 Z = OnUpdate(δR, Z)
+9 δT = { (i, a) ↦→(vr(i) − T (i, a)) }
+10 Z = OnUpdate(δT, Z)
+11 output (△ ⁄= ∅)
+Figure 18: The procedure SolveOuMv solves the OuMv problem using an incremental algorithm that
+maintains a triangle query △ of arbitrary arity under single-tuple updates. The state Z is the initial IVM ǫ
+state of a database with empty relations R, S and T . The procedure OnUpdate is given in Figure 17 and
+maintains the triangle query under single-tuple updates.
+assume that there is an incremental maintenance algorithm A that maintains △ under single-tuple updates
+with arbitrary preprocessing time, O(|D|
+1
+2 −γ) amortized update time, and O(|D|1−γ ) enumeration delay,
+for some γ > 0. We show that this algorithm can be used to design an algorithm B that solves the OuMv
+problem in subcubic time, which contradicts the OuMv conjecture.
+The reduction Figure 18 gives the pseudocode of the algorithm B, which processes an OuMv input
+(M, (u1, v1), . . . ,(un, vn)). We denote the entry of M in row i and column j by M(i, j) and the i-th
+component of v by v(i). The algorithm ﬁrst constructs the initial IVM ǫ state Z from a database D =
+{R, S, T } with empty relations R, S, and T . Then, it executes at most n2 updates to the relation S such
+that S = { (i, j) ↦→M(i, j) | i, j ∈ [n] }. In each round r ∈ [n], the algorithm executes at most 2 n updates
+to the relations R and T such that R = { (a, i) ↦→ur(i) | i ∈ [n] } and T = { (i, a) ↦→vr(i) | i ∈ [n] }, where
+a is some constant. By construction, uT
+r Mvr = 1 if and only if there exist i, j ∈ [n] such that ur(i) = 1,
+M(i, j) = 1, and vr(j) = 1, which is equivalent to R(a, i) · S(i, j) · T (j, a) = 1 at the end of round r. Thus,
+the algorithm outputs 1 at the end of round r if and only if the result of the triangle query is nonempty.
+Nonemptiness of the query result can be checked by triggering enu meration and checking whether at least
+one output tuple is reported.
+Time analysis Constructing the initial state from a database with empty relations takes constant time.
+The construction of relation S from M requires at most n2 updates. Given that the amortized time for
+each update is O(|D|
+1
+2 −γ) and the database size |D| stays O(n2), the overall time for constructing relation
+S is O(n2 · n2·( 1
+2 −γ)) = O(n3−2γ). In each round, the algorithm performs at most 2 n updates and needs
+O(|D|1−γ ) time to report the ﬁrst result tuple or to signalize that the result is empty. Hence, the time to
+execute the updates in a single round is O(2n · n2·( 1
+2 −γ)) = O(n2−2γ). The time to report the ﬁrst result
+tuple or signalize emptiness is O(n2·(1−γ)) = O(n2−2γ ). Thus, the overall execution time is O(n2−2γ) per
+round and O(n3−2γ) for n rounds. Hence, algorithm B needs O(n3−2γ) time to solve the OuMv problem,
+which contradicts the OuMv conjecture and, consequently, the OMv conjecture.
+39
+=== PDF PAGE 40 ===
+10 Recovering Existing Dynamic and Static Approaches
+We next show how IVM ǫ recovers the classical ﬁrst-order IVM [12] on triangle queries (Se ction 10.1) and
+the worst-case optimal time of non-incremental algorithms for co mputing the result of the ternary triangle
+query (Section 10.2).
+10.1 Classical First-Order IVM
+We start with a brief description of classical ﬁrst-order IVM on the ternary triangle query △3. The other
+triangle queries are treated analogously. Classical ﬁrst-order IV M materializes the query result. Given a
+single-tuple update δR = {(α, β) ↦→m} to relation R, it maintains query △3 under the update by computing
+the delta query
+δ△3(α, β, c) = δR(α, β) · S(β, c) · T (c, α)
+and updating the query result by setting △3(α, β, c) := △3(α, β, c) + δ△3(α, β, c) for each C-value c in δ△3.
+The maintenance of the query requires the iteration over possibly lin early many C-values paired with β in
+relation S and with α in relation T . Hence, the update time is O(|D|). The evaluation of updates to the
+relations S and T is analogous. The preprocessing phase uses a worst-case optimal join algorithm to compute
+the initial query result in O(|D|
+3
+2 ) time [32]. Since the query result is materialized, the enumeration dela y
+is constant. The space complexity is dominated by the size O(|D|
+3
+2 ) of the query result [30].
+IVMǫ becomes the classical ﬁrst-order IVM algorithm by setting ǫ to 0 or 1.
+We ﬁrst consider the case ǫ = 1 and explain it for the ternary triangle query; the other triangle q ueries
+are treated analogously. If ǫ = 1, then all tuples are in the light parts of the relations and the resu lts of all
+materialized views in Figure 10 become empty except for the skew-aw are view
+△LLL
+3 (a, b, c) = RL(a, b) · SL(b, c) · T L(c, a),
+whose result becomes exactly that of △3.
+We next explain in more detail. The preprocessing stage sets the thr eshold base N of the initial IVM ǫ
+state to 2 · |D| + 1 and strictly partitions each relation with threshold N ǫ = N . Since for each relation
+K ∈ { R, S, T }, variable X in the schema of K, and value x in the domain of X, it holds |σX=xK| < N ,
+all tuples in K end up in the light part of K. Consequently, all materialized views in Figure 10 besides
+△LLL
+3 stay empty, since each of them refers to at least one heavy relatio n part. The only materialized
+view that is possibly non-empty is △LLL
+3 . This also means that the result of query △3 and △LLL
+3 are
+equal. Given an update, the procedure OnUpdate in Figure 17 never performs minor rebalancing, since
+the degrees of data values can never reach 3
+2 N , due to the size invariant
+⌊ 1
+4 N
+⌋
+≤ | D| < N . The procedure
+MajorRebalancing, which might be invoked by OnUpdate, does not move tuples to the heavy relation
+parts, since the threshold for strict partitioning is always greater than the database size. This implies that
+the views in Figure 10 besides △LLL
+3 stay empty after any update.
+The case of ǫ = 0 is symmetric and IVM ǫ becomes the classical ﬁrst-order IVM algorithm. In the
+preprocessing stage, the input relations are strictly partitioned w ith threshold N ǫ = 1, which means that all
+light relation parts and materialized views referring to these parts b ecome empty. Only one skew-aware view
+is constructed and its result is equal to that of the triangle query u nder consideration. IVM ǫ materializes
+this view and allows for constant-delay enumeration from it.
+We next discuss in more detail the ternary triangle query. The resu lt of the skew-aware view △HHH
+3 (a, b, c) =
+RH (a, b)·SH(b, c)·T H(c, a) is equal to the result of △3. The condition ǫ = 0 in the third line of the procedure
+AffectedPart in Figure 17 avoids that any update aﬀects the light relation parts. S ince the degrees of
+data values in the heavy relation parts can never fall below 1
+2 N ǫ = 1
+2 , minor rebalancing is never invoked.
+Based on the threshold for strict relation partitioning, major reba lancing does not move tuples to the light
+relation parts.
+40
+=== PDF PAGE 41 ===
+10.2 Computing the Ternary Triangle Query in a Static Databa se
+The worst-case optimal time to compute the result of the ternary triangle query over the database D is
+O(|D|
+3
+2 ) [32]. IVM ǫ recovers this computation time in the static case by using its update mechanism as
+follows. We ﬁx ǫ = 1
+2 and insert all tuples from D, one at a time, into a database D′ that is initially empty.
+For each insert, we call the procedure OnUpdate from Figure 17. The preprocessing time is constant. By
+Theorem 3, IVM ǫ guarantees O(M
+1
+2 ) amortized update time, where M is the size of D′ at update time.
+Thus, the total time to insert all tuples into D′ is
+O(
+|D|−1∑
+M=0
+M
+1
+2 ) = O(|D| · |D|
+1
+2 ) = O(|D|
+3
+2 ).
+Finally, we enumerate the query result with constant delay. Since th e number of tuples in the result is
+bounded by |D|
+3
+2 [30], the overall enumeration takes O(|D|
+3
+2 ) time. Overall, we compute the result of the
+ternary triangle query in O(|D|
+3
+2 ) time.
+To avoid rebalancing while inserting the tuples into the empty databas e, we can preprocess the input
+relations in D to decide for each tuple its ﬁnal relation part. For instance, if for a n A-value a, it holds
+|σA=aR| ≥ | D|
+1
+2 , the tuple is inserted to the heavy part of R, otherwise to the light part. Since we do not
+perform any rebalancing, the worst-case (and not only amortized ) time of each insert is O(|D|
+1
+2 ).
+11 Related Work
+T riangle queries in the static setting The problems of ﬁnding, counting, and listing of given-length
+cycles in graphs have been extensively investigated since the 70s [2 1, 11, 40]. One important result that
+falls into the scope of this work is that, given a graph with n vertices and m edges, ﬁnding a triangle if
+one exists and counting all triangles can be done in time O(nω) where ω < 2.373 is the exponent of matrix
+multiplication [21]. The same problem can be solved in time O(m
+2ω
+ω+1 ) ≤ O (m1.41), which is better than the
+former time bound on sparse graphs [3]. The problem of computing fo r each edge the number of triangles
+using this edge can be solved in time O(m1.41) [16]. This problem corresponds to computing the result of
+the binary triangle query over the ring of integers. Given a number k, a ﬂavor of the triangle listing problem
+asks for the listing of k triangles if the graph has at least k triangles and all triangles otherwise. This
+problem can be solved in time ~O(n2.373 + n1.568t0.478) on dense graphs and in time ~O(m1.408 + m1.222t0.186)
+on sparse graphs, where ~O suppresses multiplicative factors of size no(1) [8]. All time bounds mentioned
+above rely on algebraic fast matrix multiplication. IVM ǫ’s preprocessing phase relies on an algorithm like
+Leapfrog TrieJoin or Recursive-Join that does not use matrix multip lication and runs in time O(|D|
+3
+2 ) [32]
+to compute the initial query result on a database D. Further works approximate the triangle count in
+large graphs [37, 5, 27] and assess the practicability of triangle cou nting and listing algorithms in massive
+networks [13, 35].
+Complexity gap between single-tuple and bulk updates Our main result states that for ǫ = 1
+2 ,
+IVMǫ maintains the triangle count (unary triangle query) under single-tu ple updates to a database D with
+O(|D|
+1
+2 ) amortized update time and O(1) enumeration delay (Theorem 3), which is worst-case optimal un der
+the OMv conjecture (Proposition 5). We also know that triangle counting on a graph with m edges can be
+solved in O(m1.41) time [3]. Corroborating these two results, we conclude that there is a gap in the worst-
+case complexity of counting triangles between the static and the dy namic case (or equivalently between bulk
+updates and single-tuple updates). If the tuples in D come as a stream of inserts and we do one insert at a
+time, the overall time to compute the triangle count on D is O(|D| · |D|
+1
+2 ) = O(|D|
+3
+2 ). This is worse than
+O(|D|1.41), which is achieved by processing all tuples in D in bulk. For the ternary triangle query, however,
+IVMǫ recovers the worst-case optimal time to list all triangles in the stat ic setting, cf. Section 10.2.
+41
+=== PDF PAGE 42 ===
+Dynamic set intersection A prior result [28] on the dynamic evaluation of a class of Boolean que ries
+is closely related to the maintenance of the nullary triangle query. As sume that F is a family of sets that
+are subject to inserts and deletes and N is the overall size of these sets. Given two sets from F , the
+emptiness query answers whether their intersection is empty. The re is a dynamic algorithm that uses O(N )
+space, executes updates to the sets in F in O(N
+1
+2 ) expected time, and answers emptiness queries in O(N
+1
+2 )
+expected time. The proof of this result reveals that the algorithm c ategorizes the sets in F into small and
+large sets using some threshold and maintains the intersection size for an y two large sets in a lookup table.
+The emptiness query for two sets, where one of the sets is small, is a nswered by iterating over the elements in
+the small set and checking for each element its containment in the ot her set. For two large sets, the emptiness
+query is answered by using the intersection-size table. Although no t stated in that work, the intersection-size
+table can be constructed in O(N
+3
+2 ) expected time in the preprocessing phase. The algorithm can be ad apted
+to allow for an unbounded number of sets in F and to return the intersection size for any two sets from F .
+This prior work can be used to recover a restricted instance of IVM ǫ for the nullary query. Given a database
+D = {R(A, B), S(B, C), T (C, A)}, an A-value a ∈ πAR, and a B-value b ∈ πBR, we denote by RB
+a and RA
+b
+the set of B-values paired with a in R and respectively the set of A-values paired with b in R. The sets SC
+b ,
+SB
+c , T A
+c , and T C
+a are deﬁned analogously. Let F consist of these sets for all data values in the database.
+Assuming that the current triangle count on D is materialized, we can obtain the new triangle count upon
+an insert of a tuple ( a, b) to relation R as follows. If RB
+a is already contained in F , we extend this set by
+b, otherwise we create a new set RB
+a = {b}. The set RA
+b is updated or created analogously. Then, we ask
+for the intersection size SC
+b ∩ T C
+a . The new triangle count is the sum of the previous count and the size
+of this intersection. Updating the sets in F and computing the intersection size require O(|D|
+1
+2 ) expected
+time [28]. Deletes to R and updates to the other relations are handled analogously. Since t he triangle count is
+materialized, it allows constant-time access. Hence, we obtain a main tenance strategy for the nullary triangle
+query with O(|D|
+3
+2 ) expected preprocessing time, O(|D|) space, O(|D|
+1
+2 ) expected update time, and O(1)
+enumeration delay. While meeting the complexity bounds of Propositio n 4 (for ǫ = 1
+2 ), this alternative
+approach does not support tuple multiplicities or arbitrary rings bey ond the ring of integers.
+Fine-grained lower bounds Investigations on ﬁne-grained complexity have led to important con jectures
+and hypotheses on ﬁnding and listing triangles in graphs that have se rved as conditional lower bounds for
+many other problems [34, 1]. The strong triangle conjecture state s that in the word-RAM model with words
+of length O(log n), there is no algorithm that decides whether a graph with n nodes and m edges contains
+a triangle in O(min{nω−γ, m
+2ω
+ω+1 −γ}) expected time for any γ > 0, where ω is the exponent of matrix
+multiplication. Moreover, there is no combinatorial algorithm that so lves this problem in O(m
+3
+2 −γ) time,
+for any γ > 0. According to this conjecture, the best known algorithms for th is problem, the combinatorial
+ones as well as those based on fast matrix multiplication, are optimal. The OMv conjecture (Conjecture 1)
+[19] was used to derive conditional lower bounds on the maintenance of conjunctive queries [6]. It states
+that for any γ > 0, there is no algorithm that solves the OMv problem (Deﬁnition 34) in O(n3−γ) time. The
+best known algorithm solving the OMv problem runs in O( n3
+log2 n ) time [38]. Let Q be a Boolean conjunctive
+query whose homomorphic core is not q-hierarchical [6]. Then, for a ny γ > 0 and database of domain
+size n, there is no algorithm that incrementally maintains the result of Q under single-tuple updates with
+arbitrary preprocessing time, O(n1−γ) update time, and O(n2−γ) answer time, unless the OMv conjecture
+fails [6]. Triangle queries are not q-hierarchical and their homomorph ic cores are the queries themselves
+in case they do not have repeating relation symbols. Hence, the abo ve lower bound holds for all triangle
+queries without repeating relation symbols. The proof of this lower b ound is similar to that for the query
+ϕ = ∃x∃y(S(x)∧E(x, y)∧T (y)), which is the simplest Boolean conjunctive query that is not q-hier archical [6].
+Our lower bound proof in Section 9 adapts the proof for ϕ to triangle queries, strengthens it to allow for
+amortized update time, and expresses complexities in terms of the d atabase size.
+Enumeration with skip pointers Skip pointers have been previously used for constant-delay enume r-
+ation of distinct elements in the union of a ﬁxed number of sets [7]. Sec tion 2.4.4 introduces this approach
+42
+=== PDF PAGE 43 ===
+using the abstraction of hop iterators. Our approach extends th e original method [7] with second-level skip
+pointers and parameterizes it by a search function to enable tighte r bounds on enumeration delay. We use
+iterators with skip pointers in the enumeration procedures for the binary and unary triangle queries.
+Approximation schemes in the dynamic setting A distinct line of work investigates randomized
+approximation schemes with an arbitrary relative error for countin g triangles in a graph given as a stream of
+edges [4, 22, 10, 31, 14]. Each edge in the data stream correspond s to a tuple insert, and tuple deletes are not
+considered. The emphasis of these approaches is on space eﬃcienc y, and they express the space utilization
+as a function of the number of nodes and edges in the input graph an d of the number of triangles. The space
+utilization is generally sublinear but may become superlinear if, for inst ance, the number of edges is greater
+than the square root of the number of triangles. The update time is polylogarithmic in the number of nodes
+in the graph. There is also work estimating the number of triangles in g raph streams with both edge inserts
+and deletes [9].
+Dynamic descriptive complexity Further away from our line of work is the development of dynamic
+descriptive complexity, starting with the DynFO complexity class and the much-acclaimed result on FO
+expressibility of the maintenance for graph reachability under edge inserts and deletes, see a recent survey [36].
+The k-clique query can be maintained under edge inserts by a quantiﬁer-f ree update program of arity k − 1
+but not of arity k − 2 [41].
+12 Extensions
+Relations over task-speciﬁc rings Diﬀerent rings can be used as the domain of tuple multiplicities (or
+payloads). We used here the ring ( Z, +, ·, 0, 1) of integers to support counting. Previous work shows how
+the data-intensive computation of many applications can be captur ed by application-speciﬁc rings, which
+deﬁne sum and product operations over data values [33]. The relatio nal data ring supports payloads with
+listing and factorized representations of relations, and the degre e-m matrix ring supports payloads that can
+be used for maintaining gradients of square loss functions for linear regression models [33].
+IVMǫ variants IVMǫ can be used to maintain triangle queries with repeating relation symbo ls, the count-
+ing versions of any query built using three relations and the 4-path q uery [23] in worst-case optimal update
+time. The same conditional lower bound on the update time shown for the triangle count (nullary triangle
+query) applies for most of the mentioned queries, too. This leads to the striking realization that, while in the
+static setting the counting versions of the cyclic query computing t riangles and the acyclic query computing
+paths of length 3 have diﬀerent complexities and pose distinct compu tational challenges, they share the same
+complexity and can use a very similar approach in the dynamic setting.
+Loomis Whitney queries The IVMǫ maintenance strategies also naturally extend from triangle to Loom is
+Whitney (L W) queries. L W queries generalize triangle queries from cliques of degree three to cliques of degree
+n ≥ 3; they encode the Loomis Whitney inequality [30]. Let A1, . . . , An be the query variables and R1, . . . , Rn
+relations over schemas X1, . . . ,Xn, where ∀i ∈ [n] : Xi = (A((i+j) mod n)+1)−1≤j≤n−3. That is, the schema
+of R1 is ( A1, . . . , An−1), whereas the schema of Rn is ( An, A1, . . . , An−2). The n-ary L W query of degree n
+has the form
+♦n(x) = R1(x1) · · · Rn(xn),
+where x = ( aj)j∈[n] and for all i ∈ [n], xi = ( a((i+j) mod n)+1)−1≤j≤n−3 is a value from the domain of the
+tuple Xi of variables. As for triangle queries, a L W query of degree n and arity 0 ≤ k ≤ n − 1 has the same
+body as for arity n but only keeps the ﬁrst k values in the result. For instance, for n = 4 the binary L W
+query is
+♦2(a1, a2) =
+∑
+a3,a4
+R1(a1, a2, a3) · R2(a2, a3, a4) · R3(a3, a4, a1) · R4(a4, a1, a2).
+43
+=== PDF PAGE 44 ===
+In case n = 3, each L W query ♦k becomes the triangle query △k, for 0 ≤ k ≤ 3.
+IVMǫ achieves the following complexities for L W queries of degree n (stated without proof):
+• The preprocessing and amortized update time are the same as for t riangle queries: O(|D|
+3
+2 ) prepro-
+cessing time and O(|D|max{ǫ,1−ǫ}) amortized update time.
+• In case all variables are free, the space complexity is the same as fo r the ternary triangle query, namely,
+O(|D|
+3
+2 ); otherwise, the space complexity is O(|D|1+min{ǫ,1−ǫ}).
+• For the nullary and n-ary L W queries, the enumeration delay is constant; for k-ary L W queries where
+0 < k < n , the enumeration delay is O(|D|min{1,(n−k)·(1−ǫ)}). The delay hence improves with increasing
+arity. For n = 3, we get exactly the same enumeration delay as for the triangle qu eries.
+• The lower bound on the update-delay trade-oﬀ for triangle queries stated in Proposition 5 carry over
+to L W queries. This means that at ǫ = 1
+2 , IVM ǫ is strongly Pareto worst-case optimal for the nullary
+and n-ary L W queries and weakly Pareto worst-case optimal for all othe r L W queries.
+The result of the n-ary L W query ♦n of degree n has size O(|D|
+n
+n− 1 ) [30]. It can also be computed in the
+static setting in the same time, which is thus worst-case optimal [32]. IVMǫ cannot be used to recover the
+optimality in the static case, since it takes O(|D|
+1
+2 ) amortized time per each single-tuple update and there
+are |D| tuples to insert. Since the combination of O(|D|
+1
+2 ) amortized time and O(1) delay is strongly Pareto
+worst-case optimal, it means that no dynamic algorithm can achieve a lower amortized single-tuple update
+time for the n-ary L W query. This shows the limitation of single-tuple u pdates. To achieve the overall
+O(|D|
+n
+n− 1 ) time for |D| tuple inserts, one would need to process several inserts at the sa me time, that is,
+in bulk, such that the amortized time per insert should be O(|D|
+1
+n− 1 ). A characterization of the diﬀerence
+between bulk updates and single-tuple updates remains an interest ing open problem.
+13 Conclusion and Future Work
+This article introduces IVM ǫ, an incremental maintenance approach for triangle queries under updates that
+exhibits a trade-oﬀ between the update time on one hand and the sp ace and enumeration delay on the other
+hand. IVM ǫ captures classical ﬁrst-order IVM as a special case that has sub optimal linear update time.
+There are worst-case optimal algorithms for join queries in the static setting [32]. In contrast, IVM ǫ is
+worst-case optimal for the nullary and ternary triangle join querie s in the dynamic setting. The dynamic
+setting case poses challenges beyond the static setting. First, th e optimality argument for static join algo-
+rithms follows from their runtime being linear(ithmic) in their output siz e; this argument does not apply
+to our nullary triangle query, since its output is a scalar and hence of constant size. Second, optimality in
+the dynamic setting requires a more ﬁne-grained argument that ex ploits the skew in the data for diﬀerent
+evaluation strategies, view materialization, and delta computation; in contrast, there are static worst-case
+optimal join algorithms that do not need to exploit skew, materialize v iews, nor delta computation.
+We conclude with a discussion on possible directions for future work.
+Worst-case optimal dynamic query evaluation This article opens up a line of work on worst-case
+optimal dynamic query evaluation algorithms. The goal is a complete c haracterization of the complexity
+of incremental maintenance for arbitrary functional aggregate queries [2]. We would ﬁrst like to ﬁnd a
+syntactical characterization of all queries that admit incrementa l maintenance in (amortized) sublinear time.
+Using known (ﬁrst-order, fully recursive, or factorized) increme ntal maintenance techniques, cyclic and even
+acyclic joins require at least linear update time. Our intuition is that th is characterization is given by a
+notion of diameter of the query hypergraph. This class strictly con tains the q-hierarchical queries, which
+admit constant-time updates [6]. A ﬁrst step towards this goal is a c haracterization of the update-delay
+trade-oﬀ for hierarchical queries with arbitrary free variables [25 ].
+44
+=== PDF PAGE 45 ===
+Space-delay trade-oﬀ IVMǫ does not admit any trade-oﬀ between the space complexity and the enumer-
+ation delay: for all queries, there is either no or positive correlation between the two measures (cf. Figure 1).
+Prior work investigates the trade-oﬀ between space and delay for the evaluation of conjunctive queries in
+the static setting [15]. An interesting future direction is to design a m aintenance approach with focus on the
+space-delay trade-oﬀ.
+Implementation of IVM ǫ We would like to implement IVM ǫ and benchmark against existing IVM
+systems. The implementation of IVM ǫ may pose some challenges. For instance, maintaining the exact
+heavy-light partitions of relations is computationally expensive. One way to handle this problem is to loosen
+the partition thresholds so that relation partitions are rebalanced less frequently while accepting temporarily
+suboptimal maintenance strategies. A further challenge is the main tenance of the index structures of IVM ǫ.
+For each materialized view V with some schema X and sub-schema Y ⊆ X, IVM ǫ assumes the existence of an
+index that allows to check containment of any tuple y over Y in πYV in constant time and to enumerate all
+tuples in V matching y with constant delay We need to address the trade-oﬀ between the cost of maintaining
+this indices and the cost of access times without them.
+References
+[1] A. Abboud and V. V. Williams. Popular conjectures imply strong lowe r bounds for dynamic problems.
+In FOCS, pages 434–443, 2014.
+[2] M. Abo Khamis, H. Q. Ngo, and A. Rudra. F AQ: Questions Asked Fr equently. In PODS, pages 13–28,
+2016. DOI: 10.1145/2902251.2902280.
+[3] N. Alon, R. Yuster, and U. Zwick. Finding and Counting Given Lengt h Cycles. Algorithmica, 17(3):209–
+223, 1997. DOI: 10.1007/BF02523189.
+[4] Z. Bar-Yossef, R. Kumar, and D. Sivakumar. Reductions in Stre aming Algorithms, with an Application
+to Counting Triangles in Graphs. In SODA, pages 623–632, 2002.
+[5] L. Becchetti, P. Boldi, C. Castillo, and A. Gionis. Eﬃcient algorithms for large-scale local triangle
+counting. TKDD, 4(3):13:1–13:28, 2010. DOI: 10.1145/1839490.1839494.
+[6] C. Berkholz, J. Keppeler, and N. Schweikardt. Answering Conju nctive Queries Under Updates. In
+PODS, pages 303–318, 2017. DOI: 10.1145/3034786.3034789.
+[7] C. Berkholz, J. Keppeler, and N. Schweikardt. Answering UCQs U nder Updates and in the Presence of
+Integrity Constraints. In ICDT, pages 8:1–8:19, 2018. DOI: 10.4230/LIPIcs.ICDT.2018.8.
+[8] A. Bj¨ orklund, R. Pagh, V. V. Williams, and U. Zwick. Listing Triangle s. In ICALP, pages 223–234,
+2014. DOI: 10.1007/978-3-662-43948-7 19.
+[9] L. Bulteau, V. Froese, K. Kutzkov, and R. Pagh. Triangle count ing in dynamic graph streams. Algo-
+rithmica, 76(1):259–278, 2016. DOI: 10.1007/s00453-015-0036-4.
+[10] L. S. Buriol, G. Frahling, S. Leonardi, A. Marchetti-Spaccamela , and C. Sohler. Counting Triangles in
+Data Streams. In PODS, pages 253–262, 2006. DOI: 10.1145/1142351.1142388.
+[11] N. Chiba and T. Nishizeki. Arboricity and Subgraph Listing Algorith ms. SIAM J. Comput. , 14(1):210–
+223, 1985. DOI: 10.1137/0214017.
+[12] R. Chirkova and J. Yang. Materialized Views. Found. & Trends DB , 4(4):295–405, 2012. DOI:
+10.1561/1900000020.
+45
+=== PDF PAGE 46 ===
+[13] S. Chu and J. Cheng. Triangle Listing in Massive Networks. TKDD, 6(4):17:1–17:32, 2012. DOI:
+10.1145/2382577.2382581.
+[14] G. Cormode and H. Jowhari. A Second Look at Counting Triangles in Graph Streams (Corrected).
+Theor. Comput. Sci. , 683:22–30, 2017. DOI: 10.1016/j.tcs.2016.06.020.
+[15] S. Deep and P. Koutris. Compressed representations of conj unctive query results. In PODS, pages
+307–322, 2018. DOI: 10.1145/3196959.3196979.
+[16] L. Duraj, K. Kleiner, A. Polak, and V. V. Williams. Equivalences bet ween triangle and range query
+problems. In SODA, 2020. DOI: 10.1137/1.9781611975994.3.
+[17] A. Durand and Y. Strozecki. Enumeration complexity of logical q uery problems with second-order
+variables. In CSL, pages 189–202, 2011. DOI: 10.4230/LIPIcs.CSL.2011.189.
+[18] T. Eden, A. Levi, D. Ron, and C. Seshadhri. Approximately Coun ting Triangles in Sublinear Time. In
+FOCS, pages 614–633, 2015. DOI: 10.1109/FOCS.2015.44.
+[19] M. Henzinger, S. Krinninger, D. Nanongkai, and T. Saranurak. Unifying and Strengthening Hardness
+for Dynamic Problems via the Online Matrix-Vector Multiplication Conje cture. In STOC, pages 21–30,
+2015. DOI: 10.1145/2746539.2746609.
+[20] M. Idris, M. Ugarte, and S. Vansummeren. The Dynamic Yannak akis Algorithm: Compact and Eﬃcient
+Query Processing Under Updates. In SIGMOD, pages 1259–1274, 2017. DOI: 10.1145/3035918.3064027.
+[21] A. Itai and M. Rodeh. Finding a Minimum Circuit in a Graph. SIAM J. Comput. , 7(4):413–423, 1978.
+DOI: 10.1137/0207033.
+[22] H. Jowhari and M. Ghodsi. New Streaming Algorithms for Countin g Triangles in Graphs. In COCOON,
+pages 710–716, 2005. DOI: 10.1007/11533719 72.
+[23] A. Kara, H. Q. Ngo, M. Nikolic, D. Olteanu, and H. Zhang. Countin g triangles under updates in
+worst-case optimal time. CoRR, abs/1804.02780, 2018.
+[24] A. Kara, H. Q. Ngo, M. Nikolic, D. Olteanu, and H. Zhang. Countin g triangles under updates in
+worst-case optimal time. In ICDT, pages 4:1–4:18, 2019. DOI: 10.4230/LIPIcs.ICDT.2019.4.
+[25] A. Kara, M. Nikolic, D. Olteanu, and H. Zhang. Trade-oﬀs in stat ic and dynamic evaluation of hierar-
+chical queries. CoRR, abs/1907.01988, 2019. To appear in PODS 2020.
+[26] C. Koch, Y. Ahmad, O. Kennedy, M. Nikolic, A. N¨ otzli, D. Lupei, a nd A. Shaikhha. DBToaster:
+Higher-Order Delta Processing for Dynamic, Frequently Fresh View s. VLDB J. , 23(2):253–278, 2014.
+DOI: 10.1007/s00778-013-0348-4.
+[27] M. N. Kolountzakis, G. L. Miller, R. Peng, and C. E. Tsourakakis. Eﬃcient Triangle Counting in
+Large Graphs via Degree-Based Vertex Partitioning. Internet Mathematics , 8(1-2):161–185, 2012. DOI:
+10.1080/15427951.2012.625260.
+[28] T. Kopelowitz, S. Pettie, and E. Porat. Dynamic set intersectio n. In WADS, pages 470–481, 2015. DOI:
+10.1007/978-3-319-21840-3 39.
+[29] P. Koutris, S. Salihoglu, and D. Suciu. Algorithmic Aspects of Par allel Data Processing. Found. &
+Trends DB, 8(4):239–370, 2018. DOI: 10.1561/1900000055.
+[30] L. H. Loomis and H. Whitney. An inequality related to the isoperime tric inequality. Journal: Bull.
+Amer. Math. Soc. , 55(55):961–962, 1949. DOI: 10.1090/S0002-9904-1949-0932 0-5.
+46
+=== PDF PAGE 47 ===
+[31] A. McGregor, S. Vorotnikova, and H. T. Vu. Better Algorithms for Counting Triangles in Data Streams.
+In PODS, pages 401–411, 2016. DOI: 10.1145/2902251.2902283.
+[32] H. Q. Ngo, E. Porat, C. R´ e, and A. Rudra. Worst-case optima l join algorithms. J. ACM , 65(3):16:1–
+16:40, 2018. DOI: 10.1145/3180143.
+[33] M. Nikolic and D. Olteanu. Incremental View Maintenance with Trip le Lock Factorization Beneﬁts. In
+SIGMOD, pages 365–380, 2018. DOI: 10.1145/3183713.3183758.
+[34] M. Patrascu. Towards polynomial lower bounds for dynamic pro blems. In STOC, pages 603–610, 2010.
+[35] T. Schank and D. Wagner. Finding, Counting and Listing All Triang les in Large Graphs, an Experi-
+mental Study. In WEA, pages 606–609, 2005. DOI: 10.1007/11427186 54.
+[36] T. Schwentick and T. Zeume. Dynamic Complexity: Recent Updat es. SIGLOG News , 3(2):30–52, 2016.
+DOI: 10.1145/2948896.2948899.
+[37] C. E. Tsourakakis. Fast counting of triangles in large real netw orks without counting: Algorithms and
+laws. In ICDM, pages 608–617, 2008. DOI: 10.1109/ICDM.2008.72.
+[38] R. Williams. Matrix-vector multiplication in sub-quadratic time: (so me preprocessing required). In
+SODA, pages 995–1001, 2007.
+[39] V. V. Williams. On Some Fine-Grained Questions in Algorithms and Com plexity. In ICM, volume 3,
+pages 3431–3472, 2018. DOI: 10.1142/9789813272880 0188.
+[40] R. Yuster and U. Zwick. Finding Even Cycles Even Faster. SIAM J. Discrete Math. , 10(2):209–222,
+1997. DOI: 10.1137/S0895480194274133.
+[41] T. Zeume. The Dynamic Descriptive Complexity of k-Clique. Inf. Comput. , 256:9–22, 2017. DOI:
+10.1016/j.ic.2017.04.005.
+47

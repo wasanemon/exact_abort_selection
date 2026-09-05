@@ -1,0 +1,966 @@
+=== PDF PAGE 1 ===
+arXiv:2208.07359v1  [cs.DC]  15 Aug 2022
+Stable Scheduling in Transactional Memory
+Costas Busch ∗ Bogdan S. Chlebus ∗ Dariusz R. Kowalski ∗ Pavan Poudel ∗
+Abstract
+We study computer systems with transactions executed on a set o f shared objects. Trans-
+actions arrive continually subjects to constrains that are framed as an adversarial model and
+impose limits on the average rate of transaction generation and the number of objects that
+transactions use. We show that no deterministic distributed sched uler in the queue-free model
+of transaction autonomy can provide stability for any positive rate of transaction generation.
+Let a system consist of m shared objects and an adversary be constrained such that each trans-
+action may access at most k shared objects. We prove that no scheduler can be stable if a
+generation rate is greater than max
+{ 2
+k+1 , 2
+⌊
+√
+2m⌋
+}
+. We develop a centralized scheduler that is
+stable if a transaction generation rate is at most max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+. We design a distributed
+scheduler in the queue-based model of transaction autonomy, in w hich a transaction is assigned
+to an individual processor, that guarantees stability if the rate of transaction generation is less
+than max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+. For each of the schedulers we give upper bounds on the queue size and
+transaction latency in the range of rates of transaction generat ion for which the scheduler is
+stable.
+Key words: Transactional memory, shared object, dynamic transaction gen eration, adversarial
+model, stability, latency.
+∗ School of Computer and Cyber Sciences, Augusta University, Augusta, Georgia, USA.
+=== PDF PAGE 2 ===
+1 Introduction
+We propose to investigate dynamic transactional memory wit h arrivals of transactions modeled
+adversarially. The goal is to develop a framework to assess t he performance of transaction schedulers
+in quantitative terms. In particular, we seek schedulers th at provide stability of transaction-memory
+systems and restrain delays in processing transactions.
+The adversarial models of generating transactions that we u se are inspired by the adversar-
+ial queueing theory, which has been applied to study stabili ty of routing algorithms with packets
+injected continually. Transmissions of packets in communi cation networks are constrained by the
+properties of network, like its topology and capacities of l inks or channels. In the case of transac-
+tional memory, executing multiple transactions concurren tly is constrained by the property that a
+transaction requires exclusive access to each object it nee ds to interact with.
+A computer system includes a ﬁxed set of shared objects. Thre ads with transactions to execute
+are spawned continually. The system is synchronous in that a n execution of an algorithm schedul-
+ing transactions is structured into rounds. It takes one rou nd to execute a transaction successfully.
+Multiple transactions can be invoked concurrently, but a tr ansaction requires exclusive access to
+each object that it needs to interact with in order to be execu ted successfully. If multiple transac-
+tions accessing the same object are invoked at a round then al l of them are aborted. The arrival
+of threads with transactions is governed by an adversarial m odel with parameters bounding the
+average generation rate and the number of transactions that can be generated at one round. Pro-
+cessed transactions may be additionally constrained by imp osing an upper bound on the number
+of objects a transaction needs to access.
+The task of a considered computer system is to eventually exe cute each generated transaction,
+while striving to limit the number of pending transactions a t any round and the time spent waiting
+by each pending transaction. Once a transaction is generate d, it may need to wait to be invoked.
+It is a scheduling algorithm that manages the timings of invo cations of pending transactions. We
+consider both centralized and distributed schedulers.
+There are two models of generating transactions which speci fy the autonomy of individual
+transactions. In the queue-free case, for each transaction there is a corresponding autonomous
+thread responsible for its execution. A distributed schedu ler in the queue-free model is executed
+by the threads that attempt to invoke transactions on shared objects. In the queue-based model,
+there is a ﬁxed set of processors, and each thread with a trans action is assigned to a processor.
+A distributed scheduler in the queue-based model is execute d by the processors that communicate
+through the shared objects by performing transactions on th em. A centralized scheduler is not
+aﬀected by constraints on autonomy of each transaction, sinc e all pending transactions are managed
+en masse. The schedulers we consider are deterministic, in t hat they do not resort to randomization.
+A scheduler is stable against a given adversary if the number of pending transactions stays
+bounded at all times, while new transactions are generated b y the adversary subject to constrains
+on the number of new transactions generated in a contiguous s egment of rounds. The primary
+measure of performance of a scheduler is the maximum rate of t ransaction generation by the
+adversary such that the scheduler can maintain the system st able for this generation rate. If
+a given system is stable, as determined by a set of shared obje cts and adversarial constraints
+1
+=== PDF PAGE 3 ===
+Scheduler Lower bound Upper bound
+distributed queue-free stability impossible (Section 2)
+centralized ρ > max
+{ 2
+k+1, 2
+⌊
+√
+2m⌋
+}
+(Section 3) ρ≤ max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+(Section 4)
+distributed queue-based ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+(Section 5)
+Table 1: A summary of the ranges of rates of transaction gener ation for which deterministic sched-
+ulers are stable. The used notations are as follows: m is the number of shared objects, k is the
+maximum number of shared objects accessed by a transaction, and ρ is the rate of transaction gen-
+eration. Upper bounds limit transaction generation rates f or which stability is achievable. Lower
+bounds limit transaction generation rates for which stabil ity is not possible. A lower bound for
+centralized schedulers holds a priori for distributed queu e-based schedulers.
+on transaction generation and a scheduler of transactions, then upper bounds on the number of
+pending transactions at a round and a delay of a transaction’ s execution are used as secondary
+performance metrics.
+The contributions. We show ﬁrst that no deterministic distributed scheduler in the queue-free
+model of transaction autonomy can provide stability for any positive rate of transaction generation.
+Let a computer system consist of m shared objects and the adversary be constrained such that ea ch
+transaction needs to access at most k of the shared objects. We show that no scheduler can be
+stable if a generation rate is greater than max
+{ 2
+k+1 , 2
+⌊
+√
+2m⌋
+}
+. We develop a centralized scheduler
+that is stable if the transaction generate rate is at most max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+. We design a distributed
+scheduler in the queue-based model of transaction autonomy , in which a transaction is assigned
+to an individual processor, that guarantees stability if th e rate of transaction generation is less
+than max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+. For each of the two schedulers we develop, we give upper boun ds on the
+queue size and transaction latency in the range of rates of tr ansaction generation for which the
+scheduler is stable. Table 1 gives a summary of the ranges of r ates of transaction generation for
+which deterministic schedulers are stable.
+Related work. Scheduling transactions has been studied for both shared me mory multi-core and
+distributed systems. Most of the previous work on schedulin g transactions considered an oﬄine case
+where all transactions are known at the outset. Some previou s work considered online scheduling
+where a batch of transactions arrives one by one and the perfo rmance of an online scheduler is
+compared to a scheduler processing the batch oﬄine. No previ ous work known to the authors of
+this paper addressed dynamic transaction arrivals with pot entially inﬁnitely many transactions to
+be scheduled in a never-ending execution.
+Attiya et al. [3], and Sharma and Busch [15, 16] considered tr ansaction scheduling in distributed
+systems with provable performance bounds on communication cost. Transaction scheduling in a
+distributed system with the goal of minimizing execution ti me was ﬁrst considered by Zhang et
+al. [19]. Busch et al. [6] considered minimizing both the exe cution time and communication cost
+simultaneously. They showed that it is impossible to simult aneously minimize execution time
+and communication cost for all the scheduling problem insta nces in arbitrary graphs even in the
+2
+=== PDF PAGE 4 ===
+oﬄine setting. Speciﬁcally, Busch et al. [6] demonstrated a tradeoﬀ between minimizing execution
+time and communication cost and provided oﬄine algorithms t hat separately optimizw execution
+time and communication cost. Busch et al. [7] considered tra nsaction scheduling tailored to speciﬁc
+popular topologies and provided oﬄine algorithms that mini mize simultaneously execution time and
+communication cost. Busch et al. [8] studied online algorit hms to schedule transactions. Distributed
+directory protocols have been designed by Herlihy and Sun [1 4], Sharma and Busch [15], and Zhang
+et al. [19], with the goal to optimize communication cost in s cheduling transactions. Zhang and
+Ravindran [17] provided a distributed dependency-aware mo del for scheduling transactions in a
+distributed system that manages dependencies between conﬂ icting and uncommitted transactions
+so that they can commit safely. This model has the inherent tr adeoﬀ between concurrency and
+communication cost. Zhang and Ravindran [18] provided cach e-coherence protocols for distributed
+transactional memory based on a distributed queuing protoc ol.
+Adversarial queuing is a methodology to capture stability o f processing incoming tasks without
+any statistical assumptions about task generation. It prov ides a framework to develop worst-case
+bounds on performance of deterministic distributed algori thms in a dynamic setting. This approach
+to study routing algorithms in store-and-forward networks was proposed by Borodin et al. [5], and
+continued by Andrews et al. [2]. Adversarial queuing has bee n applied to other dynamic tasks
+in communication networks. Bender et al. [4] considered bro adcasting in multiple-access channels
+with queue-free stations in the framework of adversarial qu euing. Chlebus et al. [11] proposed to
+investigate deterministic distributed broadcast in multi ple access channels performed by stations
+with queues in the adversarial setting. This direction was c ontinued by Chlebus et al. [10] who
+studied the maximum throughput in such a setting. Ananthara mu et al. [1] considered packet
+latency of deterministic broadcast algorithms with inject ion rates less than 1. Chlebus et al. [9]
+studied adversarial routing in multiple-access channels s ubject to energy constraints. Garncarek et
+al. [12] investigated adversarial stability of memoryless packet scheduling policies in multiple access
+channels. Garncarek et al. [13] studied adversarial commun ication through channels with collisions
+between communicating agents represented as graphs.
+2 Technical Preliminaries
+A computer system includes a ﬁxed set of m shared objects. The system executes an algorithm.
+An execution of the algorithm is synchronous in that is parti tioned into time steps, which we call
+rounds. The algorithm spawns threads. Each thread generates and ex ecutes one transaction at a
+time. The threads communicate through shared objects.
+The type of a transaction is the set of objects it may need to access dur ing execution. To
+determine the type of a transaction, it suﬃces to read it to li st all the mentioned objects. The
+number of objects in a transaction’s type is the weight of this transaction and the type. If the
+types of two transactions share an object, then we say that th is creates a conﬂict for access to this
+object, and that the transactions involved in a conﬂict for a ccess to an object collide at this object.
+A set of transactions with the property that no two diﬀerent tr ansactions in the set collide at some
+shared object is called conﬂict free or collision free.
+In a queue-free model of transaction autonomy, each transaction is associa ted with a thread,
+3
+=== PDF PAGE 5 ===
+which exists only for the purpose to execute this transactio n and it disappears after the transac-
+tion’s execution. In the queue-based model, each transaction is assigned to a group of transactio ns
+managed by a processor. All the pending transactions at a pro cessor make its queue.
+Scheduling transactions. Transactions are managed by a scheduler. This is an algorithm that
+determines for each round which pending transactions are in voked at this round. A centralized
+scheduler is an algorithm for the queue-free model that knows all the tr ansactions pending at a
+round, can invoke each pending transaction, and receives fe edback from each object about commit-
+ting to an invoked transaction or aborting it. In the queue-b ased model, a distributed scheduler is
+executed by the processors that communicate among themselv es through the shared objects.
+Scheduling transactions is constrained by whether this is a queue-free or queue-based model.
+In a queue-free model, if a pending transaction invoked at a r ound is not involved in conﬂict with
+any object it needs to access, for any of the transactions inv oked at this round concurrently, then
+this transaction is executed successfully. It follows that all transactions in a conﬂict-free set of
+transactions can be executed together at one round. Complem entarily, if a pending transaction
+invoked at a round is involved in conﬂict for an object it need s to access with some transaction
+invoked concurrently then both transaction get aborted at t his round and stay pending. The queue-
+based model is more restricted, in that the queue-free model ’s constraints do apply, but additionally,
+for each processor, at most one transaction in this processo r’s queue can be performed at a round.
+A transaction invoked at a round that executes successfully is no longer pending, while an aborted
+transaction stays pending in the next round. In the queue-fr ee model, transactions are managed
+en-masse.
+Adversaries. We consider a setting in which new transactions arrive conti nuously to the system.
+The process of generation of transactions is represented qu antitatively by adversarial models. We
+study two types of adversaries corresponding to the queue-f ree and queue-based models. In the
+queue-free model, a transaction generated at a round contri butes a unit to the congestion at the
+round at each object the transaction includes in its type. Th is is the queue-free adversary. In the
+queue-based model, a transaction generated at a round at a pr ocessor contributes a unit to the
+congestion at the round at each object the transaction includes in its ty pe and also to the processor
+the transaction is generated at. This is the queue-based adversary.
+Quantitative restrictions imposed on adversaries are expr essed in terms of bounds on congestion.
+A queue-free adversary generates transactions with generation rate ρ and burstiness component b if,
+in each contiguous time interval τ of length t and for each shared object, the amount of congestion
+created for the object at all the rounds in τ together is at most ρt + b. A queue-based adversary
+generates transactions with generation rate ρ and burstiness component b if, in each contiguous time
+interval τ of length t and for each shared object and for each processor, the amount of congestion
+created for the object at all the rounds in τ together is at most ρt + b and the amount of congestion
+created for the processor at all the rounds in τ together is at most ρt + b. For these adversarial
+models, we assume that ρ > 0 is a real number and b > 0 is an integer. Each such an adversary is
+said to be of type (ρ, b). The burstiness of an adversary is the maximum number of transactions
+the adversary can generate in one round. By considering a tim e interval τ of length 1 we obtain
+that the burstiness of an adversary of type ( ρ, b) is⌊ρ + b⌋, which is b for ρ < 1.
+4
+=== PDF PAGE 6 ===
+Performance metrics. A scheduler is stable, against a given type of an adversary, if the number
+of pending transactions stays bounded in the course of any ex ecution in which transactions are
+generated by the adversary of this type. For an object and a ro und number r, at most r transactions
+that contributed to congestion at this object can get execut ed in the ﬁrst r rounds. It follows that
+no scheduler can be stable if its injection rate is greater th an 1, so we consider only adversaries
+of types ( ρ, b) in which 0 < ρ ≤ 1. A transaction’s delay is the number of rounds between the
+generation and execution of this transaction. The latency of a scheduler in an execution is the
+maximum possible delay of a transaction generated in the exe cution.
+Proposition 1 No deterministic distributed scheduler for a system with on e shared object can be
+stable against an adversary of type (ρ, 2), for any constant ρ > 0.
+Proof: Consider an execution in which the adversary generates two t ransactions that need to access
+the only existing object at the ﬁrst round. This is consisten t with the power of the adversary, since
+its burstiness is 2. Each transaction is controlled by its th read which executes a deterministic
+code. We argue by induction of the round number that in each ro und the states of the threads
+are identical. The initialization of each of the threads is t he same so they start in the same initial
+state. The threads communicate via the shared object. At a ro und, assuming that the states of
+both threads are equal, the threads perform the same action, which is either pausing or invoking
+the transaction. Pausing does not generate any feedback fro m the object, so each thread transitions
+to the same new state, driven only by the change of the round nu mber. Invoking a transaction
+results in receiving feedback indicating conﬂict for acces s and the resulting abort, so each thread
+transitions to the same state determined by this feedback. S ince the states of the threads stay the
+same at every round, these two transactions will stay pendin g forever.
+If the generation rate ρ is positive, then the adversary can generate new two transac tions that
+have the object in their types again, after suﬃciently many r ounds of the previous generation have
+passed. Such a pattern of repeated generation of pairs of tra nsactions can be repeated indeﬁnitely,
+resulting in the number of pending transactions growing unb ounded. □
+Coloring graphs. We will use properties of colorings of vertices of simple gra phs. An algorithm
+for coloring vertices of a graph that we call primary greedy starts by ordering the vertices in a ﬁxed
+order. It will assign colors to vertices in this order. Posit ive natural numbers are used as colors. A
+color assigned to a vertex is smallest such that it is diﬀerent from the colors already assigned to the
+neighbors. The primary greedy algorithm uses a number of col ors that is at most the maximum
+vertex degree plus 1; such a maximum color is assigned to a ver tex v only if v’s degree is maximum,
+all its neighbors got colors already assigned, and all these colors are all diﬀerent among themselves.
+An algorithm for coloring vertices of a graph that we call alternative greedy begins by ordering
+vertices in a ﬁxed order. Then maximal independent sets of ve rtices in induced subgraphs are
+found in a greedy manner. To construct a maximal independent set, we process the vertices in the
+given order one by one. If no neighbor of a processed vertex ha s been selected yet as a member
+of the independent set, then we add the processed vertex to th e independent set, otherwise we
+skip it. After all the vertices have been processed, the vert ices in the obtained independent set are
+given the same color and get removed from the graph to produce a pruned induced subgraph. This
+procedure continues until all the vertices get removed.
+5
+=== PDF PAGE 7 ===
+Proposition 2 The alternative greedy coloring algorithm uses a number of co lors that is at most
+the maximum degree plus 1.
+Proof: We may interpret an execution of the alternative greedy colo ring with regard to the coloring
+produced by the primary greedy algorithm. We show that the or dinal number x of an obtained
+independent set consists of all the vertices that get color x assigned by the primary greedy algorithm.
+The proof is by induction on the position of a vertex in a given ordering of vertices. The base of
+induction is about the ﬁrst vertex in the ordering. This ﬁrst vertex is colored 1 and it also belongs
+to the ﬁrst independent set. To show the inductive step, cons ider a vertex v following a block of
+vertices already colored. Let y is the smallest available color for vertex v by the primary greedy
+coloring. All the numbers less than y represent independent sets in the order they were built, by
+the inductive assumption. Once these independent sets are r emoved, the vertex v is placed in the
+yth independent set as its ﬁrst element. □
+3 A Lower Bound
+We show that no scheduler can handle dynamic transactions if a generation rate is suﬃciently
+high with respect to the number of shared objects m and an upper bound k on the weight of a
+transaction.
+If a and b are integers where a≤ b then let [ a, b] denote the set of integers {a, a + 1, . . . , b}. We
+begin with a preliminary fact.
+Lemma 1 For an integer n > 0, there is a family of sets A1, A2, . . . , An+1, each a subset of
+[1, n(n+1)
+2 ], such that every set Ai has n elements, any two sets Ai and Aj, for i⁄= j, share an
+element, and each element of [1, n(n+1)
+2 ] belongs to exactly two sets Ai and Aj, for i⁄= j.
+Proof: We start with A1 = [1 , n], then set A2 = {1}∪ [n + 1 , n + ( n− 1)], next set A3 =
+{2, n + 1}∪ [2n, 2n− 1 + (n− 2)], and next deﬁne A4 ={3, n + 2, 2n}∪ [3n− 2, 3n− 3 + (n− 2)].
+Observe that number 1 is shared by A1 and A2, number 2 is shared by A1 and A3, number 3 is
+shared by A1 and A4, number n + 1 is shared by A2 and A3, number n + 2 is shared by A2 and A4.
+This is the beginning of a general construction that is recur sive and proceeds as follows.
+Suppose we have deﬁned each among the sets A1, . . . , Aℓ, for ℓ≤ n. The set Aℓ+1 contains n
+elements, of which the smallest ℓ are the following: the ﬁrst number in A1 that does not belong to
+any of the sets A1, . . . , Aℓ except for A1, the ﬁrst number in A2 that does not belong to any of the
+sets A1, . . . , Aℓ except for A2, and so on, and ﬁnally the ﬁrst number in Aℓ that does not belong
+to any of the sets A1, . . . , Aℓ except for Aℓ. The remaining n− ℓ elements in Aℓ+1 are speciﬁed to
+be the smallest n− ℓ positive integers that do not belong to the union of A1, . . . , Aℓ. This process
+deﬁnes the sets A1, . . . , Ak, An+1.
+By the construction of the sets A1, . . . , Ak, An+1, any two sets Ai and Aj, for 1 ≤ i, j≤ n + 1
+and i⁄= j, share exactly one element. Set A1 contributes n integers, set A2 contributes n− 1
+integers beyond A1, set A3 contributed n− 2 integers beyond A1∪ A2, and set An contributes one
+element beyond A1∪ A2∪ . . .∪ An−1. The set An+1 does not contribute any new elements. The
+6
+=== PDF PAGE 8 ===
+union of A1, . . . , An covers the integers between 1 and n + (n− 1) + ( n− 2) +··· + 1 = n(n+1)
+2 ,
+which makes the segment of integers [1 , n(n+1)
+2 ]. □
+Now, we give a lower bound on generation rate to keep scheduli ng stable.
+Theorem 1 A queue-free adversary of type (ρ, b) generating transactions for a system of m objects
+such that each transaction is of weight at most k can make any scheduling algorithm unstable if
+injection rate ρ satisﬁes ρ > max
+{ 2
+k+1 , 2
+⌊
+√
+2m⌋
+}
+.
+Proof: Let the m objects be denoted as o1, o2, . . . , om. Suppose ﬁrst that k(k+1)
+2 ≤ m. The
+transactions to be generated will use only the objects o1, o2, . . . , os, where s = k(k+1)
+2 .
+Let us take the family of sets A1, A2, . . . , Ak+1 as in Lemma 1, in which n is set to k. We will use
+a ﬁxed set of transactions T1, T2, . . . , Tk+1 deﬁned such that transaction Ti uses object oj if and only
+if j∈ Ai. In particular, each transaction uses k objects. The adversary generates these transactions
+listed in order L0, L1, L2, . . ., where Li−1 is the ith transaction generated and Li is a transaction
+identical to T1+i mod ( k+1). The adversary generates new transactions at full power, in the sense that
+if a transaction can be generated in a given round, subject to the speciﬁcation of the adversary’s
+type, that a consecutive transaction is generated. Speciﬁc ally, consider a round r + 1. Let i be
+the highest index of a transaction Li generated by round r. Then in round r + 1 the adversary
+generates transactions that make a maximal preﬁx of the sequ ence Li+1, Li+2, . . . such that the total
+number of transactions generated by round r + 1 satisﬁes the constraints on objects’ congestion of
+type ( ρ, b). The adversary may generate no transaction at a round and it may generate multiple
+transaction at a round. For example, the adversary generate s exactly the transactions L0, . . . , Lb−1
+simultaneously in the ﬁrst round.
+By Lemma 1, at most one transaction can be executed at a round. The k + 1 transactions
+T1, T2, . . . , Tk+1 require k + 1 rounds to have each one executed, one transaction per roun d. Dis-
+counting for the burstiness of generation, which is possibl e due to the burstiness component b in the
+type ( ρ, b), these transactions can be generated with a frequency of at most one new transaction
+generated per round if the execution is to stay stable.
+The group of transactions T1, . . . , Tk+1 together contribute 2 to the congestion of each used
+object, by Lemma 1. If an execution is stable then the inequal ity ρ(k + 1)≤ 2 holds. This gives a
+bound ρ≤ 2
+k+1 on the generation rate of an adversary if the execution is sta ble. In case ρ > 2
+k+1 ,
+the adversary can generate at least one transaction at every round, and for each round r it can
+generate two transactions at some round after r. Such an execution is unstable, because at most
+one transaction among T1, . . . , Tk+1 can be executed in one round.
+Next, consider the case k(k+1)
+2 > m. Let n be the greatest positive integer such that n(n+1)
+2 ≤ m.
+We use a similar reasoning as in the case k(k+1)
+2 ≤ m, with the family of sets A1, A2, . . . , An+1 as in
+Lemma 1. In particular, we use a set of transactions T1, T2, . . . , Tn+1 deﬁned such that transaction Ti
+uses an object oj if and only if j∈ Ai. The rules of generating new transactions by the adversary
+are similar. We obtain the inequality ρ≤ 2
+n+1 by the same argument. The inequality n(n+1)
+2 ≤ m
+implies n + 1 =⌊ 1
+2 (1 +√1 + 8m)⌋, by algebra. We have the estimates
+2
+n + 1 = 2
+⌊ 1
+2 (1 +√1 + 8m)⌋≤ 2
+⌊
+√
+2m⌋ .
+7
+=== PDF PAGE 9 ===
+Algorithm Centralized-Scheduler
+initialize Pending← an empty list
+for each round do
+append all transactions generated in the previous round at t he tail of list Pending
+initialize Execute← an empty set
+if Pending is nonempty then
+repeat
+(a) entry← ﬁrst unprocessed list item on Pending, starting from head towards tail
+(b) if entry is conﬂict-free with all the transactions in Execute then
+remove entry from Pending and add it to set Execute
+until entry points at the tail of list Pending
+execute all the transactions in Execute
+Figure 1: A pseudocode of the algorithm scheduling all pendi ng transactions en masse. Transactions
+pending execution are stored in a list Pending in the order of generation, with the oldest at the head.
+The set Execute includes transactions to execute at a round. It is selected i n a greedy manner,
+prioritizing older transactions over newer and avoiding co nﬂicts for access to shared objects.
+If ρ > 2
+⌊
+√
+2m⌋ then also ρ > 2
+n+1 . It follows that if the adversary is of a type ( ρ, b) such that
+ρ > 2
+⌊
+√
+2m⌋ , then this adversary generating transactions at full power can generate at least one
+transaction at every round, and for each round r it can generate two transactions at some round
+after r. This makes the queue of transactions grow unbounded. □
+4 A Centralized Scheduler
+We present a scheduling algorithm that processes all transa ctions pending at a round. The al-
+gorithm is centralized in that it is aware of all the pending t ransactions while selecting the ones
+to be executed at a round. Throughout this Section we assume t he queue-free model of auton-
+omy of individual transactions, and the corresponding queu e-free adversarial model of transaction
+generation.
+The centralized scheduler identiﬁes a conﬂict-free set of t ransactions pending execution that is
+maximal with respect to inclusion among all pending transac tions. This is accomplished by ﬁrst
+ordering all pending transaction on the time of generation a nd then processing them greedily one
+by one in this order. The word ‘greedily’ in this context mean s passing over a transaction only when
+its type includes an object that belongs to the type of a trans action already selected for execution
+at the current round.
+The algorithm is called Centralized-Scheduler, its pseudocode is given in Figure 1. The
+variable Pending denotes a list of all pending transactions. At the beginning of a round, all newly
+generated transactions are appended to the tail of this list . The list is processed in the order from
+head to tail, which prioritizes transactions on their arriv al time, such that those generated earlier
+get processed before these generated later. The transactio ns already selected for execution are
+stored in the set Execute. If a transaction in Pending is processed, it is checked for conﬂicts with
+8
+=== PDF PAGE 10 ===
+transactions already placed in the set Execute. If a processed transaction does not collide with
+any transaction already in Execute then it is removed from Pending and added to Execute, and
+otherwise it is passed over. After the whole list Pending have been scanned, all the transactions in
+Execute get executed concurrently. No invoked transaction is abort ed in the resulting execution,
+because conﬂicts of transactions are avoided by the process to add transactions to the set Execute.
+Lemma 2 A set of transactions in Execute obtained at the beginning of a round makes a set of
+transactions that is maximal with respect to inclusion amon g subsets of transactions in the list
+Pending that are conﬂict-free.
+Proof: The list Pending is scanned systematically, by line (a) and the condition con trolling the
+repeat-loop in the pseudocode in Figure 1. A processed trans action is added to the set Execute if
+and only if it is free of conﬂicts with all the transactions al ready placed in Execute, by line (b) in
+the pseudocode in Figure 1. This shows that the set Execute produced after completing the repeat
+loop is conﬂict free. This set is maximal with this property, because a transaction not in Execute
+that could possibly be added was considered in line (a) at som e point and not added, which means
+a conﬂict was detected. □
+The list Pending is updated at the very beginning of a round by adding all newly generated
+transactions. At any round in which there are pending transa ctions, some set of transactions gets
+invoked successfully, by Lemma 2. This means each generated transaction is eventually executed.
+To assess the eﬃciency of executing transactions, let us par tition an execution of the algorithm
+Centralized-Scheduler into contiguous milestone intervals of rounds, denoted I1, I2, I3, . . .,
+such that the length of each interval equals 4 b· min{k,⌈√m⌉} rounds.
+The transactions pending in a milestone interval Ik at any time are categorized into old and
+new : the former are those generated prior to the start of Ik and the latter are those generated
+during Ik. We interpret all the old transactions at the beginning of a r ound of execution of algo-
+rithm Centralized-Scheduler in interval Ij+1 as forming a transaction conﬂict graph , or simply
+conﬂict graph in this Section. Such a graph has old transactions as vertice s and two old transac-
+tions are connected by an edge if and only if they collide. The ﬁrst round of the interval Ij+1
+has the biggest such a graph among all the rounds in the interv al. Each following round results in
+pruning the graph of vertices to produce an induced subgraph . The conﬂict graph evolves through
+a sequence of diﬀerent induced subgraphs in interval Ij+1, unless these subgraphs become empty.
+Let us assume the adversary generates transactions with a ra te ρ≤ max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+and with
+a burstiness b≥ 1. The total contribution to congestion of an object by trans actions generated
+during a milestone interval can be estimated as follows:
+max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+· 4b· min{k,⌈√m⌉} + b≤ b + b = 2b. (1)
+It follows that the sum of weights of transactions generated in a milestone interval is at most 2 bm.
+Since a transaction uses at least one object, the adversary c an generate at most 2 bm transactions
+in a milestone interval.
+We show the following invariant for all milestone intervals of an execution.
+9
+=== PDF PAGE 11 ===
+Lemma 3 ( Centralized milestone invariant) If a generation rate satisﬁes ρ≤ max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+,
+then there are at most 2bm pending transactions at the ﬁrst round of a milestone interv al, and all
+these transactions get executed by the end of the interval.
+Proof: The invariant pertains to at most 2 bm old pending transactions. We show the centralized
+milestone invariant by induction on the index of interval.
+The base case concerns interval I1. The invariant holds because there are no transactions
+generated prior to this interval. To show the inductive step , suppose it holds for an interval Ij and
+consider interval Ij+1. By the inductive assumption, all the old transactions in Ij+1 got generated
+during interval Ij. It follows that there are at most 2 bm old transactions at the beginning of Ij+1.
+We show next that all the old transactions pending in such an i nterval Ij+1 get executed by the
+end of Ij+1.
+An execution of algorithm Centralized-Scheduler during interval Ij+1 can be interpreted
+as an execution of the alternative greedy coloring of the con ﬂict graph, as the graph is determined
+at the ﬁrst round of Ij+1, by Lemma 2. The consecutive round numbers in interval Ij+1 could be
+interpreted as colors. By Proposition 2, the number of assig ned colors is at most the maximum
+degree plus 1. The old transactions make a preﬁx of the list of all pending transactions, by how
+new transactions get added to list Pending, by the pseudocode in Figure 1. This means that
+new transactions get considered at a round only after all the old transactions had a chance to
+be scheduled and added to Execute, and so they do not get in the way of old transactions. The
+maximum assigned color is the last round in which all old tran sactions get completed.
+Since each transaction uses at most k objects and each object belongs to at most 2 b old transac-
+tions, by the bound (1), each old transaction collides with a t most (2 b− 1)k other old transactions.
+It follows that the maximum degree of the conﬂict graph is at m ost (2 b− 1)k. The alternative
+greedy coloring assigns at most (2 b− 1)k + 1 colors. This is also an upper bound on the number of
+rounds spent to complete executing all old transactions.
+To show the inductive step, it suﬃces to demonstrate that the length of interval Ij+1 is an
+upper bound on the number of colors assigned to the vertices o f a graph of old transactions by the
+greedy coloring. We consider two cases, depending on the rel ative magnitude of k and⌈√m⌉.
+Suppose ﬁrst that k≤⌈√m⌉. The length of each milestone interval is 4 bk, which is strictly
+greater than the maximum vertex degree. This is because the i nequality
+4bk > (2b− 1)k + 1 = 2 bk− k + 1
+is equivalent to 2 bk >−k + 1, which holds since both b≥ 1 and k≥ 1.
+The other case is k >⌈√m⌉. Let us call an old transaction heavy if its weight is greater than
+⌈√m⌉ and light if its weight is at most ⌈√m⌉. There are at most 2 b⌈√m⌉ heavy old transactions, as
+otherwise the total weight of old transactions would be stri ctly greater than 2 b⌈√m⌉·√m≥ 2bm,
+which is impossible. Suppose conservatively that if a heavy transaction is scheduled to be executed
+at a round then this is the only transaction executed at this r ound. There are at most 2 b⌈√m⌉ such
+rounds. The remaining rounds in the interval execute light t ransactions only. We interpret these
+rounds as belonging to an execution of the alternative greed y coloring. The subgraph induced by
+light transactions has maximum degree at most (2 b−1)⌈√m⌉, and so at most (2 b−1)⌈√m⌉+1 colors
+10
+=== PDF PAGE 12 ===
+get assigned, each color representing a round. To combine th e outcomes of these two counts, there
+are at most 2 b⌈√m⌉ rounds needed to execute heavy transactions and at most (2 b− 1)⌈√m⌉ + 1
+rounds to execute light transactions, for a total of these ma ny rounds:
+2b⌈√m⌉ + (2b− 1)⌈√m⌉ + 1 = (4 b− 1)⌈√m⌉ + 1 .
+The length of a milestone interval is 4 b·⌈√m⌉ rounds. By its end all old transactions are completed,
+because the inequality
+(4b− 1)⌈√m⌉ + 1≤ 4b·⌈√m⌉
+is equivalent to ⌈√m⌉ ≥1. This completes the proof of the inductive step of the centr alized
+milestone invariant. □
+We show next that algorithm Centralized-Scheduler is stable and has bounded transaction
+latency for suitably low transaction generation rates.
+Theorem 2 If algorithm Centralized-Scheduler is executed against an adversary of type
+(ρ, b), such that each generated transaction accesses at most k objects out of m shared objects avail-
+able and transaction-generation rate ρ satisﬁes ρ≤ max
+{ 1
+4k , 1
+4⌈√m⌉
+}
+, then the number of pending
+transactions at a round is at most 4bm and transaction latency is at most 8b· min{k,⌈√m⌉}.
+Proof: To estimate the number of transactions pending at a round, le t this round belong to a
+milestone interval Ik. The number of old transactions at any round of Ik is at most 2 mb, by the
+centralized milestone invariant formulated as Lemma 3. Dur ing the interval Ik, at most 2 mb new
+transactions can be generated. So 2 mb + 2mb = 4mb is an upper bound on the number of pending
+transactions at the round.
+To estimate transaction latency, we use the property that a t ransaction generated in a milestone
+interval gets executed by the end of the next interval, again by the centralized milestone invariant
+formulated as Lemma 3. This means that transaction latency i s at most twice the length of a
+milestone interval, which is 2 · 4b· min{k,⌈√m⌉} = 8b· min{k,⌈√m⌉}. □
+5 A Distributed Scheduler
+We now consider distributed scheduling. Let a distributed s ystem consist of n processors. The
+processors issue threads that communicate among themselve s through some m shared objects.
+Every transaction type includes at most k objects.
+Each generated transaction is assigned to a speciﬁc process or and resides in its local queue
+while pending execution. This means we consider the queue-b ased model of autonomy of individual
+transactions, and the corresponding queue-based adversar ial model of transaction generation.
+We employ a speciﬁc communication mechanism between a pair o f processors. One of the
+processors, say s, is a sender and the other processor, say r, is a receiver. The two processors s
+and r communicate through a designated object o. Communication occurs at a given round. All
+the processors are aware that this particular round is a roun d of communication from s to r. Each
+of the participants s and r may invoke a transaction involving object o at the round, while at the
+same time all the remaining processors pause and do not invok e any transactions at this round.
+11
+=== PDF PAGE 13 ===
+Assume ﬁrst that both s and r have pending transactions that access object o. At a round of
+communication, the recipient processor r invokes a transaction tr that uses object o. If the sender
+processor s wants to convey bit 1 then s also invokes a transaction ts that uses object o. In this case,
+both transactions tr and ts get aborted, so that the processor r receives the respective feedback
+from the system and interprets it as receiving 1. If the sende r processor s wants to convey bit 0 then
+s does not invoke any transactions using object o at this round. In this case, transaction tr gets
+executed successfully, so that r receives the respective feedback from the system and interp rets it
+as receiving 0. This is how one bit can be transmitted success fully from a sender s to a recipient r.
+That was an example of a perfect cooperation between a sender and receiver, but alternative
+scenarios are possible as well. Suppose that the sender s has a pending transaction using object o
+and wants to communicate with r but the recipient r either does not want to communicate or
+does not have a pending transaction using object o. What occurs is that s invokes a suitable
+transaction ts which gets executed but r does not receive any information. Alternatively, suppose
+that the receiver r has a pending transaction using object o and wants to communicate while the
+sender s either does not want to communicate or does not have a pending transaction using object o.
+What occurs is that the receiver r invokes a suitable transaction tr which gets executed, which the
+receiver r interprets as receiving the bit 0.
+That communication mechanism can be extended to transmit th e whole type of any transaction
+in the following way. The type identiﬁes a subset of all m objects. Having a ﬁxed ordering of the
+objects, the type can be represented as a sequence of m bits, in which 1 at position i represents
+that the ith object belongs to the type, and 0 represents that the ith object does not belong. A
+processor s can transmit a transaction type to recipient r by transmitting m bits representing the
+type in m successive rounds while using some designated object o. We say that by this operation
+processor s sends the transaction type to processor r via object o. This operation works as desired
+assuming each of the processors has at least m transactions involving object o. If at least one
+of these processors either does not have m transactions involving object o or does not want to
+participate, then either no bits are transmitted, or the rec eiver r possibly receives a sequence of 0s
+only, which it interprets as no type of transaction successf ully transmitted.
+Pending transactions at a processor are grouped by their typ es. All pending transactions of the
+same type at a processor make a block of transactions of this type. The weight of a block is deﬁned
+to be the weight of its type. If there are suﬃciently many tran sactions in a block then the block
+and the type are said to be large. A boundary number deﬁning sizes to be large is denoted by L
+and equals L = (n− 1)2n2m2. If the number of transactions of some type in a queue at a proc essor
+is at least kL but less than ( k + 1)L, for a positive integer k, then we treat these transactions as
+contributing k large blocks.
+An execution of the scheduling algorithm is partitioned int o epochs, and each consecutive epoch
+consists of three phases, labeled Phase 1, Phase 2, and Phase 3. Each phase is executed the same
+number of L = ( n− 1)2n2m2 rounds. The algorithm is called Distributed-Scheduler and its
+pseudocode is given in Figure 2.
+In the beginning of Phase 1, each processor v that has a large block of transactions of some type,
+selects one such a block, and this type then is active at the processor in the epoch. A processor
+that starts Phase 1 with an active type is called active in this phase. Processors store large blocks
+12
+=== PDF PAGE 14 ===
+Algorithm Distributed-Scheduler
+Phase 1 : sharing information about large active blocks during L rounds
+repeat n− 1 times
+for each sender processor s and each recipient processor r and each object o do
+in a segment of rounds assigned for this selection of s, r, and o:
+if v is active and this is a round when s = v then
+act as sender to transmit all relevant information to r via object o
+elseif v is active and this is a round when r = v then
+act as recipient to receive all relevant information from s via object o
+Phase 2 : executing large blocks of transactions during L rounds
+if v is active then
+select active blocks for execution among those learned in Ph ase 1
+if v is active and its active block got selected then
+for each among L consecutive rounds do
+if there is a transaction of the active type in the queue then
+invoke such a transaction
+Phase 3 : executing remaining transactions by solo processors in L rounds
+for L consecutive rounds
+if this is a round among L/n ones assigned to v then
+if the queue is nonempty then invoke a transaction
+Figure 2: A pseudocode of an epoch for a processor v. Pending transactions are dispersed among
+the processors. Number L = ( n− 1)2n2m2 is the duration of each phase. In Phase 1, processors
+s and r use transactions from their active large blocks to implemen t communication. A sender
+processor s transmits the active type for each processor it knows about. In Phase 2, large active
+blocks are selected for execution in a greedy manner, with bl ocks ordered by the processors’ names.
+In Phase 3, each processor gets assigned a unique exclusive c ontiguous segment of L/n rounds, in
+which to execute up to L/n transactions from its queue in a ﬁrst-in ﬁrst-out manner.
+in the order of generation of their last-added transaction. Each processor chooses as active a large
+block that comes ﬁrst in this order.
+The purpose of Phase 1 is to spread the information of active t ypes of all the active processors
+as widely as possible. Each active processor uses transacti ons of its active type for communication.
+Such communication involves executing transactions, so a b lock of transactions of a given type may
+gradually get smaller. Once a type of a large block becomes ac tive in the beginning of Phase 1,
+it stays considered as active for the durations of an epoch, e ven if the number of transactions in
+the block becomes less than L. Phase 1 assigns segments of ( n− 1)n2m2 rounds for each pair of
+processors s and r and each object o to spend with s acting as sender to r acting as receiver with
+communication performed via object o.
+Phase 2 is spent on executing transactions in some active blo cks selected such that they do not
+create conﬂicts for access to shared objects. In the beginni ng of Phase 2, each processor computes a
+selection of active large blocks of transactions to execute in Phase 2 among those learned in Phase 1.
+13
+=== PDF PAGE 15 ===
+This common selection is computed greedily as follows. The a ctive types learned in Phase 1 are
+ordered by the owners’ names. There is a working set of active types selected for execution, which
+is initialized empty. The active types are considered one by one. If a processed active type can
+be added to the working set without creating a conﬂict for acc ess to an object, then the type is
+added to the set, and otherwise it is passed over. This comput ation is performed locally by each
+active processor at the beginning of the ﬁrst round of Phase 2 and each active processor obtains the
+same output. The rounds of Phase 2 are spent on executing the t ransactions of the active blocks
+selected for execution. An active processor whose active la rge block has been selected executes
+pending transactions in its selected active block as long as some transactions from the block are
+still available in the queue or Phase 2 is over, whichever hap pens earlier.
+Phase 3 is spent by each processor executing solo its pending transactions, those that have never
+been included in large blocks. Each processor is assigned a u nique exclusive contiguous segment of
+L/n = (n− 1)2nm2 rounds to execute such transactions. Transactions are perf ormed in the order
+of their adding to the queue, with those waiting longest exec uted before those generated later.
+Let P = ∑ k
+i=1
+( m
+i
+)
+be the number of possible diﬀerent transaction types in a syst em of m shared
+objects such that a type includes at most k objects. We will use the estimate P ≤ 2H( k
+m ) m, for
+k≤ m
+2 , where H( x) is the binary entropy function H( x) = x lg x + (1− x) lg(1− x) for 0 < x < 1.
+We partition the rounds of an execution of algorithm Distributed-Scheduler into contigu-
+ous milestone intervals denoted I1, I2, . . .. Each milestone interval consists of 2 bnP· min{k,⌈√m⌉}
+epochs. Alternatively, a milestone interval consists of 6 bnLP· min{k,⌈√m⌉} rounds, after trans-
+lating the lengths of epochs into rounds.
+The transactions pending in an interval Ik at any time are categorized into old and new : the
+former are those generated prior to the start of Ik and the latter are those generated during Ik.
+We also apply this terminology to large blocks of transactio ns, and categorize them accordingly: a
+large old block of transactions is a large block that consists of only old tra nsactions.
+We deﬁne a simple graph called block conﬂict graph , or simply a conﬂict graph in this Section.
+Vertices are speciﬁed to be pairs ( v, S) where v is a processor and S is a large old block at v.
+Two vertices are connected by an edge if either they share the same processor name, as its ﬁrst
+coordinate, or the types of large old blocks, in the second co ordinates, share an object. Observe
+that, for each processor v, a subgraph induced by all vertices with the same ﬁrst coordi nate v is a
+clique.
+The block conﬂict graph allows to interpret the range of comm unication during Phase 1 in an
+epoch. Namely, Phase 1 results in every processor v learning the active types in all vertices of the
+connected component of the block conﬂict graph to which vert ices ( v, S) belong. The duration of
+a phase L is determined such as to have suﬃciently many rounds to accom plish this goal.
+Lemma 4 After completion of Phase 1, every processor v knows the active transaction type of
+each processor in the connected component of the block conﬂi ct graph to which vertices with the ﬁrst
+coordinate v belong.
+Proof: In the beginning of an epoch, each processor having a large bl ock selects one large block
+of transactions as active. A block’s type can be encoded by a s tring of bits, of which at least
+one is a 1, as 1s indicate objects in the type. The use of an obje ct for communication for each
+14
+=== PDF PAGE 16 ===
+sender-receiver pair is exclusive. If a receiving processo r obtains a string of bits that includes at
+least one occurrence of 1, then this is a legitimate type. Oth erwise, if a receiver does not receive
+any sequence of bits or it decodes a transmission of a type as a sequence of only 0s, then this means
+that no type was communicated. This demonstrates the correc tness of transmitting a type between
+a pair of processors.
+Next, we show that the length L of Phase 1 is suﬃciently large for the relevant information t o
+successfully propagate to reach every processor. Any piece of information will need to be transmit-
+ted at most n− 1 times, as there are n processors. The number of ordered pairs of a sender and a
+receiver is n(n− 1). A pair of communicating processors may use one among m shared objects at
+an instance of communication. The information to propagate pertains to each of the n processors.
+A type is encoded by m bits. The length of Phase 1 is a product of all these numbers, s o its value
+allows for the needed communication to propagate. □
+Lemma 5 A set of active types obtained in the beginning of Phase 2 by an active processor is max-
+imal with respect to inclusion among subsets of active types , in the processor’s connected component
+in the block conﬂict graph, that are conﬂict free.
+Proof: Each active processor knows all the active types of processo rs in its connected component
+of the block conﬂict graph, by Lemma 4. All the active process ors in a connected component work
+with the same list of active types ordered by the names of acti ve processors. Each processor selects
+types of blocks greedily based on the same rules of selecting blocks to add to a working set of blocks
+to execute. So each active processor in a connected componen t produces the same list of active
+types.
+Each active large block S at a processor v is represented as a pair ( v, S). This pair belongs to a
+clique induced of all such pairs that share the ﬁrst componen t. The sub-graph of the block conﬂict
+graph induced by the pending large old blocks can be partitio ned into such cliques. Each vertex
+(v, S) in the conﬂict graph for an active vertex v is a neighbor of a vertex ( v, S′) with an active
+large old block S′. It follows that a maximal independent set among the active v ertices is also such
+in the whole conﬂict graph. □
+Let us assume that the adversary generates transactions wit h a rate ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+and
+with a burstiness b≥ 1. Let us call the number nLP the bulk of the system. The contribution
+to congestion of any object and of any processor by the transa ctions generated during a milestone
+interval, with a generation rate ρ, can be bounded above as follows:
+ρ· 6bnLP· min{k,⌈√m⌉} + b≤ bnLP , (2)
+assuming the bulk of the system nLP is at least 1
+1− 6ρ min{k,⌈√m⌉} . We refer to this assumption about
+he bulk of the system by saying that the bulk of the system is suﬃciently large for a generation
+rate ρ, where the generation rate ρ satisﬁes ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+, for the given parameters m and k.
+A large block at a processor contributes L to the congestion of every object of its type, and also
+a priori to the congestion of the processor. The number of lar ge blocks contributing to congestion
+of a processor is this processor’s block congestion. The number of large blocks contributing to
+congestion of an object is this object’s block congestion.
+15
+=== PDF PAGE 17 ===
+The contribution to a block congestion of a processor during a milestone interval is at most
+bnP = C, by (2), if only the bulk of the system is suﬃciently large for a generation rate ρ, where
+ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+. Similarly, the contribution to a block congestion of an obj ect during a
+milestone interval is at most bnP = C, by (2), if only the bulk of the system is suﬃciently large
+for a generation rate ρ, where ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+. The sum of block congestions generated in an
+interval over all objects is at most Cm. A large block uses at least one object, so the adversary can
+generate at most Cm large blocks in a milestone interval.
+Next, we show the following invariant for all milestone inte rvals of an execution of algorithm
+Distributed-Scheduler.
+Lemma 6 ( Distributed milestone invariant) For a generation rate ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+, and as-
+suming the bulk of the system is suﬃciently large with respec t to ρ, there are at most bn5m3P
+pending transactions at a ﬁrst round of every milestone inte rval, and all these transactions get
+executed by the end of the interval.
+Proof: The invariant concerns old transactions in a milestone inte rval. We show the invariant by
+induction on the index of a milestone interval.
+The base case concerns interval I1. The invariant holds because there are no transactions
+generated prior to this interval. To show the inductive step , suppose it holds for an interval Ij, and
+consider interval Ij+1. By the inductive assumption, all the old transactions in Ij+1 got generated
+during interval Ij.
+First, let us consider old transactions that do not belong to large old blocks. Every old trans-
+action that does not belong to large old blocks gets executed during the third phases of the epochs
+in interval Ij+1. To show this, observe that there are no collisions in the thi rd phases of epoch so it
+suﬃces to count the number of such transactions. There are fe wer than LP such old transactions
+at a processor, since L transactions of some type make a large block and there are at m ost P types.
+A milestone interval consists of 6 bnLP· min{k,⌈√m⌉} rounds, so there are 6 bLP· min{k,⌈√m⌉}
+rounds assigned to each processor during Phase 3, which is gr eater than LP .
+Next, let us consider large old blocks. The types of transact ions selected for execution in Phase 2
+do not collide, so no transaction is ever aborted in Phase 2. T o see this, suppose otherwise, that the
+two active processors include the same object in their respe ctive active types. The two processors
+eventually communicate in the epoch, because they try each s hared object as a communication
+medium. This communication is successful when some shared o bject is used for communication, so
+the processors learn of their respective active types.
+By the inductive assumption, there are at most Cm large old blocks of transactions at the begin-
+ning of Ij+1. This means a total of at most bnmP large blocks, which makes nbmLP transactions.
+We show next that all large old blocks in interval Ij+1 get executed by the end of Ij+1.
+At the start of the ﬁrst epoch in the interval Ij+1, the block conﬂict graph is determined by old
+transactions only, those that make large blocks. For the sak e of the analysis, we consider this very
+graph during epochs in the milestone interval Ij+1, disregarding new transactions generated in the
+meantime. The graph evolves through consecutive epochs in t he interval. Each of the following
+epochs contributes to pruning the original block conﬂict gr aph to produce an induced subgraph of
+16
+=== PDF PAGE 18 ===
+the original graph. These subgraphs evolve in interval Ij+1 through a sequence of diﬀerent induced
+subgraphs, to stabilize when they become empty.
+An execution of algorithm Distributed-Scheduler during interval Ij+1 can be interpreted
+as an execution of the alternative greedy coloring of the blo ck conﬂict graph as it is determined
+at the ﬁrst epoch of Ij+1, by Lemma 5. The consecutive epoch numbers in interval Ij+1 could be
+interpreted as colors. By Proposition 2, the number of assig ned colors is at most the maximum
+degree of the block conﬂict graph plus 1. Large blocks of tran sactions are made active during an
+epoch in the order of their creation. The maximum assigned co lor is the last round in which all
+large old blocks of transactions get completed.
+The contribution to a processor congestion during a milesto ne interval is at most bnP = C,
+by (2). Since each transaction uses at most k objects and each object belongs to at most C old
+blocks, by the bound (2), each old block collides with at most (C− 1)k other old blocks. It follows
+that the maximum degree of the block conﬂict graph is at most C− 1 + (C− 1)k. The alternative
+greedy coloring assigns at most these many colors:
+(C− 1)k + C = Ck− k + C≤ C(k + 1) . (3)
+This is also an upper bound on the number of epochs spent to com plete executing all old blocks.
+To show the inductive step, we consider two cases, depending on the relative magnitude of k
+and⌈√m⌉. It suﬃces to demonstrate that the number of epochs in the int erval Ij+1 is an upper
+bound on the number of colors assigned to the vertices of a gra ph of old blocks by a greedy coloring.
+Suppose ﬁrst that k≤⌈√m⌉. The number of epochs of a milestone interval is 2 Ck , which is at
+least as large as the number of colors of the block conﬂict gra ph assigned by the greedy coloring
+and estimated in (3). This is because the inequality
+2Ck≥ C(k + 1) = Ck + C
+is equivalent to Ck≥ C, which holds since both C≥ 1 and k≥ 1.
+The other case is k >⌈√m⌉. Let us call an old block heavy if its weight is greater than ⌈√m⌉
+and light if its weight is at most ⌈√m⌉. There are at most C⌈√m⌉ heavy old transactions, as
+otherwise the total weight of old blocks would be strictly gr eater than C⌈√m⌉·√m≥ Cm, which
+is impossible. Suppose, conservatively, that if a heavy blo ck is scheduled to be executed during the
+second phase of an epoch then this is the only active block exe cuted at this phase of this epoch.
+There are at most C⌈√m⌉ such epochs. The remaining epochs in the interval execute li ght blocks
+during their second phases. We interpret these epochs/phas es as representing an execution of the
+alternative greedy coloring. The subgraph induced by verti ces of the form ( v, S), where S is a light
+large block, is colored by at most C(⌈√m⌉) colors, by (3) and the inequality ⌈√m⌉ < k .
+To combine all this together, observe that there are at most C⌈√m⌉ epochs needed to execute
+heavy transactions in their second phases, and at most C⌈√m⌉ epochs to execute light transactions
+in their second phases, for a total of these many epochs: C⌈√m⌉+C⌈√m⌉ = 2C⌈√m⌉. A milestone
+interval consists of these many epochs:
+2nP b·⌈√m⌉ = 2C⌈√m⌉ ,
+so by its end all large old blocks get completed during second phases.
+17
+=== PDF PAGE 19 ===
+This completes the proof of the inductive step of the distrib uted milestone invariant. The
+number of old transactions in a milestone interval is at most bnmLP , by (2). This bound means
+at most bn5m3 P old transactions. □
+Next, we show that algorithm Distributed-Scheduler is stable and has bounded transaction
+latency for suitably low transaction generation rates.
+Theorem 3 If algorithm Distributed-Scheduler is executed against an adversary of type (ρ, b),
+such that each generated transaction accesses at most k ≤ m
+2 objects out of m shared objects
+available, and transaction-generation rate ρ satisﬁes ρ < max
+{ 1
+6k , 1
+6⌈√m⌉
+}
+, and the bulk of the
+system is suﬃciently large with respect to ρ, then the number of pending transactions at a round is
+at most 2bn5m3 2H( k
+m )m and transaction latency is at most 12bn5m2 2H( k
+m )m min{k,⌈√m⌉}.
+Proof: To estimate the number of transactions pending at a round, le t this round belong to a
+milestone interval Ik. The number of old transactions at any round of the interval Ik is at most
+bn5m3P , by the distributed milestone invariant formulated as Lemm a 6. During the interval Ik, at
+most bn5m3P new transactions can be generated, again by Lemma 6, because they will become old
+when the next interval begins. So 2 bn5m3P≤ 2bn5m3 2H( k
+m )m is an upper bound on the number
+of pending transactions at any round, since P = ∑ k
+i=1
+( m
+i
+)
+≤ 2H( k
+m )m for k≤ m
+2 .
+To estimate the transaction latency, we use the property tha t a transaction generated in an
+interval gets executed by the end of the next interval, again by the distributed milestone invariant
+formulated as Lemma 6. This means that transaction latency i s at most twice the length of an
+interval, which is 2 · 6bnLP min{k,⌈√m⌉}, where L = ( n− 1)2n2m2. We obtain that the latency
+is at most 12 bn5m2 2H( k
+m )m min{k,⌈√m⌉}. □
+References
+[1] Lakshmi Anantharamu, Bogdan S. Chlebus, Dariusz R. Kowa lski, and Mariusz A. Rokicki.
+Packet latency of deterministic broadcasting in adversari al multiple access channels. Journal
+of Computer and System Sciences , 99:27–52, 2019.
+[2] Matthew Andrews, Baruch Awerbuch, Antonio Fern´ andez, Frank Thomson Leighton, Zhiyong
+Liu, and Jon M. Kleinberg. Universal-stability results and performance bounds for greedy
+contention-resolution protocols. Journal of the ACM , 48(1):39–69, 2001.
+[3] Hagit Attiya, Vincent Gramoli, and Alessia Milani. Dire ctory protocols for distributed transac-
+tional memory. In Transactional Memory. Foundations, Algorithms, Tools, an d Applications ,
+volume 8913 of Lecture Notes in Computer Science , pages 367–391. Springer, 2015.
+[4] Michael A. Bender, Martin Farach-Colton, Simai He, Brad ley C. Kuszmaul, and Charles E.
+Leiserson. Adversarial contention resolution for simple c hannels. In Proceedings of the 17th
+ACM Symposium on Parallel Algorithms and Architectures (SPA A), pages 325–332, 2005.
+[5] Allan Borodin, Jon M. Kleinberg, Prabhakar Raghavan, Ma dhu Sudan, and David P.
+Williamson. Adversarial queuing theory. Journal of the ACM , 48(1):13–38, 2001.
+18
+=== PDF PAGE 20 ===
+[6] Costas Busch, Maurice Herlihy, Miroslav Popovic, and Go karna Sharma. Time-communication
+impossibility results for distributed transactional memo ry. Distributed Computing, 31(6):471–
+487, 2018.
+[7] Costas Busch, Maurice Herlihy, Miroslav Popovic, and Go karna Sharma. Fast scheduling in
+distributed transactional memory. Theory of Computing Systems , 65(2):296–322, 2021.
+[8] Costas Busch, Maurice Herlihy, Miroslav Popovic, and Go karna Sharma. Dynamic scheduling
+in distributed transactional memory. Distributed Computing , 35(1):19–36, 2022.
+[9] Bogdan S. Chlebus, Elijah Hradovich, Tomasz Jurdzi´ nsk i, Marek Klonowski, and Dariusz R.
+Kowalski. Energy eﬃcient adversarial routing in shared cha nnels. In Proceedings of the 31st
+ACM Symposium on Parallelism in Algorithms and Architecture s (SPAA) , pages 191–200.
+ACM, 2019.
+[10] Bogdan S. Chlebus, Dariusz R. Kowalski, and Mariusz A. R okicki. Maximum throughput of
+multiple access channels in adversarial environments. Distributed Computing , 22(2):93–116,
+2009.
+[11] Bogdan S. Chlebus, Dariusz R. Kowalski, and Mariusz A. R okicki. Adversarial queuing on the
+multiple access channel. ACM Transactions on Algorithms , 8(1):5:1–5:31, 2012.
+[12] Pawel Garncarek, Tomasz Jurdzinski, and Dariusz R. Kow alski. Stable memoryless queuing
+under contention. In Proceedings of the 33rd International Symposium on Distributed Com-
+puting (DISC) , volume 146 of LIPIcs, pages 17:1–17:16. Schloss Dagstuhl - Leibniz-Zentrum
+f¨ ur Informatik, 2019.
+[13] Pawel Garncarek, Tomasz Jurdzinski, and Dariusz R. Kow alski. Eﬃcient local medium access.
+In Proceedings of the 32nd ACM Symposium on Parallelism in Algorithms and Architectu res
+(SPAA), pages 247–257. ACM, 2020.
+[14] Maurice Herlihy and Ye Sun. Distributed transactional memory for metric-space networks.
+Distributed Computing , 20(3):195–208, 2007.
+[15] Gokarna Sharma and Costas Busch. Distributed transact ional memory for general networks.
+Distributed Computing , 27(5):329–362, 2014.
+[16] Gokarna Sharma and Costas Busch. A load balanced direct ory for distributed shared memory
+objects. Journal of Parallel and Distributed Computing , 78:6–24, 2015.
+[17] Bo Zhang and Binoy Ravindran. Brief announcement: on en hancing concurrency in distributed
+transactional memory. In Andr´ ea W. Richa and Rachid Guerra oui, editors, Proceedings of the
+29th Annual ACM Symposium on Principles of Distributed Comput ing, PODC 2010, Zurich,
+Switzerland, July 25-28, 2010 , pages 73–74. ACM, 2010.
+[18] Bo Zhang and Binoy Ravindran. Brief announcement: queu ing or priority queuing? on the
+design of cache-coherence protocols for distributed trans actional memory. In Andr´ ea W. Richa
+and Rachid Guerraoui, editors, Proceedings of the 29th Annual ACM Symposium on Principles
+19
+=== PDF PAGE 21 ===
+of Distributed Computing, PODC 2010, Zurich, Switzerland, J uly 25-28, 2010 , pages 75–76.
+ACM, 2010.
+[19] Bo Zhang, Binoy Ravindran, and Roberto Palmieri. Distr ibuted transactional contention man-
+agement as the traveling salesman problem. In Proceedings of the 21st International Colloquium
+on Structural Information and Communication Complexity (SIROCCO 2014), volume 8576 of
+Lecture Notes in Computer Science , pages 54–67. Springer, 2014.
+20

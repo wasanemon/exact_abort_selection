@@ -1,0 +1,2004 @@
+=== PDF PAGE 1 ===
+Blurring the Lines between Blockchains and
+Database Systems: the Case of Hyperledger Fabric
+Ankur Sharma
+ankur.sharma@bigdata.uni-saarland.de
+Big Data Analytics Group, Saarland University
+Felix Martin Schuhknecht
+felix.schuhknecht@bigdata.uni-saarland.de
+Big Data Analytics Group, Saarland University
+Divya Agrawal
+s8diagra@stud.uni-saarland.de
+Big Data Analytics Group, Saarland University
+Jens Dittrich
+jens.dittrich@bigdata.uni-saarland.de
+Big Data Analytics Group, Saarland University
+ABSTRACT
+Within the last few years, a countless number of blockchain
+systems have emerged on the market, each one claiming to
+revolutionize the way of distributed transaction processing
+in one way or the other. Many blockchain features, such as
+byzantine fault tolerance, are indeed valuable additions in
+modern environments. However, despite all the hype around
+the technology, many of the challenges that blockchain sys-
+tems have to face are fundamental transaction management
+problems. These are largely shared with traditional database
+systems, which have been around for decades already.
+These similarities become especially visible for systems,
+that blur the lines between blockchain systems and classical
+database systems. A great example of this is Hyperledger
+Fabric, an open-source permissioned blockchain system un-
+der development by IBM. By implementing parallel trans-
+action processing, Fabric’s work￿ow is highly motivated
+by optimistic concurrency control mechanisms in classical
+database systems. This raises two questions: (1) Which con-
+ceptual similarities and di￿erences do actually exist between
+a system such as Fabric and a classical distributed database
+system? (2) Is it possible to improve on the performance of
+Fabric by transitioning technology from the database world
+to blockchains and thus blurring the lines between these two
+types of systems even further? To tackle these questions, we
+￿rst explore Fabric from the perspective of database research,
+where we observe weaknesses in the transaction pipeline.
+We then solve these issues by transitioning well-understood
+database concepts to Fabric, namely transaction reordering
+Permission to make digital or hard copies of part or all of this work for
+personal or classroom use is granted without fee provided that copies are
+not made or distributed for pro￿t or commercial advantage and that copies
+bear this notice and the full citation on the ￿rst page. Copyrights for third-
+party components of this work must be honored. For all other uses, contact
+the owner/author(s).
+SIGMOD ’19, June 30-July 5, 2019, Amsterdam, Netherlands
+©2019 Copyright held by the owner/author(s).
+ACM ISBN 978-1-4503-5643-5/19/06.
+https://doi.org/10.1145/3299869.3319883
+as well as early transaction abort. Our experimental eval-
+uation under the Smallbank benchmark as well as under a
+custom workload shows that our improved version Fabric++
+signi￿cantly increases the throughput of successful transac-
+tions over the vanilla version by up to a factor of12x, while
+decreasing the average latency to almost half.
+CCS CONCEPTS
+•Information systems→Distributed database trans-
+actions;
+ACM Reference Format:
+Ankur Sharma, Felix Martin Schuhknecht, Divya Agrawal, and Jens
+Dittrich. 2019. Blurring the Lines between Blockchains and Data-
+base Systems: the Case of Hyperledger Fabric. In2019 International
+Conference on Management of Data (SIGMOD ’19), June 30-July 5,
+2019, Amsterdam, Netherlands.ACM, Amsterdam, The Netherlands,
+18 pages. https://doi.org/10.1145/3299869.3319883
+1 INTRODUCTION
+Blockchains are one of the hottest topics in modern dis-
+tributed transaction processing. However, from the perspec-
+tive of database research, one could raise the question: what
+makes these systems so special over classical distributed
+databases, that have been out there for a long time already?
+The answer lies in byzantine fault tolerance: while classi-
+cal distributed database systems require a trusted set of par-
+ticipants, blockchain systems are able to deal with a certain
+amount ofmaliciouslybehaving nodes. This feature opens
+lots of new application ￿elds such as transactions between
+organizations, that do not fully trust each other.
+Regarding the aspect of byzantine fault tolerance,
+blockchain systems have a clear advantage over distributed
+database systems. Unfortunately, with respect to essentially
+any other aspect of transaction processing, classical database
+systems are decades ahead of blockchain systems.
+A great example for this is theorder-executetransaction
+processing model, that prominent systems like Bitcoin [1]
+and Ethereum [2] implement: In the ordering phase, all peers
+￿rst agree on a global transaction order, typically using a
+consensus mechanism. Then, each peer locally executes the
+=== PDF PAGE 2 ===
+transactions in that order on a replica of the state. While this
+approach is simple, it has two severe downsides: First, the
+execution of transactions happens in a sequential fashion.
+Second, as every transaction must be executed on every
+peer, the performance of the system does not scale with the
+number of peers. Of course, both parallel execution as well
+as scaling capabilities have been well-established properties
+of distributed database systems since many years.
+1.1 Catching up
+Still, there are blockchain systems that try to catch up. A
+prominent example for this is Hyperledger Fabric [10], a
+popular open-source blockchain system introduced by IBM.
+Instead of implementing the order-execute model, it follows
+a sophisticatedsimulate-order-validate-commitmodel. This
+model is highly in￿uenced by optimistic concurrency control
+mechanisms in database systems: Transactions are simulated
+speculatively in parallelbeforeactually ordering them. Then,
+after ordering, Fabric checks in the validation phase whether
+the order does not con￿ict with the previously computed sim-
+ulation e￿ects. Finally, the e￿ects of non-con￿icting transac-
+tions are committed. The advantages of this model are clear:
+parallel transaction execution and therefore the ability to
+scale — features, which will be mandatory for any upcoming
+blockchain system, that aims at high performance.
+We strongly believe that Fabric’s ambitions in transition-
+ing technology from the world of databases to blockchains
+are a step in the right direction. Unfortunately, its implemen-
+tation of parallel transaction processing still su￿ers from
+certain problems which highly limit the gain, that can be
+achieved by concurrency. These problems can be identi￿ed
+easily in two simple experiments.
+Transactions per second
+0 150 300 450 600
+Aborted Successful
+SuccessfulBlank
+Transactions
+Meaningful
+Transactions
+Fabric
+Figure 1: Transactions per second of vanilla Fabric
+when meaningful transactions are ￿red as described
+in Section 6 for the con￿guration BS=1024, RW=8,
+HR=40%, HW=10%, HSS=1%. Additionally, we show the
+throughput when blank transactions are ￿red.
+In the ￿rst experiment (Figure 1, top bar), we submit a
+stream of meaningful transactions, which originate from an
+asset transfer scenario, and report the throughput, divided
+into aborted and successful transactions. This experiment
+reveals a severe problem of Fabric: a large number of trans-
+actions end up as being aborted. The reason for all these
+aborts are serialization con￿icts, a negative side-e￿ect of
+concurrent execution.
+If we want to increase the number of successful transac-
+tions, we essentially have two options: Either we (a) increase
+the overall throughput of the system or (b) turn transactions,
+that would have been aborted by Fabric, to successful ones.
+Unfortunately, option (a) is hardly applicable in Fabric. We
+can see this in the second experiment (Figure 1, bottom bar),
+where we submit blank transactions without any logic. In-
+terestingly, the total throughput of blank and meaningful
+transactions essentially equals. This reveals, that the over-
+all throughput of the system is not dominated by the core
+components of transaction processing, but actually by other
+auxiliary factors: cryptographic computations and network-
+ing overhead.
+1.2 Fabric++
+Thus, option (b) is the key: we have to turn transactions, that
+would have been aborted by Fabric, to successful ones. We
+achieve this, by transitioning a well-known technique from
+database systems to Fabric:transaction reordering. Instead of
+arbitrarily ordering transactions, we inspect the transaction
+semantics and arrange the transactions in a way such that
+the number of serialization con￿icts is drastically reduced.
+Furthermore, we remove transactions, that have no chance to
+commit anymore, as early as possible from the pipeline. This
+early abort of transactionsfurther improves the situation, as
+transactions, which have no chance to commit, are out of
+consideration for reordering.
+In total, we carry out the following steps to further
+"databasify" Fabric:
+(1)To have a basis for the discussion, we ￿rst inspect the
+transaction ￿ow of Hyperledger Fabric version 1.2 from a
+conceptual perspective. (Section 2).
+(2)We carefully inspect the related work in the area of con-
+currency control and discuss, which techniques are related to
+Fabric and which are out of consideration. (Section 3). This
+leads us directly to the techniques we are integrating.
+(3)Based on the analysis of the transaction ￿ow in Fabric, we
+discuss its weaknesses in detail and describe, how database
+technology can be utilized to counter them. (Section 4).
+(4)We transition database technology to the transaction
+pipeline of Fabric. Precisely, we ￿rst improve onthe ordering
+of transactions. By default, the system orders transactions
+arbitrarily after simulation, leading to unnecessary serial-
+ization con￿icts. To counter this problem, we introduce an
+advancedtransaction reordering mechanism, which aims at re-
+ducing the number of serialization con￿icts between transac-
+tions within a block. This mechanism signi￿cantly increases
+the number of valid transactions, that make it through the
+system and therefore the overall throughput (Section 5.1).
+(5)Next, we advance theabort of transactions. By default,
+Fabric checks whether a transaction is valid right before the
+commit. This late abort unnecessarily penalizes the system
+by processing transactions, that have no chance to commit.
+To tackle this issue, we introduce the concept ofearly abort
+=== PDF PAGE 3 ===
+to various stages of the pipeline. We identify invalid trans-
+actions as early as possible and abort them, assuring that
+the pipeline is not throttled by transactions that have no
+chance to commit eventually. A requirement for this concept
+is a￿ne-grained concurrency control mechanism, by which
+we extend Fabric as well (Section 5.2). These modi￿cations
+signi￿cantly extend the vanilla Fabric, turning it into what
+we call Fabric++.
+(6)We perform an extensive experimental evaluation of the
+optimizations of Fabric++ under the Smallbank benchmark
+as well as under a custom workload. We show that we are
+able to signi￿cantly increase the number of successful trans-
+actions over the vanilla version. Additionally, we vary the
+blocksize, the number of channels, and clients to show that
+our optimizations also have a positive impact on the scal-
+ing capabilities of the system. Further, using the Caliper
+benchmark, we show that Fabric++ also produces a lower
+transaction latency than vanilla Fabric (Section 6).
+2 HYPERLEDGER FABRIC
+First, we have to understand the work￿ow of Fabric. Let
+us describe in the following section how it behaves in ver-
+sion 1.2.
+2.1 Architecture
+Fabric is apermissionedblockchain system, meaning all
+peers of the network are known at any point in time. Peers
+are grouped intoorganizations, which typically host them.
+Within an organization, all peers trust each other. Each peer
+runs a local instance of Fabric. This instance includes a copy
+of theledger, containing the ordered sequence of all transac-
+tions that went through the system. This includes both valid
+and invalid transactions. Apart from the ledger, each peer
+also contains thecurrent statein form of a state database,
+which represents the state after theapplicationof allvalid
+transactions in the ledger to the initial state. Apart from the
+peers, which play an important role both in the simulation
+phase and the validation phase, there is a separate instance
+called theordering service, which is the core component of
+the ordering phase and assumed to be trustworthy.
+2.2 High-level Work￿ow
+At its core, Fabric follows asimulate-order-validate-commit
+work￿ow, as shown in Figure 2.
+2.2.1 Simulation Phase.In the simulation phase, a client sub-
+mits a transaction proposal to a subset of the peers, called the
+endorsement peers orendorsers, for simulation. This subset
+of endorsement peers is de￿ned in a so calledendorsement
+policy. Since organizations do not fully trust each other, it
+is typically speci￿ed, that at least one peer of each involved
+organization has to simulate the transaction proposal. The
+endorsers now simulate the transaction proposal against a
+local copy of the current state in parallel. As the name of this
+Simulation  
+Phase
+Ordering  
+Phase
+Validation  
+Phase
+Commit  
+Phase
+Client 1
+Ordering  
+Service
+Peer A1
+Peer B1
+Peer A2
+Peer B2
+Client 2
+Endorsement
+Endorsement
+Proposal
+Transaction
+Block
+Peer A1
+simulate
+Peer A1
+simulate
+simulate
+simulate
+append to ledgervalidate✓ ✘
+Peer A2 Peer A2
+append to ledgervalidate✓ ✘
+Peer B1 Peer B1
+append to ledgervalidate✓ ✘
+Peer B2 Peer B2
+append to ledgervalidate✓ ✘
+Proposal
+Endorsement
+Transaction
+Figure 2: High-level work￿ow of Fabric.
+phase suggests, none of the e￿ects of the simulation become
+durable in the current state at this point. Instead, each en-
+dorser builds up a read set and a write set during simulation
+to capture the e￿ects. After simulation, each endorser re-
+turns its read and write set to the client. Along with that, the
+endorsers also return a cryptographic signature over the sets.
+If all returned read and write sets are equal, the client forms
+an actual transaction. It contains the previously computed
+read set and write set along with all signatures. The client
+then passes this transaction on to the ordering service.
+2.2.2 Ordering Phase. In the ordering phase, the trusted
+ordering service receives the transactions from the clients.
+Among all received transactions, it establishes a global order
+and packs them into blocks containing a certain number of
+transactions. By default, the transactions are essentially or-
+dered in the way in which they arrive at the service, without
+inspecting the transaction semantics in any way. The order-
+ing service then distributes each formed block toallpeers
+of the network. Note that the system does not guarantee
+that all peers receive a block at the same time. However, it
+guarantees that all peers receive the same blocks in the same
+order.
+2.2.3 Validation Phase.As soon as a block arrives at a peer,
+its validation phase starts. For each transaction within the
+block, the validation consists of two checks: First, Fabric tests
+whether the transaction respects the endorsement policy and
+whether all contained signatures ￿t to the read and write
+set. If this is not the case, it means that either an endorser
+or the client tampered with the transaction in some way. In
+this case, the systems marks the transaction as invalid. If
+a transaction passes the ￿rst test, Fabric secondly checks,
+whether any serialization con￿icts occur. As the simulation
+of transactions happens in parallelbeforeordering them, it
+is possible that the e￿ects of the simulation stand in con￿ict
+with the established order. Therefore, Fabric marks transac-
+tions, which con￿ict with previous transactions, as invalid
+as well.
+2.2.4 Commit Phase. In the commit phase, each peer ap-
+pends the block, which contains both valid and invalid trans-
+actions, to its local ledger. Additionally, each peer applies all
+changes made by the valid transactions to its current state.
+=== PDF PAGE 4 ===
+3 RELATED WORK
+Before diving into the optimizations we apply, we have to
+discuss related work in the ￿eld.
+In this work, we transition mature database techniques to
+the world of blockchains. As mentioned in the introduction,
+we essentially apply two prominent techniques from the
+￿eld of database concurrency control to Fabric:transaction
+reorderingandearly transaction abort. Of course, concurrency
+control is a large and active area of research and the alerted
+reader might wonder, why we focus on precisely these tech-
+niques. The answer lies in the fact, that a blockchain system
+such as Fabric, despite being a parallel transaction processing
+system, di￿ers from parallel database systems in four points:
+(a)A blockchain system like Fabric commits at the granu-
+larity of blocks instead of committing at the granularity
+of individual transactions. The commit granularity has a
+signi￿cant e￿ect on the type of applicable optimizations.
+(b)A blockchain system like Fabric is a distributed system,
+where the state is fully replicated across the network
+and where transactions operate on all nodes. In contrast
+to that, parallel database systems are typically either in-
+stalled locally on a single node or partition their state
+across a network, such that transactions operate on a
+subset of the network. The type of distribution and repli-
+cation has a signi￿cant e￿ect on the optimization options.
+(c)In Fabric, a single transaction is simulated in parallel
+on multiple nodes to establish trust. The state, against
+which the transaction is simulated potentially di￿ers
+across nodes. In a parallel database system, the situation
+is way simpler: a transaction is executed exactly once
+against the only state present in the system.
+(d)The performance of a blockchain system like Fabric is
+largely dominated by cryptographic signature computa-
+tions, network communication, and trust validation. In
+contrast, the performance of parallel database systems is
+highly in￿uenced by low-level components, such as the
+choice of the locking mechanism for concurrency con-
+trol. Therefore, despite being closely related, blockchain
+optimizations happen on a di￿erent level than database
+optimizations.
+Let us now go through the related work. Essentially, con-
+currency control techniques can be divided into two classes:
+(1) methods, that aim at improving the overall transactional
+throughput [13,17,20,26] and (2) methods, that try to turn
+aborted transactions into successful transactions [24, 28].
+3.1 Class 1: Transaction Throughput
+The works of [26], [20], and [13] all aim at improving par-
+allel transaction execution. In [26], the authors propose a
+mechanism, which collects a batch of transactions and an-
+alyzes the access dependencies between these transactions.
+The resulting dependency graph is then partitioned into
+non-intersecting subgraphs. As the transactions in di￿erent
+subgraphs do not con￿ict with each other, they can be safely
+executed in parallel. [20] and [13] go a step further by not
+only analyzing dependencies between entire transactions,
+but actually between transaction-fragments. Precisely, they
+￿rst split the transactions into possible fragments and then
+analyze the dependencies between these fragments, while
+respecting existing dependencies between entire transac-
+tions. By this, they are able to achieve a higher degree of
+parallelism. In general, a design as proposed by these three
+papers allows to equip systems, that would otherwise follow
+a purely sequential execution, with a partial parallel exe-
+cution. In the context of blockchains, systems following an
+order-execute model could bene￿t from such a technique.
+Obviously, Fabric is not the right candidate for this method,
+as it already parallelizes the simulation phase by default.
+[17] aims at improving concurrency control from a low-
+level perspective. It proposes interesting optimizations to
+MVCC components such as timestamp allocation, version
+storage, validation, index management, and recovery. In the-
+ory, these techniques could be applied to the underlying
+storage system of Fabric. However, improving low-level com-
+ponents of Fabric will not improve the overall performance,
+which is largely dominated by top-level components han-
+dling cryptography, networking, and trust validation.
+Unfortunately, the techniques of class (1) are not suited to
+improve the transactional throughput of a blockchain sys-
+tem such as Fabric. We saw the reason for this in Figure 1
+in the introduction. For blank transactions, the concurrency
+control mechanism essentially has no work to do. For mean-
+ingful transactions, simulation and validation must be syn-
+chronized. Still, the throughput equals. This means, that a
+technique that directly a￿ects transactional processing, such
+as concurrency control, cannotlead to an improvement in
+throughput. Instead, the system is dominated by factors, that
+arenotdirectly related to transactional processing, such as
+cryptographical computations and networking. As a conse-
+quence, optimizations of class (1) are out of consideration.
+3.2 Class 2: Transaction Abort & Success
+[24] relates to our work, as it shares the same motivation:
+to reduce the amount of transactions, that are unnecessar-
+ily aborted due to serialization con￿icts. In the context of a
+local parallel database system implementing multi-version
+concurrency control (MVCC) [16,21,25,27], the authors
+propose to protect each frequently accessed entry addition-
+ally with a shared lock. The use of such a lock prevents
+unnecessary aborts due to read-write con￿icts between trans-
+actions accessing these hot entries. E￿ectively, this need to
+acquire a lock assures for potentially con￿icting transactions,
+that they commit in a non-con￿icting order. Unfortunately,
+=== PDF PAGE 5 ===
+this strategy is hardly applicable to the distributed trans-
+action processing model of Fabric. Since Fabric simulates
+and commits transactions in parallel on multiple nodes, this
+technique would require a trusted ￿ne-grained distributed
+locking service to synchronize accesses, causing excessive
+network communication and coordination e￿ort.
+In [28], the authors also aim at reducing the number of
+aborted transactions by in￿uencing the commit order. How-
+ever, they follow a completely di￿erent strategy than [24]:
+When a transactionTwants to commit and detects a read-
+write con￿ict with an already committed transaction, then
+it is not directly aborted. Instead, it is checked whether the
+commit time ofTcan be simply changed retrospectively to
+its begin time. If this change does not trigger a read-write,
+write-write, or a write-read con￿ict with another concurrent
+transaction, thenTis allowed to commit at its begin time.
+While this technique would be applicable in the ordering
+service of Fabric, its e￿ects would be highly limited. This
+is caused by the simplicity of the method which allows the
+commit time of a transaction to be changed only to its begin
+time, not to other possible points in time within the com-
+mit sequence. This wastes a lot of optimization potential. In
+contrast, our transaction reordering mechanism considers
+commit reordering for all transactions within a block and
+aims at ￿nding the best global order.
+The bene￿t of transaction reordering has also recently
+been studied in [11]. In the context of OLTP systems, the
+authors identify that the number of successful transaction
+can be improved by up to a factor of2.7x via reordering of
+transaction batches.
+Thus, class (2) methods, which aim at increasing the num-
+ber of successful transactions and clearing the ones that must
+be aborted, are the key for improving a blockchain system
+such as Fabric. Our optimizations of transaction reordering
+and early transaction abort fall into this class. In the fol-
+lowing section, we will elaborate the importance of these
+techniques in detail.
+4 BLURRED LINES: FABRIC VS
+DISTRIBUTED DATABASE SYSTEMS
+With an understanding of the work￿ow of Fabric, we are able
+to discuss its architecture in relation to distributed database
+systems. In particular, we are interested in aspects of Fabric,
+that are (a) conceptually shared with distributed database
+systems, but (b) have potential for the application of database
+technology.
+4.1 The Importance of Transaction Order
+The ￿rst component we look at is the ordering mechanism.
+Such a component is also present in any distributed database
+system with transaction semantics and therefore a great
+candidate for transitioning database technology to Fabric.
+As described in Section 2, Fabric relies on a single trustwor-
+thy ordering service for ordering transactions. Since Fabric
+simulates the smart contracts bound to proposalsbeforeper-
+forming the ordering, the order actually has an in￿uence on
+the number of serialization con￿icts between transactions.
+Again, this is a property shared with any parallel database
+system, that separates transaction execution from transac-
+tion commit.
+In ordering transactions, various di￿erent strategies are
+possible: The simplest option is to arbitrarily order them,
+for instance in the order in which they arrive. While this
+arrival order is fast to establish, it can lead to serialization
+con￿icts, that arepotentially unnecessary. These con￿icts
+increase the number of invalid transactions, which must be
+resubmitted by the client. Unfortunately, the vanilla Fabric
+follows exactly this naive strategy. This is caused by the
+design decision that the ordering service is not supposed to
+inspect the transaction semantics, such as the read and write
+set, in any way. Instead, it simply leaves the transactions in
+the order in which they arrive. This strategy can be problem-
+atic, as the example in Table 1 shows. In this example, four
+transactions are scheduled in the order in which they arrive,
+namelyT1)T2)T3)T4, whereT1updates the keyk1
+from version 1to 2. Since the transactionsT2,T3, andT4
+each readk1in version 1during their simulations, they
+have no chance to commit, as they operated on an outdated
+version of the value ofk1. They will be identi￿ed as invalid
+in the validation phase and the corresponding transaction
+proposals must be resubmitted by the client, resulting in a
+new round of simulation, ordering, and validation.
+Table 1: For the orderT1)T2)T3)T4, only one
+out of four transactions is valid:T2,T3, andT4read the
+outdated version 1of keyk1, that has been updated
+byT1to 2before.
+Transaction Read Set Write Set Is Valid?
+1.T1 — (k1, 1! 2⇒ X
+2.T2 (k1, 1⇒,(k2, 1⇒ (k2, 1! 2⇒ ⇥
+3.T3 (k1, 1⇒,(k3, 1⇒ (k3, 1! 2⇒ ⇥
+4.T4 (k1, 1⇒,(k3, 1⇒ (k4, 1! 2⇒ ⇥
+Interestingly, for the four transactions from the previous
+example, there exists an order that is con￿ict free. In the
+scheduleT4)T2)T3)T1, as shown in Table 2, all four
+transactions are valid, as their read and write sets do not
+con￿ict with each other in this order.
+This example shows that the vanilla orderer of Fabric
+misses a chance of removingunnecessaryserialization con-
+￿icts. While this problem is new to the blockchain domain,
+as blockchains typically o￿er only a serial execution of trans-
+actions, within the database community, this problem is actu-
+ally well known. There exist reordering mechanisms which
+aim at minimizing the number of serialization con￿icts via a
+=== PDF PAGE 6 ===
+Table 2: The orderT4)T2)T3)T1results in all
+four transactions being valid.
+Transaction Read Set Write Set Is Valid?
+1.T4 (k1, 1⇒,(k3, 1⇒ (k4, 1! 2⇒ X
+2.T2 (k1, 1⇒,(k2, 1⇒ (k2, 1! 2⇒ X
+3.T3 (k1, 1⇒,(k3, 1⇒ (k3, 1! 2⇒ X
+4.T1 — (k1, 1! 2⇒ X
+reordering of transactions [11,18,29,30]. However, in a data-
+base system, it is typically avoided to bu￿er a large number
+of incoming transactions before processing as low latency
+is mandatory. Thus, reordering is not always an option in
+such a setup. Fortunately, as blockchain systems bu￿er the
+incoming transactions anyways to group them into blocks,
+this gives us the opportunity to apply sophisticated transac-
+tion reordering mechanisms without introducing signi￿cant
+overhead.
+We will add such a transaction reordering mechanism to
+Fabric in Section 5.1, which signi￿cantly enhances the num-
+ber of valid transactions, that make it through the system.
+4.2 On the Lifetime of Transactions
+The second aspect we look at from a database perspective
+tackles the lifetime of transactions within the pipeline. In
+Fabric, every transaction that goes through the system is
+either classi￿ed as valid or as invalid with respect to the
+validation criteria. In the vanilla version, this classi￿cation
+happens in the validation phase right before the commit
+phase. A severe downside of this form oflate abortis that a
+transaction, that violated the validation criteria already in an
+earlier phase, is still processed and distributed across all peers.
+This penalizes the whole system with unnecessary work,
+throttling the performance of valid transactions. Besides,
+this concept also delays the abort noti￿cation to the client.
+We have to distinguish in which phase a violation hap-
+pens. First, a violation can occur already in the simulation
+phase, in form of so calledcross-block con￿icts, meaning a
+transaction from a later block, which is currently in the simu-
+lation phase, con￿icts with a valid transaction from an earlier
+block. Second, a violation can occur as well as in the ordering
+phase, in form ofwithin-block con￿ictsbetween con￿icting
+transactions in a single block.
+Let us look at these two scenarios in isolation in Sec-
+tion 4.2.1 and Section 4.2.2, respectively.
+4.2.1 Violation in the simulation phase (cross-block conflicts).
+To understand the problem in the simulation phase, let us
+look at the following situation and how the vanilla version of
+Fabric handles it. Let us assume there are four transactionsT1,
+T2,T3, andT4that are currently in the ordering phase and that
+end up in a block of size four, which is shipped to all peers for
+validation. Before the validation of that block starts within a
+peerP, the smart contract of a transaction proposalT5starts
+its simulation inP. To do so, it acquires a read lock1on the
+entirecurrent state. While the simulation is running, the
+block has to wait for the validation, as it has to acquire an
+exclusivewrite lock on the current state. The problem in this
+situation is: ifT1,T2,T3, orT4write the value of a key, that
+is read byT5, thenT5simulates on stale data. Therefore, in
+the moment of the read, the transaction becomes virtually
+invalid. Still, in the vanilla version of Fabric, this stale read
+is not detected before the validation phase ofT5. Thus,T5
+would continue its simulation and go through the ordering
+phase, just to be invalidated in the very end.
+4.2.2 Violation in the ordering phase (within-block conflicts).
+Apart from con￿icts across blocks, there can be con￿icts
+between transactions within a block. These con￿icts appear
+after putting the transactions into a particular order in the
+ordering phase. For instance, the example from Table 1 in Sec-
+tion 4.1 showed a schedule, where the three transactionsT2,
+T3, andT4individually con￿ict with the previously sched-
+uled transactionT1of the same block. Unfortunately, these
+con￿icts are not detected within the orderer of the vanilla
+version of Fabric. The block containingT2,T3, andT4would
+be distributed across all peers of the network for validation,
+although3/4of transactions within the block are virtually in-
+valid. As before, this originates from the design decision that
+the ordering service does not inspect transaction semantics.
+The mentioned situations show that Fabric misses several
+chances to abort transactions right at the time of violation. In
+contrast to that, database systems are typically very eager in
+aborting transactions [14], as it decreases network tra￿c and
+saves computing resources. This concept of "cleaning" the
+pipeline as early as possible is calledearly abortin the context
+of databases, which apply this concept in various ￿avors.
+For instance, besides of the early abort of transactions, that
+violate certain criteria, database systems eliminate records
+from the query result set as early as possible by pushing
+down selection and projection operations in the query plan.
+To overcome the mentioned problems, we will apply the
+concept of early abort at several stages of the transaction
+processing pipeline of Fabric. By this, we assure to utilize
+the available resources with meaningful work to the extend.
+We will detail this in Section 5.2.
+5 FABRIC++
+We have outlined the problems of Fabric and how they relate
+to key problems known in the context of database systems.
+Let us now see precisely how we counter them. First, in Sec-
+tion 5.1, we introduce a transaction reordering mechanism,
+that aims at minimizing the number of unnecessary within-
+block con￿icts. Second, in Section 5.2, we introduce early
+1The read lock can be shared by multiple simulation phases, as they do
+not modify the current state.
+=== PDF PAGE 7 ===
+transaction abort to several stages of the Fabric pipeline. This
+also involves the introduction of a ￿ne-grained concurrency
+control mechanism.
+5.1 Transaction Reordering
+When reordering a set of transactionsS, multiple challenges
+must be faced. First, we have to identify which transactions
+ofSactually con￿ict with each other with respect to the
+actions they perform. Again, these con￿icts can occur, as
+the transactions ofSsimulated in complete isolation from
+each other. As the commits ofShappen in a later phase,
+they had no chance to see each other’s potentially con￿ict-
+ing modi￿cations. Precisely, we have a con￿ict between two
+transactionsTiandTj(denoted asTi9Tj), ifTiwrites to
+a key that is read byTj. In this case,Timust be ordered
+afterTj(denoted asTj)Ti) to make the schedule serial-
+izable, as otherwise, the read ofTjwould be outdated. Un-
+fortunately, the problem is typically more complex ascycles
+of con￿ictscan occur, such that simple reordering cannot
+resolve the problem. For example, if we have the cycle of
+con￿ictsTi9Tj9Tk9Ti, there is no order of these three
+transactions that is serializable. Therefore, before reorder-
+ing transactions, our mechanism must actually ￿rst remove
+certain transactions ofSto form a cycle-free subsetS0✓S,
+from which a serializable schedule can be generated.
+From a high-level perspective, the following ￿ve steps
+must be carried out: (1) First, we build the con￿ict graph of
+all transactions ofS. (2) Then, we identify all cycles within
+this con￿ict graph. (3) Based on that, we identify for each
+transaction, in which cycles it occurs. (4) Next, we incremen-
+tally abort transactions occurring in cycles, starting from
+the ones that occur in most cycles, until all cycles are re-
+solved. (5) Finally, we build a serializable schedule from the
+remaining transactions. The pseudo-code of Algorithm 1
+implements these ￿ve steps.
+5.1.1 Example.To understand the principle and to discuss
+some of the implementation details, let us go through a con-
+crete example. Let us assume we have a setSof six transac-
+tionsT0toT5to consider for reordering. These six transac-
+tions have read and write sets as shown in Table 3. In total,
+they access ten unique keysK0toK9.
+Step (1): Based on this information, we now have to gen-
+erate the con￿ict graph of the transactions as done by the
+functionbuildConflictGraph()in line 4 of Algorithm 1. To
+do so in an e￿cient way, we interpret the rows of Table 3 as
+bit-vectors of length10. Let us refer to them as ecr(Ti⇒for
+the reading accesses and ecw(Ti⇒for the writing accesses
+of a transactionTi. For each transactionTi, we now perform
+a bitwise&-operation between ecr(Ti⇒and ecw(Tj⇒for all
+j,i. If the result of an&-operation is not0, we have identi-
+￿ed a read-write con￿ict and create an edge in the con￿ict
+graph between the corresponding transactions. As a result,
+1 funcreordering(Transaction[] S) {
+2 //Step1:Foreachtransaction inSbuildConflictGraph ()
+3 //inspects thereadandwritesetandbuildsaconflict graph.
+4 Graph cg = buildConflictGraph(S)
+5 //Step2:Withintheconflict graph,wehavetoidentify all
+6 //occurring cycles.Wedothatbydividing cgintostrongly
+7 //connected subgraphs usingTarjans algorithm [2]in
+8 //divideIntoSubgraphs ().
+9 Graph[] cg_subgraphs = divideIntoSubgraphs(cg)
+10 //Inastrongly connected graph,eachnodeisreachable from
+11 //everyothernode.Thisimplies thateachstrongly connected
+12 //subgraph ofcgwithmorethanonenodemustcontain atleast
+13 //onecycle.Weidentify thecycleswithinthesubgraphs using
+14 //Johnsons algorithm [1]ingetAllCycles().
+15 Cycle[] cycles = emptyList()
+16 foreach subgraph in cg_subgraphs:
+17 if(subgraph.numNodes() > 1):
+18 cycles.add(subgraph.getAllCycles())
+19 //Step3:Toremovethecyclesincg,wehavetoremove
+20 //conflicting transactions fromS.Toidentify the
+21 //transactions thatcausethemostproblems,foreach
+22 //transaction ofS,wecountinhowmanycyclesitoccurs.
+23 MaxHeap transactions_in_cycles = emptyMaxHeap()
+24 foreach Cycle c in cycles:
+25 foreach Transaction t in c:
+26 iftransactions_in_cycles.contains(t)
+27 transactions_in_cycles[t]++
+28 else
+29 transactions_in_cycles[t] = 1
+30 //Step4:LetusdefineS’asS.Wenowgreedily removethe
+31 //transaction fromS’thatoccursinmostcycles,untilall
+32 //cycleshavebeenresolved.
+33 Transaction[] S’ = S
+34 whilenotcycles.empty():
+35 Transaction t = transactions_in_cycles.popMax()
+36 S’.remove(t)
+37 foreach Cycle c in cycles:
+38 ifc.contains(t):
+39 c.remove(t)
+40 cycles.remove(c)
+41 foreach Transaction t’ in c:
+42 transactions_in_cycles[t’]--
+43 //Step5:FromS’wehavetoformtheactual serializable
+44 //schedule.Westartbybuilding the(cycle-free)conflict
+45 //graphofS’.
+46 Graph cg’ = buildConflictGraph(S’)
+47 //Compute schedule.Westartatsomenodeofthegraph,
+48 //thathasn tbeenvisited yet.
+49 Transactions[] order = emptyList()
+50 Node startNode = cg’.getNextNode()
+51 whileorder.length() < cg’.numNodes():
+52 addNode = true
+53 ifstartNode.alreadyScheduled():
+54 startNode = cg’.getNextNode()
+55 continue
+56 //Traverse upwards tofindasource
+57 foreach Node parentNode in startNode.parents():
+58 ifnotparentNode.alreadyScheduled():
+59 startNode = parentNode
+60 addNode = false
+61 break
+62 //Asourcehasbeenfound,soschedule itandtraverse
+63 //downwards.
+64 ifaddNode:
+65 startNode.scheduled()
+66 order.append(startNode)
+67 foreach Node childNode in startNode.children():
+68 ifnotchildNode.alreadyScheduled():
+69 startNode = childNode
+70 break
+71 returnorder.invert()
+72 }
+Algorithm 1:Reordering mechanism in pseudo code.
+=== PDF PAGE 8 ===
+Table 3: Ten unique keys that are accessed by six trans-
+actions, separated in read set and write set.
+Read Set
+Transactions K0 K1 K2 K3 K4 K5 K6 K7 K8 K9
+T0 1 1 0 0 0 0 0 0 0 0
+T1 0 0 0 1 1 1 0 0 0 0
+T2 0 0 0 0 0 0 1 1 0 0
+T3 0 0 1 0 0 0 0 0 1 0
+T4 0 0 0 0 0 0 0 0 0 1
+T5 0 0 0 0 0 0 0 0 0 0
+Write Set
+Transactions K0 K1 K2 K3 K4 K5 K6 K7 K8 K9
+T0 0 0 1 0 0 0 0 0 0 0
+T1 1 0 0 0 0 0 0 0 0 0
+T2 0 0 0 1 0 0 0 0 0 1
+T3 0 1 0 0 1 0 0 0 0 0
+T4 0 0 0 0 0 1 1 0 1 0
+T5 0 0 0 0 0 0 0 1 0 0
+we obtain the con￿ict graphC(S⇒of our six transactions as
+shown in Figure 3.
+T0
+T1
+T3
+T2
+T4
+T5
+T0
+T1
+T3
+T2
+T4
+T5
+Figure 3: Con￿ict graphC(S⇒of the transactions inS.
+Note that this algorithm has quadratic complexity on the
+number of transactions. Still, we apply it as the number of
+transactions to consider is very small in practice due to the
+limitation by the block size and therefore, the overhead is
+negligible.
+Step (2): To identify the cycles, we apply Tarjan’s algo-
+rithm [22] in the functiondivideIntoSubgraphs()in line 9
+to identify all strongly connected subgraphs. In general, this
+can be done in linear time inO(N+E⇒over the number
+of nodesNand number of edgesEand results in the three
+subgraphs as shown in Figure 4.
+Using Johnson’s algorithm [15], we then identify all cycles
+within the strongly connected subgraphs. Again, this step
+can be done in linear time inO((N+E⇒·(C+1⇒⇒, whereC
+is the number of cycles. Therefore, if there are no cycles in
+the subgraphs, the overhead of this step is very small.
+T0
+T1
+T3
+T2
+T4
+T5
+T0
+T1
+T3
+T2
+T4
+T5
+Figure 4: The three strongly connected subgraphs of
+the con￿ict graph of Figure 3.
+We identify that the ￿rst subgraph (colored in green) con-
+tains the two cyclesc1=T09T39T0andc2=T09T39
+T19T0. The second subgraph (colored in red) contains the
+cyclec3=T29T49T2. The third subgraph (colored in
+yellow) contains only one node and is thus cycle-free.
+Step (3): From this information, we can build a table de-
+noting for every transaction in which cycle it appears as
+shown in the lines 15 to 18 of Algorithm 1. Table 4 visualizes
+the result for our example. If a transactionTiis part of a
+cyclecj, the corresponding cell is set to1, otherwise0. The
+last row of the table sums up for every transaction in how
+many cycles it is contained in total.
+Table 4: If a transactionTiis a part of a cyclecj, the
+corresponding cell is set to 1, otherwise 0. The last row
+contains for every transaction the total number of cy-
+cles, in which it appears.
+Cycle T0 T1 T2 T3 T4 T5
+c1 1 0 0 1 0 0
+c2 1 1 0 1 0 0
+c3 0 0 1 0 1 0
+Õ 2 1 1 2 1 0
+Step (4): We now iteratively remove transactions, that
+participate in cycles, starting from the ones that appear in
+most cycles. The lines 33 to 40 of Algorithm 1 show the
+corresponding pseudo-code. As we can see,T0andT3both
+appear in two cycles, so we take care of them ￿rst. If we
+can choose between two transactions, such asT0andT3,
+we pick the one with the smaller subscript. This assures
+that our algorithm is deterministic. We removeT0, which
+clears all cycles in whichT0appears, namelyc1andc2. The
+transactionsT2andT4remain with a participation in cyclec3
+each. We removeT2which clearsc3and thereby the last
+cycle.
+From this we now know that from the
+setS0={T1,T3,T4,T5}we can generate a serializable
+schedule, leading to the cycle-free con￿ict graph C(S0⇒
+(line 46) as shown in Figure 5.
+T1
+T3 T4
+T5
+T0
+T1
+T3
+T2
+T4
+T5
+Figure 5: The cycle-free con￿ict graphC(S0⇒, contain-
+ing only the transactionsT1,T3,T4, andT5.
+Step (5): Generating the ￿nal schedule is essentially a
+repetitive execution of two parts until all nodes are scheduled:
+(a) the locating of the source node in the current subgraph
+(lines 53 to 61) and (b) the scheduling of all nodes that are
+reachable from that source (lines 64 to 70).
+We start part (a) at the node ofC(S0⇒representing the
+transaction with the smallest subscript, namelyT1. From
+this starting node, we have to ￿nd a source node, as sources
+=== PDF PAGE 9 ===
+have to be scheduled last.T1has two parents, namelyT3and
+T4, so it not a source. We follow the edge toT3, which has
+not been visited yet but is also not a source, as it hasT4as
+a parent as well. We follow the edge toT4, which has not
+been visited yet and which is a source. Therefore, we can
+scheduleT4safely at the last position in our schedule, to
+which we refer to asposition4. Now, part (b) starts as all
+nodes that are reachable fromT4must be scheduled before it.
+T4has two children, namelyT1andT3. We follow the edge
+toT1, which has not been scheduled yet. However, asT1has
+an incoming edge fromT3, we also cannot directly schedule
+it. First, we visitT3and identify that it has a parent in form
+ofT4, the source at which we started. With this information,
+we know thatT3must be scheduled at position3andT1
+must be scheduled at position2. This ends part (b), as all
+reachable nodes have been scheduled. Next, we restart at the
+only remaining nodeT5.A sT5is not only a source but also a
+sink, we can schedule it instantly at position1. This results
+in the ￿nal scheduleT5)T1)T3)T4, which is returned
+to the orderer.
+Please note that our reordering mechanism is not guaran-
+teed to abort a minimal number of transactions, as this would
+be a NP-hard problem. However, it o￿ers a very lightweight
+way to generate a serializable schedule with a small number
+of aborts.
+5.1.2 Batch Cu￿ing.In the context of transaction reorder-
+ing, we have to discuss and extend a mechanism within the
+ordering service, that we omitted for simplicity in the de-
+scription of Fabric in Section 2, namelybatch cutting. When
+the ordering service receives the transactions in form of a
+constant stream, it decides based on multiple criteria when
+to "cut" a batch of transactions to ￿nalize it and to form the
+block. In the vanilla version, a batch is cut as soon as one
+of the following three conditions hold: (a) The batch con-
+tains a certain number of transactions. (b) The batch has
+reached a certain size in terms of bytes. (c) A certain amount
+of time has passed since the ￿rst transaction of this batch
+was received.
+In Fabric++, we extend these criteria by one additional
+condition. We also cut the batch, if (d) the transactions within
+the batch access a certain number of unique keys. This condi-
+tion ensures that the runtime of our reordering mechanism,
+in particular the time of step (1), remains bounded.
+5.2 Early Transaction Abort using
+Advanced Concurrency Control
+The reordering mechanism previously described not only
+tries to minimize the number of unnecessary aborts, it also
+enables a form ofearly abort. Transactions, that are removed
+fromSbecause of their participation in con￿ict cycles can
+be aborted already in the ordering phase instead of later on
+the validation phase. This assures that less transactions are
+distributed across the network.
+In the following, we want to push this concept of aborting
+transactions as early as possible in the pipeline to the limits.
+Additionally to early aborting transactions that occur in con-
+￿ict cycles, we can integrate two more applications of early
+abort, as we will describe in Section 5.2.1 and Section 5.2.2.
+The ￿rst one is happening already in the simulation phase.
+Let us see in the following how this works.
+5.2.1 Early Abort in the Simulation Phase. To realize early
+abort in the simulation phase, we ￿rst have to extend Fabric
+by a more ￿ne-grained concurrency control mechanism, that
+allows for the parallel execution of simulation and validation
+phase within a peer. With such a mechanism at hand, we have
+the chance of identifying stale readsduringthe simulation
+already.
+To understand the concept, let us consider the example
+from Section 4.2.1 again. With a ￿ne-grained concurrency
+control mechanism, the block containingT1,T2,T3, andT4
+would not have to pend for validation while the smart con-
+tract bound to the proposalT5is simulating. Instead, the four
+transactions would apply their updates in an atomic fashion
+whileT5is simulating. As a consequence of this design, for
+every readT5performs, we can check whether the read value
+is still up-to-date. As soon as we detect a stale read, we can
+abort the simulation of the transaction proposal. Addition-
+ally, we directly notify the corresponding client about the
+abort, such that it can resubmit the proposal without delay.
+Let us discuss in the following, how exactly our ￿ne-
+grained concurrency control mechanism works and how
+we realize it in Fabric++. In the context of modern database
+systems, advanced concurrency control mechanisms are well
+established [16,19,21,23,24,27]. Instead of locking the en-
+tire store, these techniques typically perform a ￿ne-grained
+locking on the record level or even at the level of individual
+cells/values. As there is conceptually no di￿erence between
+the store of a database system and the store used within the
+Fabric peers, similar techniques can be applied here.
+simulation
+starts
+last-block-ID=4
+Validation Phase
+Simulation Phase
+update balA=50
+read balB=100 
+block-ID=5
+abort
+simulation
+Current State
+Ledger
+balA=(70,block-ID=4)
+balB=(80,block-ID=3)
+last-block-ID=4
+read balA=70
+block-ID=4✓
+balA=(70,block-ID=5)
+balB=(100,block-ID=5)
+✘
+block 5 validated
+last-block-ID=5
+update balB=100
+balA=(50,block-ID=5)
+balB=(80,block-ID=3)
+Figure 6: Parallelization with early abort using our
+￿ne-grained concurrency control.
+As discussed in Section 2, Fabric implements its current
+state in form of a key-value store, which maps each individual
+key to a pair of value and version-number. The version-
+number is actually composed of the ID of the transaction,
+that performed the update, as well as the ID of the block that
+=== PDF PAGE 10 ===
+contains the transaction. In the original version of Fabric,
+the sole purpose of the version-numbers is to identify stale
+reads. In the validation phase, for every transaction we check
+whether the version-number of the read value still matches
+the one in the current state.
+We can go one step further and exploit the available
+version-numbers to implement a lock-free concurrency con-
+trol mechanism protecting the current state. To do so, in
+Fabric++, we ￿rst remove the read-write lock, that was un-
+necessarily sequentializing simulation and validation phase.
+The version-number, that is maintained with each value, is
+su￿cient to ensure the same transaction isolation semantics
+as the vanilla version. As no lock is acquired anymore, we
+need a mechanism to ensure that updates performed by the
+validation phase are not seen by simulation phases running
+in parallel. To achieve this behavior, during simulation, we
+have to inspect the version-number of every read value and
+test whether it is still up-to-date.
+Figure 6 visualizes this concept using a concrete example.
+At the start of the simulation phase, we ￿rst identify the
+block-IDof the last block that made it into the ledger. Let us
+refer to thisblock-IDas thelast-block-ID. In our example,
+last-block-ID = 4. During the simulation of a smart con-
+tract bound to a transaction proposalTexec, no read must
+encounter a version-number containing ablock-IDhigher
+than thelast-block-ID. If it does see a higherblock-IDit
+means that during the simulation phase, a validated trans-
+actionT alidin the validation phase modi￿ed a value in the
+read set ofTexecand thus, the read set is outdated.
+In our example, the read ofbalA=70in the simulation
+phase happensbeforethe update ofbalAto50in the val-
+idation phase. This is re￿ected by the version-number of
+balA, namelyblock-ID = 4. Therefore, this read is up-to-
+date and the simulation continues. In contrast to that, the
+read ofbalBhappensafterthe update ofbalBto100in the
+validation phase. This is re￿ected by the version-number
+ofbalB, namelyblock-ID = 5 .A s5is higher than the
+last-block-ID = 4, we can directly classifyTexecas invalid,
+as the transaction will not have a chance to pass the valida-
+tion phase later on. Please note that the overall correctness
+of our lock-free mechanism is ensured by the atomic updates
+of the version-numbers.
+5.2.2 Early Abort in the Ordering Phase. In addition to the
+early abort in the simulation phase, as explained in Sec-
+tion 5.2.1, we can transition a similar concept also to the
+ordering phase. As Fabric performs commits at the gran-
+ularity of whole blocks, two transactions within the same
+block, that read the same key, must read the same version
+of that key. For example, let us consider two transactionsT6
+andT7, whereT6is ordered beforeT7within the same block
+(T6)T7). IfT6read version 1of a keykandT7read ver-
+sion 2ofkin their respective simulations, thenT7is invalid.
+Such a version mismatch can happen, if between the simula-
+tions ofT6andT7a change to the value ofkwas committed
+by a valid transaction from a previous block. Therefore, as
+soon as we detect a version mismatch between transactions
+within the same block, we can early abort the latter transac-
+tion. Again, this strategy assures that only those transactions
+end up in a block, that have a realistic chance of commit.
+6 EXPERIMENTAL EV ALUATION
+In the previous section, we have extended and modi￿ed core
+components of Fabric in several ways, turning it into Fab-
+ric++. It is now time to evaluate the modi￿cations in terms of
+e￿ectiveness. Primarily, we are interested in the throughput
+of valid/successful and invalid/failed transactions, that make
+it through the system. Secondarily, we are interested on the
+in￿uence of certain system con￿gurations and the workload
+characteristics on the system.
+6.1 Setup
+Before starting with the actual experiments, let us discuss
+the setup. Our cluster consists of six identical servers, that
+are located within the same rack and connected via gigabit-
+ethernet. Four machines serve as peers, one machine runs the
+ordering service, and one machine serves as the client, which
+￿res transaction proposals. Each server consists of two quad-
+core Intel Xeon CPU E5-2407 (SandyBridge architecture)
+running at2.2GHz with32KB of L1 cache,256KB of L2
+cache, and10MB of a shared L3 cache.24GB of DDR3 ram
+are attached to each of the two NUMA regions. The operating
+system used is a 64-bit Arch Linux with kernel version4.17.
+Fabric is set up to use LevelDB as the current state database.
+6.2 Benchmark Framework and Workload
+In the database community, there exist numerous established
+benchmarking suites and workloads that can be used to test
+and to compare systems, such as TPC-C [3], TPC-H [4], or
+YCSB [5]. Unfortunately, since blockchains are still a rela-
+tively young ￿eld, there exist only very few benchmarks
+with standardized workloads.
+6.2.1 Framework.First, we have to identify a framework
+that can be used to run a workload against Fabric. There
+are essentially three options available right now: Caliper [6],
+Gauge [7], and BlockBench [12]. Caliper feels like a natu-
+ral candidate, as it originates from the Hyperledger project
+just like Fabric. While it is compatible with Fabric 1.2, it
+su￿ers from certain limitations: it supports only a single
+channel, it supports only one transaction type per run, it
+￿res transactions non-uniformly with respect to time, and it
+is prone to failing with missed events at high ￿ring rates [8].
+As a consequence, Gauge was forked from Caliper, which
+addresses some of these problems. Unfortunately, it lacks
+Correction:
+Actually, T6 becomes invalid in this example, not T7. Thus, the 
+former transaction is early aborted, not the latter.
+=== PDF PAGE 11 ===
+compatibility with Fabric 1.2. The same incompatibility holds
+for BlockBench.
+As none of the available frameworks is fully satisfying and
+since the framework is just a tool for running experiments,
+we decided to build our own benchmarking framework. It al-
+lows us to ￿re transaction proposals uniformly at a speci￿ed
+rate from multiple clients in multiple channels and reports
+the throughput of successful and aborted transactions per
+second. We use our framework for all main experiments in
+the upcoming evaluation. Still, we include an experimental
+run on Caliper with a compatible workload in Section 6.7 to
+ease for other groups the comparison with our work.
+6.2.2 Workload.In the following experiments, we use two
+di￿erent types of workloads.
+The ￿rst one is the Smallbank [9] workload, which is per-
+fectly suited to test a blockchain system, as it simulates a
+typical asset transfer scenario. Initially, it creates for a certain
+number of users a checking account and a savings account
+each and initializes them with random balances. The work-
+load consists of six transactions, where ￿ve of them update
+the account balances in certain ways:TransactSavingsand
+DepositCheckingincrease the savings account and the check-
+ing account by a certain amount respectively.SendPayment
+transfers money between two checking accounts.WriteCheck
+decreases a checking account, whileAmalgamatetransfers all
+funds from a savings account to a checking account. Addi-
+tionally, there is a read-only transactionQuery, which reads
+both the checking as well as the savings account of a user.
+During a single run, we repeatedly ￿re these six transactions
+in a random fashion, where we uniformly pick one of the
+￿ve modifying transactions with a certain probabilityPw,
+and the reading transaction with a probability1 Pw. For
+each picked transaction, we determine the accounts to access
+by following a Zip￿an distribution, which we can con￿gure
+in terms of skewness by setting the s-value. Note that an
+s-value of0corresponds to a uniform distribution.
+Our second workload consists solely of a single, highly
+con￿gurable transaction, which performs a certain num-
+ber of read and write accesses on a set of account balances.
+Initially, we create a certain number of accounts (N), each
+initialized with a random integer. Our transaction performs a
+certain number of reads and writes (RW) on a subset of these
+accounts. Among the accounts, there exist a certain number
+of hot accounts (HSS), that are picked for a read respectively
+write access with a higher probability. This probability for
+picking a hot account for reading (HR) respectively for writ-
+ing (HW) can also be con￿gured.
+In a single run, we ￿re a constant stream of transactions
+for a certain amount of time at a certain ￿ring rate. In the
+following experiments, we ￿x the experimental and system
+con￿guration to the parameters as shown in Table 5. We
+identi￿ed these parameter values empirically with the goal
+to ￿nd a con￿guration, that sustains the system without
+overloading it.
+Table 5: Experiment and system con￿guration.
+Experiment Parameters Values
+Fired transaction proposals per second per client 512
+Duration in which transaction proposals are ￿red 90 sec
+Number of channels 1
+Number of clients per channel 4
+System Parameters Values
+Maximum time to form a block 1 sec
+Maximum number of keys accessed per block 16384
+Maximum size per block 2MB
+Maximum number of transactions per block (BS) 1024 (see Section 6.3)
+6.3 The Impact of the Blocksize
+We start our evaluation by investigating the e￿ect of the
+blocksize on Fabric and Fabric++. By default, Fabric’s sample
+network limits the blocksize to only up to 10 transactions.
+In the following experiment, we vary the blocksize from16
+transactions to2048transactions in logarithmic steps and
+observe the impact on the number of successful transac-
+tions. As workload, we test Smallbank as de￿ned above with
+100,000users under a write heavy workload withPw=95%,
+and a uniform distribution withs-value=0. Figure 7 shows
+the average number of successful transactions per second
+over the entire run of90seconds.
+Avg. Successful Transactions per second
+0
+200
+400
+600
+800
+1000
+1200
+16 32 64 128 256 512 1024 2048
+Fabric Fabric++ (reordering & early abort)
+Blocksize [Number of Transactions]
+Figure 7: E￿ect of the blocksize on the average number
+of successful transactions under Fabric and Fabric++.
+As we can see, increasing the blocksize also increases the
+throughput of successful transactions for both Fabric and
+Fabric++. This is due to the fact, that the usage of larger
+blocks causes less network communication. Obviously, Fab-
+ric’s default setting of10transactions per block is clearly too
+small and severely limits the throughput. We can also ob-
+serve, that Fabric++ gains more over Fabric with an increase
+in the blocksize. This already gives us a ￿rst impression of the
+e￿ectiveness of our reordering mechanism, which bene￿ts
+from larger blocks. As we aim for a high overall through-
+put, for the remaining experiments, we use a blocksize of
+1024transactions.
+=== PDF PAGE 12 ===
+6.4 Transactional Throughput
+Let us now test Fabric and Fabric++ under probably the most
+important criterium for a transaction processing system,
+namely the throughput of successful transactions.
+6.4.1 Throughput under Smallbank. First, as workload, we
+use Smallbank as de￿ned in Section 6.2.2 and con￿gure it
+as shown in Table 6. Again, we initialize100,000users, each
+equipped with a checking account and a savings account.
+However, this time we vary the probability of picking a mod-
+ifying transaction over the reading transaction in three steps:
+We testPw=95%(write-heavy),Pw=50%(balanced), and
+Pw=5%(read-heavy). Further, we vary the skewness of the
+Zipf distribution, that is used to select the accounts: We go
+from ans-value=0.0(uniform) to ans-value=2.0(highly
+skewed) in steps of0.2. Table 6 summarizes the con￿guration
+again.
+Table 6: Smallbank workload con￿guration.
+Workload Parameters Values
+Number of users (two accounts per user) 100,000
+Probability for picking a modifying transactions (Pw) 95%, 50%, 5%
+s-value of Zipf distribution 0.0–2.0in steps of0.2
+In Figure 8, we can see the results. We show one plot
+each for the read-heavy, balanced, and write-heavy work-
+load. Within each plot, on the x-axis, we vary the s-value as
+described and report on the y-axis the average number of
+successful transactions per second over the run. Overall, we
+can see that Fabric++ shows a higher throughput of success-
+ful transactions for all tested runs. We can observe, that for
+little to no skew (up to an s-value of 0.6), the throughput of
+both Fabric and Fabric++ is relatively high, as the number of
+potential con￿icts between transactions is small by default.
+Still, we see that with around1000successful transactions
+per second, the throughput of Fabric++ is a bit higher than
+for Fabric with around900transactions, which is mainly
+caused by cleaning the pipeline from transactions, that have
+no chance to commit. For higher skew (s-value 1.0), we
+can see that Fabric++ drastically improves over Fabric, espe-
+cially for the balanced and write-heavy workloads. For an s-
+value of1.0, we observe improvement factors between1.15x
+and1.37x, while for an s-value of2.0, Fabric++ shows an
+improvement between2.68x and12.61x. High skew in the ac-
+cess leads to a large number of potential con￿icts, which can
+be resolved by our optimizations. For such a high contention,
+our optimizations make the di￿erence between a system, that
+is essentially jammed (30 successful transactions per second
+for Fabric underPw=95%,s-value=2.0) and a system, that
+￿uently processes transactions (370 successful transactions
+per second for Fabric++ underPw=95%,s-value=2.0).
+6.4.2 Throughput under custom workload. Let us now inves-
+tigate the throughput under our custom workload. Again,
+we use the experimental con￿guration as well as the system
+con￿guration of Table 5. We con￿gure our workload such
+that we useN=10,000accounts. We test bothRW=4
+andRW=8read and write accesses per transaction. The
+probability of picking a hot account for reading is varied
+betweenHR=10%,HR=20%, andHR=30%. The proba-
+bility of picking a hot account for a writing access is varied
+fromHW=5%toHW=10%. Additionally, we vary the
+number of hot accounts fromHSS=1%overHSS=2%to
+HSS=4%from the total number of accounts. In total, we
+test36con￿gurations, which are summarized in Table 7.
+Table 7: Custom workload con￿guration.
+Workload Parameters Values
+Number of account balances (N) 10,000
+Number of read & written balances per transaction (RW) 4, 8
+Probability for picking a hot account for reading (HR) 10%, 20%, 40%
+Probability for picking a hot account for writing (HW) 5%, 10%
+Number of hot account balances (HSS) 1%, 2%, 4%
+Figure 9 shows the results. We can see that Fabric++ signif-
+icantly increases the throughput of successful transactions
+over Fabric for all tested con￿gurations. The largest improve-
+ment of Fabric++ over Fabric in terms of successful transac-
+tions we observe is around factor 3x for the con￿guration
+BS=1024, RW=8, HR=40%, HW=10%, HSS=1%.
+6.4.3 Observations.We observe a signi￿cant decrease in the
+throughput of the successful transactions with the increase
+in the hotness of the transactions in both workloads. Each
+blockbiroughly updates every hot key. This forces most of
+the transactions in the next blockbi+1to abort because of
+read-write con￿icts. In comparison to Fabric, which su￿ers
+heavily from this scenario, Fabric++ reorders the transactions
+within the block to remove the within-block con￿icts to
+improve the overall throughput of successful transactions.
+Fabric++ is also capable of improving the throughput of
+successful transactions signi￿cantly under workloads (Small-
+bank) which read and modify the same set of keys. Fabric++
+prefers to select more transactions that access fewer keys
+rather than selecting fewer transactions with large number
+of accesses to improve the end-to-end throughput of success-
+ful transactions (as shown in Figure 8). For the workload that
+potentially has a non-overlapping read and write sets, Fab-
+ric++ is able to re-organize the transaction block to minimize
+the number of unnecessary aborts (as shown in Figure 9).
+6.5 Optimization Breakdown
+In Section 6.4, we measured the throughput of Fabric++ with
+both optimizations activated. Let us now see at a sample
+con￿guration, how much the individual optimizations of
+=== PDF PAGE 13 ===
+(a)Pw=5%(read-heavy)
+ (b)Pw=50%(balanced)
+ (c)Pw=95%(write-heavy)
+Figure 8: Average number of successful transactions per second of Fabric and Fabric++ under the Smallbank work-
+load, as de￿ned in Table 6.
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HW: 5% HW: 10% HW: 10% HW: 10%HW: 5% HW: 5%
+HR: 10% HR: 20% HR: 40%
+RW: 4
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HSS: 1%
+HSS: 2%
+HSS: 4%
+HW: 5% HW: 10% HW: 10% HW: 10%HW: 5% HW: 5%
+HR: 10% HR: 20% HR: 40%
+RW: 8
+Fabric Fabric++ (reordering & early abort)
+Avg. Successful Transactions per second
+Figure 9: Average number of successful transactions per second of Fabric and Fabric++ under 36 di￿erent con￿gu-
+rations, as de￿ned in Table 7. We vary the number of read & written balances per transaction (RW), the probability
+for picking a hot account for reading (HR) and writing (HW), and the number of hot account balances (HSS).
+reordering and early abort contribute to the improvement.
+Figure 10 shows the improvement breakdown for the con-
+￿guration BS=1024, RW=8, HR=40%, HW=10%, HSS=1% in
+comparison to standard Fabric. While Fabric achieves only
+a throughput of around100successful transactions per sec-
+ond, activating one of our two optimization techniques alone
+improves this to around150transactions per second. In com-
+parison to that, activating both techniques at the same time
+results in the highest throughput of successful transactions
+with around220transactions per second. This shows nicely
+how both techniques work together: Transactions, that are
+already early aborted in the simulation phase do not end
+up in a block in the ordering phase. As a consequence, only
+transactions, that have a realistic chance of being successful,
+are considered in the reordering process.
+6.6 Scaling Channels and Clients
+In all of our previous experiments we used four clients to ￿re
+transactions on a single channel. We now vary the number
+of channels, and the number of clients to see the e￿ect on
+the throughput. We use the con￿guration BS=1024, RW=8,
+HR=40%, HW=10%, HSS=1% to evaluate the average through-
+put of successful transactions for Fabric and Fabric++.
+Successful Transactions per second
+0
+50
+100
+150
+200
+250
+Fabric
+Fabric++ (only reordering)
+Fabric++ (only early abort)
+Fabric++ (reordering & early abort)
+Figure 10: Breakdown of the individual impact of
+our optimizations on the throughput of successful
+transactions for the con￿guration BS=1024, RW=8,
+HR=40%, HW=10%, HSS=1%.
+First, we vary the number of channels in Figure 11(a) from
+1to8. Per channel, we use2clients to ￿re transaction propos-
+als. We can see that when going from1channel to4channels,
+the throughput of both Fabric and Fabric++ signi￿cantly in-
+creases. Obviously, the additional mechanisms of Fabric++
+do not harm the scaling with the number of channels. Only
+when using8channels, the throughput decreases again for
+=== PDF PAGE 14 ===
+Successful Transactions per second
+0
+100
+200
+300
+400
+1 2 4 8
+Fabric Fabric++ (reordering & early abort)
+Number of channels
+(a)Varying the number of channelsfrom 1 to 8. Per channel, we
+use 2 clients to ￿re the transaction proposals.Successful Transactions per second
+0
+50
+100
+150
+200
+250
+1 2 4 8
+Number of clients per channel
+(b)Varying the number of clients per channelfrom 1 to 8. All
+clients ￿re their transaction proposals in a single channel.
+Figure 11: The impact of the number of channels as
+well as the number of clients per channel on the
+throughput of successful transactions for the con￿g-
+uration BS=1024, RW=8, HR=40%, HW=10%, HSS=1%.
+both Fabric and Fabric++. This is simply the case because
+individual channels start competing for resources. This also
+increases the number of failed transactions: Scaling from1to
+8channels increases the number of failed transactions from
+213TPS to837TPS for Fabric and from81TPS to704TPS for
+Fabric++. Due to the competition for resources, individual
+simulations phase take longer and increase the chance of
+working on stale data.
+After varying the number of channels, let us now vary the
+number of clients per channel in Figure 11(b). We test1,2,4,
+and8clients, where all clients ￿re their transaction proposals
+into a single channel. Here, the picture is a slightly di￿erent
+to the behavior when scaling channels. The throughput of
+Fabric increases very gently with the number of clients, and
+we see an improvement from around60to105successful
+transactions per seconds when going from1to8clients. For
+Fabric++, we see the highest throughput with around205
+successful transactions per second already for2clients. For
+8clients, the throughput drops by around factor2to the
+throughput of Fabric, clearly showing that the ￿ring clients
+also compete for resources. This is also visible in an increase
+in failed transactions when going from1to8clients per
+channel, which increase from86TPS to928TPS for Fabric
+and from20TPS to841TPS for Fabric++.
+6.7 Hyperledger Caliper
+For completeness, let us ￿nally see how Fabric and Fabric++
+perform under a run of the Hyperledger Caliper benchmark-
+ing framework. As said, Caliper severely struggles with high
+transaction ￿ring rates, so we cannot use the con￿guration of
+Table 5 as before. Instead, we ￿re at a lower rate of150trans-
+actions per second per client, resulting in600transactions
+per second in total. As a consequence of this low ￿ring rate,
+we also tune down the block size to512transactions. We test
+our custom workload withN=10000,RW=4,HR=40%,
+HW=10%, HSS=1%. Table 8 shows the results.
+Table 8: Latency and Throughput as measured by
+Caliper for Fabric and Fabric++.
+Metric Fabric Fabric++
+Max. Latency [seconds] 1.44 1.14
+Min. Latency [seconds] 0.26 0.12
+Avg. Latency [seconds] 0.47 0.28
+Avg. Successful Transactions per second 188 299
+Interestingly, Caliper also produces latency numbers ad-
+ditionally to the measured throughput of successful trans-
+actions. We can see that the average latency of Fabric++ is
+almost half the latency of the vanilla Fabric. As less virtu-
+ally invalid transactions trash the pipeline in Fabric++, valid
+transactions can commit earlier. The run of Caliper also con-
+￿rms our ￿ndings on the throughput: Fabric++ signi￿cantly
+increases the number of successful transactions per second.
+7 CONCLUSION
+In this work, we identi￿ed strong similarities of the transac-
+tion pipeline of contemporary blockchain systems at the case
+of Hyperledger Fabric and distributed database systems in
+general. We analyzed these similarities in detail and exploited
+them to transition mature techniques from the context of
+database systems to Fabric, namely transaction reordering
+to remove serialization con￿icts as well as early abort of
+transactions, that have no chance to commit. In an extended
+experimental evaluation, where we tested Fabric++ and the
+vanilla version under the Smallbank benchmark as well as
+under a custom workload, we show that Fabric++ is able
+to signi￿cantly outperform Fabric by up to a factor of12x
+for the number of successful transactions per second. Fur-
+ther, we are able to almost half the transaction latency, while
+keeping the scaling capabilities of the system intact.
+8 ACKNOWLEDGEMENT
+This work was funded by the German Research Foundation
+(DFG) via the collaborative research center “Methods and
+Tools for Understanding and Controlling Privacy” (SFB 1223).
+=== PDF PAGE 15 ===
+REFERENCES
+[1]2019. https://bitcoin.org/bitcoin.pdf
+[2]2019. https://github.com/ethereum/wiki/wiki/White-Paper
+[3]2019. http://www.tpc.org/tpcc/
+[4]2019. http://www.tpc.org/tpch/
+[5]2019. https://github.com/brianfrankcooper/YCSB
+[6]2019. https://github.com/hyperledger/caliper
+[7]2019. https://github.com/persistentsystems/gauge
+[8]2019. https://github.com/persistentsystems/gauge/blob/master/docs/
+caliper-changes.md
+[9]2019. http://hstore.cs.brown.edu/documentation/deployment/
+benchmarks/smallbank/
+[10]Elli Androulaki, Artem Barger, Vita Bortnikov, et al.2018. Hyperledger
+fabric: a distributed operating system for permissioned blockchains.
+InEuroSys 2018, Porto, Portugal, April 23-26. 30:1–30:15. https://doi.
+org/10.1145/3190508.3190538
+[11]Bailu Ding, Lucja Kot, and Johannes Gehrke. 2018. Improving Opti-
+mistic Concurrency Control Through Transaction Batching and Oper-
+ation Reordering.PVLDB12, 2 (2018), 169–182. http://www.vldb.org/
+pvldb/vol12/p169-ding.pdf
+[12]Tien Tuan Anh Dinh, Rui Liu, Meihui Zhang, Gang Chen, Beng Chin
+Ooi, and Ji Wang. 2018. Untangling Blockchain: A Data Processing
+View of Blockchain Systems.IEEE Trans. Knowl. Data Eng.30, 7 (2018),
+1366–1385. https://doi.org/10.1109/TKDE.2017.2781227
+[13]Jose M. Faleiro, Daniel Abadi, and Joseph M. Hellerstein. 2017. High
+Performance Transactions via Early Write Visibility.PVLDB10, 5
+(2017), 613–624. https://doi.org/10.14778/3055540.3055553
+[14]Zhengyu He and Bo Hong. 2009. Impact of early abort mechanisms
+on lock-based software transactional memory. In16th International
+Conference on High Performance Computing, HiPC 2009, December 16-
+19, 2009, Kochi, India, Proceedings. 225–234. https://doi.org/10.1109/
+HIPC.2009.5433207
+[15]Donald B. Johnson. 1975. Finding All the Elementary Circuits of a
+Directed Graph.SIAM J. Comput.4, 1 (1975), 77–84. https://doi.org/
+10.1137/0204007
+[16]Per-Åke Larson, Spyros Blanas, Cristian Diaconu, Craig Freedman,
+Jignesh M. Patel, and Mike Zwilling. 2011. High-Performance Concur-
+rency Control Mechanisms for Main-Memory Databases.PVLDB5, 4
+(2011), 298–309.
+[17]Hyeontaek Lim, Michael Kaminsky, and David G. Andersen. 2017.
+Cicada: Dependably Fast Multi-Core In-Memory Transactions. InPro-
+ceedings of the 2017 ACM International Conference on Management
+of Data, SIGMOD Conference 2017, Chicago, IL, USA, May 14-19, 2017.
+21–35. https://doi.org/10.1145/3035918.3064015
+[18]Gang Luo, Je￿rey F. Naughton, Curt J. Ellmann, and Michael Watzke.
+2010. Transaction reordering.Data Knowl. Eng.69, 1 (2010), 29–49.
+https://doi.org/10.1016/j.datak.2009.08.007
+[19]Thomas Neumann, Tobias Mühlbauer, and Alfons Kemper. 2015. Fast
+Serializable Multi-Version Concurrency Control for Main-Memory
+Database Systems. InSIGMOD 2015, Melbourne, Victoria, Australia,
+May 31 - June 4. 677–689. https://doi.org/10.1145/2723372.2749436
+[20]Thamir M. Qadah and Mohammad Sadoghi. 2018. QueCC: A Queue-
+oriented, Control-free Concurrency Architecture. InProceedings of
+the 19th International Middleware Conference, Middleware 2018, Rennes,
+France, December 10-14, 2018. 13–25. https://doi.org/10.1145/3274808.
+3274810
+[21]Ankur Sharma, Felix Martin Schuhknecht, and Jens Dittrich. 2018. Ac-
+celerating Analytical Processing in MVCC using Fine-Granular High-
+Frequency Virtual Snapshotting. InSIGMOD 2018, Houston, TX, USA,
+June 10-15, 2018. 245–258. https://doi.org/10.1145/3183713.3196904
+[22]Robert Endre Tarjan. 1972. Depth-First Search and Linear Graph
+Algorithms.SIAM J. Comput.1, 2 (1972), 146–160. https://doi.org/10.
+1137/0201010
+[23]Tianzheng Wang, Ryan Johnson, Alan Fekete, and Ippokratis Pandis.
+2017. E￿ciently making (almost) any concurrency control mechanism
+serializable.The VLDB Journal26, 4 (01 Aug 2017), 537–562. https:
+//doi.org/10.1007/s00778-017-0463-8
+[24]Tianzheng Wang and Hideaki Kimura. 2016. Mostly-Optimistic Con-
+currency Control for Highly Contended Dynamic Workloads on a
+Thousand Cores.PVLDB10, 2 (2016), 49–60. http://www.vldb.org/
+pvldb/vol10/p49-wang.pdf
+[25]Yingjun Wu, Joy Arulraj, Jiexi Lin, Ran Xian, and Andrew Pavlo. 2017.
+An Empirical Evaluation of In-Memory Multi-Version Concurrency
+Control.PVLDB10, 7 (2017), 781–792. https://doi.org/10.14778/
+3067421.3067427
+[26]Chang Yao, Divyakant Agrawal, Gang Chen, Qian Lin, Beng Chin Ooi,
+Weng-Fai Wong, and Meihui Zhang. 2016. Exploiting Single-Threaded
+Model in Multi-Core In-Memory Systems.IEEE Trans. Knowl. Data Eng.
+28, 10 (2016), 2635–2650. https://doi.org/10.1109/TKDE.2016.2578319
+[27]Xiangyao Yu, George Bezerra, Andrew Pavlo, Srinivas Devadas, and
+Michael Stonebraker. 2014. Staring into the Abyss: An Evaluation of
+Concurrency Control with One Thousand Cores.PVLDB8, 3 (2014),
+209–220.
+[28]Yuan Yuan, Kaibo Wang, Rubao Lee, Xiaoning Ding, Jing Xing, Spyros
+Blanas, and Xiaodong Zhang. 2016. BCC: Reducing False Aborts in Op-
+timistic Concurrency Control with Low Cost for In-Memory Databases.
+PVLDB9, 6 (2016), 504–515. https://doi.org/10.14778/2904121.2904126
+[29]Bo Zhang, Binoy Ravindran, and Roberto Palmieri. 2015. Reducing
+Aborts in Distributed Transactional Systems through Dependency
+Detection. InProceedings of the 2015 International Conference on Dis-
+tributed Computing and Networking, ICDCN 2015, Goa, India, January
+4-7, 2015. 13:1–13:10. https://doi.org/10.1145/2684464.2684475
+[30]Ningnan Zhou, Xuan Zhou, Xiao Zhang, et al .2017. Reordering
+Transaction Execution to Boost High-Frequency Trading Applica-
+tions.Data Science and Engineering2, 4 (2017), 301–315. https:
+//doi.org/10.1007/s41019-017-0054-0
+A HYPERLEDGER FABRIC: A RUNNING
+EXAMPLE
+In the following, the interested reader ￿nds a complete run-
+ning example of Fabric’s work￿ow in Figure 12 (simulation
+phase), Figure 13 (ordering phase), and Figure 14 (validation
+and commit phase), where two organizationsAandBwant
+to transfer money between each other.
+Each organization contributes two peers to the network.
+The balances of the organizations are stored by two variables
+BalAandBalB, whereBalAstores the value100in its current
+version 3andBalBstores50in version 2. We can also see
+that the ledger already contains six transactionsT1toT6,
+where the four transactionsT1,T2,T4, andT6were valid ones
+and lead to the current state. The transactions T3andT5
+were invalid transactions. They are still stored in the ledger,
+although they did not pass the validation phase.
+A.1 Simulation Phase
+Transaction processing starts with thesimulationphase in
+Figure 12. Instep1, a client proposes atransaction proposal
+=== PDF PAGE 16 ===
+(or shortproposal) to the system. In our example, the pro-
+posal intends to transfer the amount of30fromBalAtoBalB.
+The two involved operationsBalA-=30andBalB+=30are ex-
+pressed in a smart contract2, an arbitrary program, that is
+bound to the proposal. Additionally to the smart contract, an
+endorsement policy must be speci￿ed. It determines which
+and/or how many peers have to endorse the proposal. In our
+example of money transfer between two organizations, a rea-
+sonable endorsement policy is to request endorsement from
+one peer of each organization — like two lawyers, preserving
+and defending the individual rights of their clients.
+Peer A1
+BalA=(100,v3)
+BalB=(50,v2)
+Peer B1Client
+1 2
+3
+3
+4
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1
+T1T2T3
+Peer A2
+Peer B2
+Transaction Proposal
+Simulate 
+BalA-=30 BalB+=30
+Endorsement: A&B
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigB1
+Endorsement of A1
+Endorsement of B1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1, SigB1
+Transaction T7
+T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+Figure 12: simulation phase.
+Therefore, instep2, the proposal is sent to the two en-
+dorsement peersA1andB1according to the policy. These
+two peers now individually simulate the smart contract
+(BalA-=30,BalB+=30), that is bound to the proposal, against
+their local current state. Note that, as the name suggests, the
+simulation of the smart contract against the current state
+doesnot changethe current state in any way. Instead, each
+endorsement peer builds an auxiliary read setRSand a write
+setWSduring the simulation to keep track of all accesses that
+happen. In our case of money transfer over the amount of30,
+the smart contract ￿rst reads the two current balancesBalA
+andBalBalong with their current version-numbers. Second,
+the smart contract updates the two balances according to the
+transferred amount, resulting in the new balancesBalA=70
+andBalB=80. Overall, this builds the following read and
+write set:
+RS={(BalA, 3⇒,(BalB, 2⇒}WS={BalA=70,BalB=80}
+In this sense, the simulation of the smart contract is actually
+only a monitoring of the execution e￿ects. The reason for
+performing only a simulation is that in this phase, we can-
+not be sure yet whether this transaction will be allowed to
+commit eventually – this check will be performed later in
+the validation phase.
+After the simulation of the smart contract on all endorse-
+ment peers, instep3, the endorsement peers return their
+individually computed read and write sets to the client, that
+2Smart contracts are typically calledchaincodesin Fabric. However, as
+they do not conceptually di￿er from smart contracts in blockchain systems
+such as Ethereum, we stick to this term throughout the paper.
+sent the transaction proposal. Additionally, they return a
+signature of their simulation, that will be relevant in the
+validation phase in Section A.3. If all read sets and write sets
+match3, instep4, the actualtransaction(calledT7in the
+following) is formed from the results of the endorsement.
+This transactionT7now contains the e￿ects of the execution
+in form of the read and write set as well as all signatures and
+can be passed on to the ordering service.
+A.2 Ordering Phase
+As mentioned, the central component of theorderingphase is
+the ordering service, that we visualize in Figure 13. It receives
+all transactions, that made it through the simulation phase.
+Consequently, it receives instep5our transactionT7, that
+we followed through the simulation phase in Section A.1. In
+step6, we assume that it also receives two other transac-
+tionsT8andT9, that were endorsed in parallel toT7.
+Peer A1
+BalA=(100,v3)
+BalB=(50,v2)
+Peer B1
+T1T2T3
+Peer A2
+Peer B2
+T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+BalA=(100,v3)
+BalB=(50,v2)
+T1T2T3T4T5T6
+Ordering  
+Service
+5
+6
+6
+Client
+Client
+Client
+T7
+T8
+T9
+T8T7T9
+7
+8
+9
+T8T7T9
+T8T7T9
+9T8T7T9
+8
+Figure 13: Ordering Phase.
+The ordering service now has the sole purpose of estab-
+lishing a global order among the transactions. It treats the
+transactions in a black box fashion and does not inspect the
+transaction semantics, such as the read and write set, in any
+way. By default, it essentially arranges the transactions in the
+order in which they arrive, resulting in what we call for the
+rest of the paper thearrival order. Instep7, the ordering
+service now outputs the ordered stream of transactions in
+form ofblocks, containing a certain number of transactions.
+Outputting whole blocks instead of individual transactions
+reduces the pressure on the network, as less communication
+overhead is produced.
+Finally, the generated block is distributed toallfour peers
+of the network to start the validation phase. Note that there
+is no guarantee that all peers receive a block at the same time,
+as the distribution happens partially from ordering service to
+peers directly as shown instep8and partially between the
+peers using a gossip protocol as shown instep9. However,
+the service assures that all peers receive the blocks in the
+same order.
+3They might not match due to non-determinism in the smart contract
+or due to malicious behavior of the endorsement peer(s).
+=== PDF PAGE 17 ===
+A.3 Validation and Commit Phase4
+When a block arrives at a peer, thevalidationphase starts,
+visualized in Figure 14 for peerA1. The three remaining peers
+execute the same validation process. Overall, the validation
+phase has two purposes.
+A.3.1 Endorsement Policy Evaluation. The ￿rst purpose is
+to validate the transactions in the block with respect to the
+endorsement policy. For example, it is possible that a mali-
+cious transaction was generated by a malicious client and a
+malicious peer in conspiracy to take advantage of the money
+transfer. Let us assume that transactionT8is such a malicious
+transaction and that the malicious client, which proposedT8,
+works together with peerA2, which is also malicious. Instead
+of using the legit write setWSB2={BalA=30,BalB=
+120}from B2, the client creates a proposal with the write
+setWSA2={BalA=100,BalB=120}, that it received from
+its collaborator A2.
+How is this transactionT8now detected in the validation
+phase? The key to this lies in the signaturesSi A2andSi B2,
+that the endorsement peers generate at the end of the simula-
+tion phase. The signature is computed over the read and write
+set, the executed smart contract, and the used endorsement
+policy. The client receives these cryptographically secure sig-
+natures and must pack them into the transaction along with
+the read and write set. The peers that validate the transaction
+recompute the signatures of all endorsement peers, that were
+responsible for transactionT8and compare the signatures
+with the received onesSi A2andSi B2. In our example, in
+step10, the peers detect that the signature of the honest
+peerSi B2does not match to the one they computed from
+the received write set and thus, would classifyT8as invalid.
+T7andT9, the remaining transactions in the block, are evalu-
+ated in parallel. Their signatures match the ones computed
+from the read and write set and therefore, these transactions
+are valid with respect to the endorsement policy.
+A.3.2 Serializability Conflict Check. The second purpose of
+the validation is to analyze the transactions with respect to
+serializability con￿icts, that can arise from the order of trans-
+actions. For every transaction, it must be checked whether
+the version-numbers of all keys in the read set match the
+version-numbers in the current state. Only if this is the
+case, a transaction operates on an up-to-date state. Con-
+sidering our example, let us perform the serializability con-
+￿ict check for the received block.T8is already marked as
+invalid as it did not pass the endorsement policy evalua-
+tion, so it is not checked again.T7passed the endorsement
+policy evaluation and is now tested for serialization con-
+￿icts instep11. Its read set isRS={(BalA, 3⇒,(BalB, 2⇒}.
+4Logically, these are two separate phases. However, as Fabric interleaves
+these phases, we describe them together.
+Peer A1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=100, BalB=120}
+SigA2    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1    SigB1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=0, BalB=150}
+SigA1    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=100, BalB=120}
+SigA2    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1    SigB1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=0, BalB=150}
+SigA1    SigB2✓ ✘ ✓ ✓ ✓ ✓
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=100, BalB=120}
+SigA2    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1    SigB1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=0, BalB=150}
+SigA1    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=100, BalB=120}
+SigA2    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1    SigB1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=0, BalB=150}
+SigA1    SigB2
+State: BalA=(70,v4) BalB=(80,v3)
+✓ ✓
+✘
+State: BalA=(100,v3) BalB=(50,v2)
+State: BalA=(70,v4) BalB=(80,v3)
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=100, BalB=120}
+SigA2    SigB2
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=70, BalB=80}
+SigA1    SigB1
+RS = {(BalA,v3),(BalB,v2)}
+WS = {BalA=0, BalB=150}
+SigA1    SigB2
+10 10 10
+11
+13
+14
+12
+T8 T7 T9
+Ordering Service
+✘
+Figure 14: Validation and Commit Phase.
+The version numbers ofBalAandBalBin the read set
+match the ones of the current state and therefore, T7is
+marked as valid. As a consequence, instep12, the write
+set ofT7, namelyWS={BalA=70,BalB=80}is writ-
+ten to the current state. This changes the current state to
+BalA=(70, 4⇒andBalB=(80, 3⇒. Note that the version-
+numbers of the modi￿ed variables are incremented.
+The next transaction to be checked isT9instep13. Let
+us assume it also performs a money transfer and has the
+following read and write set:
+RS={(BalA, 3⇒,(BalB, 2⇒}WS={BalA=0,BalB=150}
+This transaction will not pass the con￿ict check, as it read
+BalAin version 3andBalBin version 2, while the cur-
+rent state already containsBalAin version 4andBalBin
+version 3. Therefore, it operated on outdated data and is
+marked as invalid. As a consequence, its write set is not
+applied to the current state and simply discarded.
+Finally, after validating all transactions of the block, in
+step14the entire block is appended to the ledger along
+with the information about which transactions are valid or
+invalid.
+B REORDERING: MICRO-BENCHMARKS
+To analyze the e￿ectiveness of our reordering mechanism,
+we also evaluate it in a stand-alone micro-benchmark in iso-
+lation of Fabric. For a given sequence of input transactions
+we compute the number of valid transactions for this partic-
+ular sequence (called "arrival order" in the following plots)
+as well as for the sequence that is generated by our reorder-
+ing mechanism (called "reordered" in the following plots).
+Additionally, we measure the time to compute the reordered
+schedule. In Figure 15, we test a workload pattern with vary-
+ing number of con￿icts. Additionally, we evaluate the e￿ect
+of varying the length of the cycles (Figure 16) and see how
+well our reordering mechanism performs in comparison to
+the naive arrival order.
+=== PDF PAGE 18 ===
+B.1 Micro-Benchmark 1: Interleave reads
+and writes to vary the number of
+con￿icts
+The ￿rst input sequence we test consists of two equal sized
+sub sequences, where one subsequence contains only trans-
+actions that perform writes (colored inred) and the other
+sequence only transactions that read (colored inblue). Each
+transaction performs only one operation (either read or
+write). Neither two writes nor two reads happen to the same
+key. For the example ofn=6transactions, we start with the
+following sequenceS1:
+S1=T[w(k1⇒],T[w(k2⇒],T[w(k3⇒],T[r(k1⇒],T[r(k2⇒],T[r(k3⇒]
+To generateSi, we move the last transaction ofSi 1to the
+front, leading to the following sequencesS2,S3, andS4.
+S2=T[r(k3⇒],T[w(k1⇒],T[w(k2⇒],T[w(k3⇒],T[r(k1⇒],T[r(k2⇒]
+S3=T[r(k2⇒],T[r(k3⇒],T[w(k1⇒],T[w(k2⇒],T[w(k3⇒],T[r(k1⇒]
+S4=T[r(k1⇒],T[r(k2⇒],T[r(k3⇒],T[w(k1⇒],T[w(k2⇒],T[w(k3⇒]
+The more writing transactions happen before the correspond-
+ing reading transactions, the more con￿icts happen. We want
+to ￿nd out whether our reordering mechanism can solve this
+problem.
+ 0
+ 500
+ 1000
+ 0  100  200  300  400  500
+ 0
+ 5
+ 10
+ 15
+ 20
+Number of valid transactions
+Time [ms]
+Number of read-transactions shifted before the write-transactions
+Arrival order
+Reordered
+Time to Reorder
+Figure 15: Workload 1: Varying the number of con-
+￿icts within the transactions.
+Figure 15 shows the results forn=1024transactions. As
+we can see, our reordering mechanism is able to reorder
+the transactions for every input sequence in a way such
+that all transactions are valid. In contrast to that, the arrival
+order su￿ers under a lot of invalid reading transactions, if
+writing transactions happen before. We can also see that
+our reordering mechanism is computationally cheap: it takes
+only around 1 to 2 ms to rearrange the transactions on a
+Macbook Pro with Intel Core i7 running at 3.1 GHz.
+B.2 Micro-Benchmark 2: Vary the length
+of cycles
+In the following experiment, we want to analyze the impact
+of cycles on the arrival order and on our reordering mecha-
+nism. To do so, we again form a sequence ofntransactions,
+that containsn/tcycles of sizettransactions of the form
+T[r(k0⇒,w(k0⇒],T[r(k0⇒,w(k1⇒],T[r(k1⇒,w(k2⇒],T[r(k2⇒,w(k0⇒]
+Again, we want to identify how many transactions are valid
+under the arrival order and when using our reordering mech-
+anism. Figure 16 shows the results for1024transactions. For
+the arrival order, only half of transactions are valid, no mat-
+ter of the cycle length. This is because aborting every second
+transaction breaks the cycles. In comparison to that, our
+reordering mechanism is able to achieve a high number of
+valid transactions, if the cycles are su￿ciently long respec-
+tively, there are not too many cycles to cancel. Of course, our
+algorithm becomes more expensive with the length of the
+cycles to break. However, since extremely long cycles are
+very unlikely to occur in reality, the runtime of our mech-
+anism will in general remain low in the ordering phase, as
+we see our evaluation presented in Section 6.
+ 0
+ 200
+ 400
+ 600
+ 800
+ 1000
+ 1200
+ 1400
+ 0  100  200  300  400  500
+ 0
+ 200
+ 400
+ 600
+ 800
+ 1000
+Number of valid transactions
+Time [ms]
+Number of transactions per cycle
+Arrival order
+Reordered
+Time to Reorder
+Figure 16: Workload 2: Varying the size of the cycles.

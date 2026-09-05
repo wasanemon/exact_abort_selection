@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "base_commit": "d150211968ef6d61efda82f9f44f63e3bac28b44",
+  "scope": "all files under sources except checksums.json itself; Issue #3 source inputs",
+  "files": [
+    {
+      "path": "experiments/target_selection/sources/ding.pdf",
+      "sha256": "41416f64c794c06e129c9781b9d014e925031eeffcf1f6a117ef1c866d7e00c0",
+      "bytes": 973997
+    },
+    {
+      "path": "experiments/target_selection/sources/ding_audit.json",
+      "sha256": "c950e0159e674424887138c918311ce8cae5435861bd4f48e457d259ea58e452",
+      "bytes": 2017
+    },
+    {
+      "path": "experiments/target_selection/sources/fabric_flextender_abs.html",
+      "sha256": "6faa1f4943fb58dcd876bbf86ffe92a10965626dcfad8100714e849c6b3363a3",
+      "bytes": 43057
+    },
+    {
+      "path": "experiments/target_selection/sources/fabric_recent_search.json",
+      "sha256": "5af87dec95a961857ed94d0ef861f097e314c6bfc425b199480f8e261ec56f82",
+      "bytes": 4569
+    },
+    {
+      "path": "experiments/target_selection/sources/fabric_sources_manifest.json",
+      "sha256": "fffaadbafc5c28f7c96df6330445758bbe98e5a7250274c83a3ceff8a65f335f",
+      "bytes": 10723
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp.pdf",
+      "sha256": "20cdccb16852b34876eca87741878c02414564eb9d6419ddb8cdb57fb555e8ef",
+      "bytes": 3581515
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp.txt",
+      "sha256": "3e40dceea9a7f8432e363b89b32389a6ada97a4850ec100d3c839bb9a923ec23",
+      "bytes": 78669
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/LICENSE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "bytes": 11358
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/Makefile",
+      "sha256": "7ca8cfdb554d6fe8921cb5c63464e4cbac4d80dcac02f89a92ec06606a36099e",
+      "bytes": 18699
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/README.md",
+      "sha256": "ff854d0cc77d3734b2149fd5ab9eb6aff225200fcf0be4f578f6478f753854e2",
+      "bytes": 653
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/docker-env.mk",
+      "sha256": "a4c2d6fb4b29fc94aabbd646f89df5788e29c5472a2b803f075f25979255cae5",
+      "bytes": 3356
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/blockcutter/blockcutter.go",
+      "sha256": "f1cf4655c064cf008bf5971421c28fdda109d44080e8ab0e677c613cb592f57b",
+      "bytes": 11777
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/johnsonce/johnsonce.go",
+      "sha256": "37abc3a4486cf02e2b0aa25a2982831d8b53d0ac1467f9e56c220d7e1a119423",
+      "bytes": 5551
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/resolver/resolver.go",
+      "sha256": "bb6ebf234335715350ed502cce8af7f342fc4cbacfc2fe8a4ea995f8259a4a79",
+      "bytes": 2032
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_sigmod19.pdf",
+      "sha256": "ff1bdea8563ea0196d046990d4fb488ba1500f092fc7330c414f081d7792e962",
+      "bytes": 2475042
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_sigmod19.txt",
+      "sha256": "a0ac8d696b9262c75f66e5777cabeffb1c9ad494d0c4c6651b4be045d95da76c",
+      "bytes": 93623
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp.pdf",
+      "sha256": "f1e7370eb1d4eef5ec5087752013d638bad292a81d5fe93ec7a3dea36d7244e3",
+      "bytes": 1177750
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp.txt",
+      "sha256": "bd6c61f0a29737d49504c7298f8d67f3a9dd14b58601b27bfd9743c26621d784",
+      "bytes": 75244
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_master_README.md",
+      "sha256": "d00bfcb2b9620e6dca292383981d840f4a1266098397172602bff674a0acaf2d",
+      "bytes": 6579
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_master_smallbank.go",
+      "sha256": "998dc90a9207f0cb77ef89604b55a940429a7d306f075dc779350d0c32947e39",
+      "bytes": 6279
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/LICENSE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "bytes": 11358
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/Makefile",
+      "sha256": "0205bd3036aee6cf0f1997f00ac994df8bfee387f606cd8ea0546e8d26602003",
+      "bytes": 18064
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/README.md",
+      "sha256": "54e163e5ef654974099efc203a262e8ae1af4ea9f6182decd9ef6ab365b95f38",
+      "bytes": 3101
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/docker-env.mk",
+      "sha256": "a4c2d6fb4b29fc94aabbd646f89df5788e29c5472a2b803f075f25979255cae5",
+      "bytes": 3356
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/blockcutter.go",
+      "sha256": "b1805c35c6086a9c8f3e8d683a3481fa62e3411e20b4cc281678899c2a6b2d61",
+      "bytes": 6746
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/common/ds.go",
+      "sha256": "4b23e76b8c51f277509516a01f268e0c277b91b486604e5d41fb2eb8be711877",
+      "bytes": 10464
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/common/mv_store.go",
+      "sha256": "09d742dbe235878f02cb9e6d1fa683c5e964e9c4e4f216e4faed1ed848054d59",
+      "bytes": 6317
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/latestscheduler/scheduler.go",
+      "sha256": "081b31852c935d2165eda5ba8d45c363db7ef181c3d10babcbcc327dcc280526",
+      "bytes": 5336
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/sharpscheduler/scheduler.go",
+      "sha256": "4a22e8a5b34b4bd40bdf9bdae235c7296100caded03a0428f104553bbddce575",
+      "bytes": 19159
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/supplementary/contract/custom.go",
+      "sha256": "dfc4d64def2b372fbbea3bace55c61e89021b2cab4b709fbcc91b11da813b764",
+      "bytes": 3615
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricx_committer_readme.md",
+      "sha256": "53d105979ae38f66a5bf66051e6c1f9d2466c6942e2489a7784fdaf5b73596b4",
+      "bytes": 1152
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricx_readme.md",
+      "sha256": "a285bb63409ae854bc658e8a20b804b6e2739d7a676cdf2b598d39652e0f0362",
+      "bytes": 13955
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_abs.html",
+      "sha256": "ebd1ed31eb3d7a3fc5391961b01528fd3ce57a8b8261d1bc0b1e2fc0a112cdd0",
+      "bytes": 41227
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_artifact_probes.json",
+      "sha256": "57fdcecad0980cc345fed1ade60c76138dd33c4c737c81bd3225f29495b0d73f",
+      "bytes": 1348
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_downloads.json",
+      "sha256": "091b174aa3f3eb84d74eb3ac743bd2dc266c1fc3e2f903cedaecd11543bb04a2",
+      "bytes": 971
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_full.html",
+      "sha256": "5061160caf9ae6135acc1a22e8b5732fec957ef1b7e190bd0e08c3b0cab505ad",
+      "bytes": 330451
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_full.pdf",
+      "sha256": "fc685485f0b65d14948d1fc129374555221a0e8b7a3d48c8e8b86c84bece32fc",
+      "bytes": 713692
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_full.txt",
+      "sha256": "17d3f3da594bdfb9c302bdda7a6e6ba09802fe269e0426f62d801f595f0cde13",
+      "bytes": 86146
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_github_repositories.response",
+      "sha256": "4af480b8ee5b87b369a76c49bd22c9a783908272ebffbe97898f8ab0f0772a5f",
+      "bytes": 55
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_github_title.response",
+      "sha256": "4af480b8ee5b87b369a76c49bd22c9a783908272ebffbe97898f8ab0f0772a5f",
+      "bytes": 55
+    },
+    {
+      "path": "experiments/target_selection/sources/lantern_search_log.json",
+      "sha256": "daab7afc864bc7348403ae9982419986417ec53b65a5dbbebf1b94e925cc11b1",
+      "bytes": 1190
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_download_manifest.json",
+      "sha256": "98eb44a433948eed218ed27365cda84b5b9ab31e382950716c692e4168d0f953",
+      "bytes": 9770
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_dynamic_set_2014.pdf",
+      "sha256": "ca9d0d4ea4dff40d09738af8f98d130b865122fc43bd5cee76c6f04a4cfafed4",
+      "bytes": 216228
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_dynamic_set_2014.txt",
+      "sha256": "085c7112fcc6274b84561957870428a1d0ce3a90dd9620a26efb7545c641aad5",
+      "bytes": 39686
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_ivm_2020.pdf",
+      "sha256": "47e75c0902be8eecf4dc7430ee5809855224b9cd71d7efe819f721c1f2fed695",
+      "bytes": 663589
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_ivm_2020.txt",
+      "sha256": "35b8692a5b16bf3f38fc962811a822faba98d81913af4bb57ccd24bab74294c9",
+      "bytes": 172285
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_matching_2021.pdf",
+      "sha256": "795ef36a33e66354b9ee574f5ee3fecc74e299ed805d8b1904d89953b430c14c",
+      "bytes": 784556
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_matching_2021.txt",
+      "sha256": "88623c93b760c7af6a3e45dd363ffe815df2d04086817bb4cad6031b34a8d07b",
+      "bytes": 64468
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_1.Coin_BTO-STM_Contract_Coin.cpp",
+      "sha256": "620c1c7b4fbeadd368ccc350860177e345eebf5124048668fa34ac5a53a6b667",
+      "bytes": 6037
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.cpp",
+      "sha256": "b44392eee31bdcc80c0dafbca3172cb97c5eebb4253606a7c297f0860bcbe1bc",
+      "bytes": 12642
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.h",
+      "sha256": "90d0811f60fcb94c6b5ac3c4c958ea347882a0354578b9b533a07e1e95d0a6e4",
+      "bytes": 2201
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_1.Coin_BTO-STM_default-main.cpp",
+      "sha256": "45e51f2ba5db1183301d0d48c44621d5e261c7f29f8b70ae814ef4e63283bec3",
+      "bytes": 31806
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_2021.pdf",
+      "sha256": "298b2444f4019a5f40cec1bcaa4752b88b6d15baa7d79b944caf524bf454410a",
+      "bytes": 702572
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_2021.txt",
+      "sha256": "ab3cf1129ec32ff5b3128e63834d67bd0b16b5cca509dcc46319c1e43cf7ee25",
+      "bytes": 92392
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_README.md",
+      "sha256": "8a0d260d02f9e96e25560b118070367d5c2cc1e632ecea82f65441fc8b3904a1",
+      "bytes": 2970
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_commit.json",
+      "sha256": "a0c778f90ace8c48726c5097a95b22604136ffabd54b0fd3dd24ee45e5358713",
+      "bytes": 4540
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_optsmart_tree.json",
+      "sha256": "4c382cb6bba8e97be1b94eb16ac730864e452b46f73c88316d73c0d451978714",
+      "bytes": 380262
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_2026.html",
+      "sha256": "f04ead1a58049f41918462908746390facaa46d61b4cc0d48cce39bdb90c3c2e",
+      "bytes": 299086
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_README.md",
+      "sha256": "00c28c0f376a576fa42bda8f2f4ae9628c9578fd8daffe09606c7ec0d20e3f29",
+      "bytes": 5334
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_commit.json",
+      "sha256": "3c4c7d76c1ba31035831054a663359767eb5cb0a48fc7e125856baddcfcbd0c2",
+      "bytes": 4988
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_simple_Heuristics_P1_simple.m",
+      "sha256": "038811fa8be32a10bfdfe250d68646b65222d1ef96558c0b3baaa032618e5625",
+      "bytes": 9376
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_simple_and_complex_Heuristics_P1_complex.m",
+      "sha256": "e203e39653093f349883b5b0fb10a1ecab95d1d530f7805d6c624d03063cf016",
+      "bytes": 14947
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_sea_tree.json",
+      "sha256": "a3ef297fc499795bd1c22a9e003f54554c354b90faf3ed86b03e87f374e53ac9",
+      "bytes": 8530
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_search_log.json",
+      "sha256": "c028f6c75e6ffac3de5248c54a146435e1f5d04332a55e397d3fea1170bcc9dd",
+      "bytes": 165475
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_stm_2022.pdf",
+      "sha256": "59aabcdd05f774acae3d95d62dabbfe772b5ba82fcfb6cac478d5b32ab547ade",
+      "bytes": 224559
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_stm_2022.txt",
+      "sha256": "2d358b3ee979ac90e692c88e7b2dcadcb90991440c1dbf09c0ab9867a08560af",
+      "bytes": 68268
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_veldt_2023.pdf",
+      "sha256": "5f58504936e4864d8ed951584eae7732e4e5fab06615104d1da815851ca0f2b1",
+      "bytes": 1008121
+    },
+    {
+      "path": "experiments/target_selection/sources/representation_veldt_2023.txt",
+      "sha256": "6998232dfa603216a1aea7ec331b241105b711028f4679d4a4cef60c81dbfb1b",
+      "bytes": 148601
+    }
+  ],
+  "base_inputs": [
+    {
+      "path": "REPORT_policy_comparison_ja.md",
+      "sha256": "fbe11049ad56e281546f1a4960ce7d22d065c95fbf353f38afcfbacd180dcebb",
+      "bytes": 24384
+    },
+    {
+      "path": "next_stage.json",
+      "sha256": "9614447255fd2f7fba2ece421444e04d3ffae63c41960b6411453e04443d2229",
+      "bytes": 20966
+    }
+  ]
+}
