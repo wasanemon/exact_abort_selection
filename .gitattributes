@@ -1,0 +1,7 @@
+experiments/eas/results/** linguist-generated=true
+# Preserve the standard CSV CRLF and matplotlib's generated SVG path whitespace.
+experiments/eas/results/**/*.csv whitespace=cr-at-eol
+experiments/eas/results/**/*.svg whitespace=-blank-at-eol
+experiments/eas/validation/*.json linguist-generated=true
+experiments/eas/validation/*.jsonl linguist-generated=true
+experiments/eas/validation/*.log linguist-generated=true

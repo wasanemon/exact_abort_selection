@@ -1,0 +1,435 @@
+{
+  "adaptive_switches": [
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "seed": 101,
+      "selector.degree_queries": 4,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "seed": 11,
+      "selector.degree_queries": 6,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "seed": 29,
+      "selector.degree_queries": 4,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "seed": 47,
+      "selector.degree_queries": 16,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-uniform-w1-k2",
+      "seed": 71,
+      "selector.degree_queries": 6,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "seed": 101,
+      "selector.degree_queries": 331,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "seed": 11,
+      "selector.degree_queries": 436,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "seed": 29,
+      "selector.degree_queries": 385,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "seed": 47,
+      "selector.degree_queries": 334,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "main-l2-n128-zipf-w1-k2",
+      "seed": 71,
+      "selector.degree_queries": 312,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "main"
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "seed": 101,
+      "selector.degree_queries": 4216,
+      "selector.switch_queries": 4216,
+      "selector.switch_remaining": 239,
+      "selector.switch_round": 17,
+      "selector.switches": 1,
+      "status": "ok",
+      "suite": "worst"
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "seed": 11,
+      "selector.degree_queries": 4216,
+      "selector.switch_queries": 4216,
+      "selector.switch_remaining": 239,
+      "selector.switch_round": 17,
+      "selector.switches": 1,
+      "status": "ok",
+      "suite": "worst"
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "seed": 29,
+      "selector.degree_queries": 4216,
+      "selector.switch_queries": 4216,
+      "selector.switch_remaining": 239,
+      "selector.switch_round": 17,
+      "selector.switches": 1,
+      "status": "ok",
+      "suite": "worst"
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "seed": 47,
+      "selector.degree_queries": 4216,
+      "selector.switch_queries": 4216,
+      "selector.switch_remaining": 239,
+      "selector.switch_round": 17,
+      "selector.switches": 1,
+      "status": "ok",
+      "suite": "worst"
+    },
+    {
+      "condition": "worst-l2-n256-identical-w1-k1",
+      "seed": 71,
+      "selector.degree_queries": 4216,
+      "selector.switch_queries": 4216,
+      "selector.switch_remaining": 239,
+      "selector.switch_round": 17,
+      "selector.switches": 1,
+      "status": "ok",
+      "suite": "worst"
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "seed": 101,
+      "selector.degree_queries": 0,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "zero_commit"
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "seed": 11,
+      "selector.degree_queries": 0,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "zero_commit"
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "seed": 29,
+      "selector.degree_queries": 0,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "zero_commit"
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "seed": 47,
+      "selector.degree_queries": 0,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "zero_commit"
+    },
+    {
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "seed": 71,
+      "selector.degree_queries": 0,
+      "selector.switch_queries": 0,
+      "selector.switch_remaining": 0,
+      "selector.switch_round": 0,
+      "selector.switches": 0,
+      "status": "ok",
+      "suite": "zero_commit"
+    }
+  ],
+  "capacity_probes": [],
+  "measurement_count": 100,
+  "paired_ratio": "per-seed baseline duration / mode duration, then summarize the ratios; never ratio of independent medians",
+  "rss": "peak_rss_kib is whole benchmark process high-water mark; runner_peak_rss_kib independently obtained via /usr/bin/time; every run a fresh process",
+  "source": "/home/wasanemon/project/exact_abort_selection/experiments/eas/results/smoke",
+  "statistics": "median, min/max, interpolated quartiles (Hyndman-Fan type 7); successful observations only",
+  "successful_count": 100,
+  "timing_intervals": "selector_ms includes extraction/normalization and kernel. selector.total_ms is the same interval; kernel_ms excludes normalize. batch_ms includes read, reservation, selection, commit and waits. Worker cumulative fields are not wall-time components. See engine/design docs for nested fields; do not sum overlapping fields.",
+  "warmup_count": 20,
+  "zero_commit": [
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "adaptive",
+      "seed": 101,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "graph",
+      "seed": 101,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "lazy",
+      "seed": 101,
+      "status": "ok"
+    },
+    {
+      "abort_count": 1,
+      "commit_count": 1,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "native",
+      "seed": 101,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "profile",
+      "seed": 101,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "adaptive",
+      "seed": 11,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "graph",
+      "seed": 11,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "lazy",
+      "seed": 11,
+      "status": "ok"
+    },
+    {
+      "abort_count": 1,
+      "commit_count": 1,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "native",
+      "seed": 11,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "profile",
+      "seed": 11,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "adaptive",
+      "seed": 29,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "graph",
+      "seed": 29,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "lazy",
+      "seed": 29,
+      "status": "ok"
+    },
+    {
+      "abort_count": 1,
+      "commit_count": 1,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "native",
+      "seed": 29,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "profile",
+      "seed": 29,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "adaptive",
+      "seed": 47,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "graph",
+      "seed": 47,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "lazy",
+      "seed": 47,
+      "status": "ok"
+    },
+    {
+      "abort_count": 1,
+      "commit_count": 1,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "native",
+      "seed": 47,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "profile",
+      "seed": 47,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "adaptive",
+      "seed": 71,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "graph",
+      "seed": 71,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "lazy",
+      "seed": 71,
+      "status": "ok"
+    },
+    {
+      "abort_count": 1,
+      "commit_count": 1,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "native",
+      "seed": 71,
+      "status": "ok"
+    },
+    {
+      "abort_count": 2,
+      "commit_count": 0,
+      "condition": "zero_commit-l1-n2-identical-w1-k2",
+      "mode": "profile",
+      "seed": 71,
+      "status": "ok"
+    }
+  ]
+}

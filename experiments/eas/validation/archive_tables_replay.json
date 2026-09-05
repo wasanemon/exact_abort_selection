@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "byte_identical": {
+    "metrics.csv": true,
+    "paired_ratios.csv": true,
+    "paired_graph.csv": true,
+    "paired_native.csv": true,
+    "status_counts.csv": true,
+    "tables_ja.md": true
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "saved_before_measurement": "2026-09-05",
+  "base_sha": "d0508c393ec084582c12e6f3abadab63501eaedd",
+  "modes": ["native", "graph", "lazy", "profile", "adaptive"],
+  "seeds": [11, 29, 47, 71, 101],
+  "repetitions": 5,
+  "paired": "one independent trace per seed, same trace for every mode",
+  "warmup": "one separate unmeasured process per configuration and mode at seed 7",
+  "order_seed": 20260905,
+  "key_count": 10000,
+  "main": {"arity": [2], "n": [128,512,2048,8192,32768], "distribution": ["uniform","zipf"], "zipf": 0.99, "workers": [1], "k": 2},
+  "arity": {"arity": [1,3,4], "n": [512,8192], "distribution": ["uniform","zipf"], "workers": [1], "k": 2},
+  "worst": {"arity": [2,4], "n": [256,1024,4096,16384], "distribution": ["identical"], "workers": [1], "k": 1},
+  "constant": {"arity": [1,2,3,4,6,8], "n": [2048], "distribution": ["uniform"], "selector_only": true, "k": 2},
+  "scale": {"arity": [2], "n": [8192], "distribution": ["zipf"], "workers": [2,4], "k": 2},
+  "zero_commit": {"arity": [1], "n": [2], "distribution": ["identical"], "workers": [1], "k": 2},
+  "budgets": {"process_timeout_seconds": 120, "memory_mib": 2048, "total_seconds": 14400, "max_arity": 8, "max_subset_incidence": 8000000, "max_graph_bytes": 536870912},
+  "adaptive_budget": "n0 * ceil(sqrt(n0)); ell=1 starts with profile",
+  "profile_B": "ceil(n0^((ell-1)/ell)); classifications fixed per construction",
+  "status_policy": "record timeout/OOM/unsupported/error/budget_exhausted without inventing timing; preserve all repeats",
+  "verification": "outside timed intervals; direct snapshot/private-write/final-state comparison; exact EAS decisions compared across modes"
+}

@@ -1,0 +1,7 @@
+{
+  "suite": "audit_results_fixture",
+  "status": "passed",
+  "tests": 8,
+  "wall_seconds_reported_by_unittest": 0.128,
+  "scope": "Synthetic artifact fixtures only; no benchmark execution or real full-data audit."
+}

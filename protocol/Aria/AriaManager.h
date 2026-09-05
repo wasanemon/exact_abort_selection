@@ -5,6 +5,7 @@
 #pragma once
 
 #include "core/Manager.h"
+#include "core/AriaExperiment.h"
 #include "core/Partitioner.h"
 #include "protocol/Aria/Aria.h"
 #include "protocol/Aria/AriaExecutor.h"
@@ -55,6 +56,9 @@ public:
       epoch.fetch_add(1);
       cleanup_batch();
 
+      if (context.aria_experiment)
+        context.aria_experiment->before_read(epoch.load());
+
       // LOG(INFO) << "Seed: " << random.get_seed();
       n_started_workers.store(0);
       n_completed_workers.store(0);
@@ -70,6 +74,8 @@ public:
       wait4_ack();
 
       // Allow each worker to commit transactions
+      if (context.aria_experiment)
+        context.aria_experiment->after_read(epoch.load(), transactions);
       n_started_workers.store(0);
       n_completed_workers.store(0);
       signal_worker(ExecutorStatus::Aria_COMMIT);
@@ -82,6 +88,9 @@ public:
       wait_all_workers_finish();
       // wait for all machines until they finish the Aria_COMMIT phase.
       wait4_ack();
+      if (context.aria_experiment &&
+          context.aria_experiment->after_commit(epoch.load(), transactions))
+        stopFlag.store(true);
     }
 
     signal_worker(ExecutorStatus::EXIT);

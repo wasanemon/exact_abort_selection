@@ -1,0 +1,14 @@
+U=0 m=1: 1 instances, 1 preprocessing NO, 0 constructed; PASS
+U=0 m=2: 1 instances, 1 preprocessing NO, 0 constructed; PASS
+U=0 m=3: 1 instances, 1 preprocessing NO, 0 constructed; PASS
+U=1 m=1: 4 instances, 3 preprocessing NO, 1 constructed; PASS
+U=1 m=2: 16 instances, 13 preprocessing NO, 3 constructed; PASS
+U=1 m=3: 64 instances, 57 preprocessing NO, 7 constructed; PASS
+U=2 m=1: 16 instances, 9 preprocessing NO, 7 constructed; PASS
+U=2 m=2: 256 instances, 151 preprocessing NO, 105 constructed; PASS
+U=2 m=3: 4096 instances, 2661 preprocessing NO, 1435 constructed; PASS
+U=3 m=1: 64 instances, 27 preprocessing NO, 37 constructed; PASS
+U=3 m=2: 4096 instances, 1657 preprocessing NO, 2439 constructed; PASS
+PASS: every generated instance was checked; no counterexample.
+{"access_count_checks": 4034, "connectivity_checks": 4034, "constructed": 4034, "constructed_no": 244, "constructed_yes": 3790, "degree_checks": 64858, "directed_edges_checked": 395288, "id_order_checks": 8068, "instances": 8615, "maximum_constructed_arity": 4, "ordered_pair_checks": 1078892, "original_no": 4825, "original_yes": 3790, "preprocess_checks": 8615, "preprocess_no": 4581, "rw_accesses_checked": 247752, "scc_checks": 4034, "top1_tie_choices_checked": 6029, "top2_tie_choices_checked": 8766, "vertices_checked": 64858, "with_duplicate_family_sets": 4670, "with_empty_set": 5343}
+status=passed, elapsed_seconds=2.535280

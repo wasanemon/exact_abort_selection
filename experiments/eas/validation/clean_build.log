@@ -1,0 +1,21 @@
+[ 28%] Building CXX object CMakeFiles/eas_selector.dir/eas/Selector.cpp.o
+[ 28%] Building CXX object CMakeFiles/eas_selector.dir/eas/Oracle.cpp.o
+[ 42%] Linking CXX static library libeas_selector.a
+[ 42%] Built target eas_selector
+[ 57%] Building CXX object CMakeFiles/eas_engine.dir/eas/Engine.cpp.o
+[ 71%] Linking CXX static library libeas_engine.a
+[ 71%] Built target eas_engine
+[ 85%] Building CXX object CMakeFiles/bench_eas.dir/bench_eas.cpp.o
+[100%] Linking CXX executable bench_eas
+[100%] Built target bench_eas
+Consolidate compiler generated dependencies of target eas_selector
+[ 60%] Built target eas_selector
+[ 80%] Building CXX object CMakeFiles/eas_selector_test.dir/tests/eas_selector_test.cpp.o
+[100%] Linking CXX executable eas_selector_test
+[100%] Built target eas_selector_test
+[ 42%] Built target eas_selector
+Consolidate compiler generated dependencies of target eas_engine
+[ 71%] Built target eas_engine
+[ 85%] Building CXX object CMakeFiles/eas_integration_test.dir/tests/eas_integration_test.cpp.o
+[100%] Linking CXX executable eas_integration_test
+[100%] Built target eas_integration_test

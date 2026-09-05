@@ -1,0 +1,11 @@
+test_exact_pair_comparison_detects_round_boundary (__main__.ExperimentToolsTests) ... ok
+test_fresh_process_and_timeout (__main__.ExperimentToolsTests) ... ok
+test_paired_ratio_and_failed_timings_excluded (__main__.ExperimentToolsTests) ... ok
+test_prespecified_jobs_and_worker_invariant_input (__main__.ExperimentToolsTests) ... ok
+test_timeout_stays_timeout_even_with_json (__main__.ExperimentToolsTests) ... ok
+test_trace_reproducible_and_fixed_arity (__main__.ExperimentToolsTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.052s
+
+OK

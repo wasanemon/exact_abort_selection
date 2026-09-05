@@ -1,3 +1,5 @@
+Exact Abort Selection (Issue #1): [日本語の再現手順](README_eas.md) · [実験報告](REPORT_ja.md)
+
 **Yi Lu**, Xiangyao Yu, Lei Cao, Samuel Madden
 
 [Aria: A Fast and Practical Deterministic OLTP Database]()

@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace aria {
+struct AriaExperiment;
 class Context {
 
 public:
@@ -69,6 +70,8 @@ public:
   bool aria_read_only_optmization = true;
   bool aria_reordering_optmization = true;
   bool aria_snapshot_isolation = false;
+
+  AriaExperiment *aria_experiment = nullptr; // opt-in finite local experiment
 
   std::size_t ariaFB_lock_manager;
 
