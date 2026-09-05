@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "delivery_commit": "619a7eb933063a03a1c56bc7d6ac58b907609144",
+  "clean_checkout": "/tmp/eas-policy-delivery-20260905",
+  "csv_byte_identical": {
+    "full/sensitivity_grid.csv": "67644bd4da9fe3c5558400e8e9998eaee4c5e9d0bfc32724b625cf41dd8206c4",
+    "full/seed_metrics.csv": "bc96de62c5c4ad6cc7c84b5cbe4e6a3d91c3667325d91f6a1eb1cb6d98757398",
+    "full/runs.csv": "3f4faf85383ec060c33cad2fc93d26645fe3e163dd2fdb1762a247a04bd967ca",
+    "full/metrics.csv": "361ca5f71f42c372f25212565d65e0bea209be84d0da803a858406477c26f553",
+    "full/paired_observations.csv": "d8a506af38558b5860a89c47c0628fed22c65031654bed7cebc69c5fd6f3413b",
+    "full/paired_seed.csv": "1ea9ebd08e87f6d7ae46d72a90a365bd4e66515645b4d99783876f9f2789eb5b",
+    "full/paired.csv": "e841e224d610c7d36b217f9242e71573a7da532987a75885541dcf1adc53b042",
+    "full/sensitivity_roots.csv": "c9e8e0ac9a4003895cbf01525770a2fb5f66f42950a8c329a2dd8b9bcaa7c2e0",
+    "smoke/sensitivity_grid.csv": "d7441d54b7f1f753c9e9550f5bdbd947d0f8a3373dd5b19f36965db652c8706e",
+    "smoke/seed_metrics.csv": "2ff3149db0faa28790df85fa679266b3596c9220c87549b8d100e6835208f7c2",
+    "smoke/runs.csv": "fa3e2b914ff90398f6545cdad8a5f410b3f814392cd1428198c1b281f17dcf63",
+    "smoke/metrics.csv": "217c0b13b02f533cc6b0af6da92feda55ae35cda3d2c49e816dde875e594a6db",
+    "smoke/paired_observations.csv": "c5e0add9139dec5b4dca628e72308b623a6f82d20d925a8f8d7805859169fb67",
+    "smoke/paired_seed.csv": "73eb07b61a2386db2c7b5f98af0a9ba87ee53744fa39323f53caec3f5cf29801",
+    "smoke/paired.csv": "ec7a3cd31d88177fcbae538f3fa8292f29b75682b8e4d4c7395113c7d7249f2b",
+    "smoke/sensitivity_roots.csv": "a217ad24c0daee39e6ffe0305e52c0ec4fe55e6670fc23861fa34c65e99eb93f"
+  },
+  "tables_facts_byte_identical": true,
+  "png_byte_identical": true,
+  "tracked_diff_after_replay": "",
+  "archive_audit": {
+    "archives": [
+      {
+        "files": 8102,
+        "path": "results/full/raw_data.tar.gz",
+        "sha256": "7a4111969a5610000ebd2ac48ee7a94c1b6aed7cadaeb95b958c82ddb15c0312"
+      },
+      {
+        "files": 2750,
+        "path": "results/smoke/raw_data.tar.gz",
+        "sha256": "208cd3313ac82a3cd5ad241f7fdb63f0f302f17ee982e3533a1bd23c36909d34"
+      },
+      {
+        "files": 2750,
+        "path": "results/development-smoke/raw_data.tar.gz",
+        "sha256": "b11fa11c83a354258e292c6a64d3b3a152dda66a55f1ccab349e581e44798dd5"
+      },
+      {
+        "files": 624,
+        "path": "baseline_smoke/raw_data.tar.gz",
+        "sha256": "1d403ebb896cfa54c27129e7a76dbef70746ef216c4abbb3d58c2f8d8cc921b8"
+      },
+      {
+        "files": 2,
+        "path": "quality/raw_data.tar.gz",
+        "sha256": "9d21b1c385da194d4c339c2d104fd5d62623e850c80bfce0adb03323c4b7af3e"
+      }
+    ],
+    "exact_policy_groups_across_workers": 405,
+    "full_measurements": 1500,
+    "machine_summary_paths_exist": true,
+    "status": "passed",
+    "worker_1_2_4_groups": 25
+  }
+}
