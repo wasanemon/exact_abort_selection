@@ -1,0 +1,114 @@
+{
+  "aggregation": "paired per-trace per-repetition differences and ratios; median within seed then across five seeds; preserve all observations and min/max",
+  "base_commit": "d150211968ef6d61efda82f9f44f63e3bac28b44",
+  "budgets": {
+    "address_space_mib": 2048,
+    "timeout_seconds_per_process": 60,
+    "total_seconds": 3600
+  },
+  "correctness": {
+    "counterexamples": "frozen top-k, strict size<k, tie-break, directed R!=W rejection",
+    "exhaustive": "all subsets of 3-key universe, ordered batches n=0..4, k=1/2/3",
+    "max_n": 18,
+    "oracle": "independent all-pair intersection and every-round degree recomputation",
+    "random_inputs": 1000,
+    "random_seed": 202609054
+  },
+  "date": "2026-09-05",
+  "dense": {
+    "arity": [
+      2
+    ],
+    "distribution": [
+      "identical"
+    ],
+    "k": [
+      1
+    ],
+    "n": [
+      1024,
+      4096
+    ]
+  },
+  "failure_policy": "save timeout, memory_limit, unsupported, error and unexecuted; never silently omit failed variants",
+  "gate": "experiments/target_selection/gate.json",
+  "issue": 4,
+  "key_count": 8192,
+  "main": {
+    "arity": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "distribution": [
+      "uniform",
+      "zipf"
+    ],
+    "k": [
+      1
+    ],
+    "n": [
+      40,
+      128,
+      512,
+      2048
+    ]
+  },
+  "measurement": "fresh sequential process per variant; timed API includes normalization, index/graph build, selection/trim, decision construction, scratch destruction; input parse, verification and JSON serialization excluded; RSS process high-water",
+  "order_seed": 202609054,
+  "paper_k": {
+    "arity": [
+      2
+    ],
+    "distribution": [
+      "uniform",
+      "zipf"
+    ],
+    "k": [
+      2
+    ],
+    "n": [
+      40,
+      512,
+      2048
+    ]
+  },
+  "repetitions_per_seed": 3,
+  "scale": {
+    "arity": [
+      2
+    ],
+    "distribution": [
+      "uniform",
+      "zipf"
+    ],
+    "k": [
+      1
+    ],
+    "n": [
+      8192
+    ]
+  },
+  "schema_version": 1,
+  "scope": "standalone synthetic complete point-RMW validator; no DBMS throughput claim",
+  "seeds": [
+    11,
+    29,
+    47,
+    71,
+    101
+  ],
+  "variants": [
+    "paper",
+    "graph",
+    "lazy",
+    "profile",
+    "adaptive",
+    "accept_id",
+    "accept_static_degree"
+  ],
+  "warmup": "none; fresh-process performance including cold allocator behavior; no cross-process warm-cache claim",
+  "workload_claim": "synthetic, n=40 represents paper default batch size only; not original SmallBank or original 5-read/5-write microbenchmark",
+  "zipf": 0.99
+}

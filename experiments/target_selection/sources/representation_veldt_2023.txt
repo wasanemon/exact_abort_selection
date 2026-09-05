@@ -1,0 +1,3445 @@
+=== PDF PAGE 1 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for
+Clustering Edge-Colored Hypergraphs
+Nate V eldt1
+Abstract
+We study the approximability of an existing frame-
+work for clustering edge-colored hypergraphs,
+which is closely related to chromatic correlation
+clustering and is motivated by machine learning
+and data mining applications where the goal is to
+cluster a set of objects based on multiway interac-
+tions of different categories or types. We present
+improved approximation guarantees based on lin-
+ear programming, and show they are tight by prov-
+ing a matching integrality gap. Our results also
+include new approximation hardness results, a
+combinatorial 2-approximation whose runtime is
+linear in the hypergraph size, and several new con-
+nections to well-studied objectives such as vertex
+cover and hypergraph multiway cut.
+1. Introduction
+Partitioning a graph into well-connected clusters is a fun-
+damental algorithmic problem in machine learning. A re-
+cent focus in the machine learning community has been
+to develop algorithms for clustering problems deﬁned over
+data structures that generalize graphs and capture rich in-
+formation and metadata beyond just pairwise relationships.
+One direction has been to develop algorithms for cluster-
+ing and learning over hypergraphs (Li & Milenkovic, 2017;
+2018; Fountoulakis et al., 2021; Hein et al., 2013), which
+can model multiway relationships between data objects
+rather than just pairwise relationships. Another recent focus
+has been to develop techniques for clustering edge-colored
+graphs (and hypergraphs), where edge colors represent the
+type or category of pairwise interaction modeled by the
+edge (Amburg et al., 2020; Bonchi et al., 2015; Anava
+et al., 2015; Klodt et al., 2021; Xiu et al., 2022; Amburg
+et al., 2022). Edge color labels are relevant for many differ-
+1Department of Computer Science and Engineering, Texas
+A&M University, College Station, Texas, USA. Correspondence
+to: Nate Veldt<nveldt@tamu.edu>.
+Proceedings of the 40 th International Conference on Machine
+Learning, Honolulu, Hawaii, USA. PMLR 202, 2023. Copyright
+2023 by the author(s).
+Figure 1. The best node coloring of this edge-colored hypergraph
+leaves three edges satisﬁed and two unsatisﬁed (dashed lines).
+ent applications. In co-authorship (hyper)graphs, an edge
+color may represent the type of publication venue or disci-
+pline (Amburg et al., 2020; Bonchi et al., 2012), which can
+be used to better ascertain the academic ﬁeld an author be-
+longs to. Edges in brain networks may have color labels to
+indicate differences in co-activation patterns between brain
+regions (Crossley et al., 2013). In temporal graph analysis,
+edges within the same time period can be associated with
+the same color (Amburg et al., 2020), which provides in-
+formation about how interaction patterns evolve over time.
+In addition to these settings, algorithms for edge-colored
+graphs and hypergraphs have been applied to cluster food
+ingredients co-appearing in different recipes (where edge
+colors indicate cuisine types) (Amburg et al., 2020; Klodt
+et al., 2021; Xiu et al., 2022), genes in biological networks
+(where edge colors indicate gene interaction types) (Bonchi
+et al., 2012), and users of social media platforms like Face-
+book and Twitter (where edge colors indicate types of social
+circles) (Klodt et al., 2021; Xiu et al., 2022).
+The Edge-Colored Clustering problem. Edge-Colored
+Clustering (ECC) is a combinatorial optimization frame-
+work for clustering graphs and hypergraphs with edge col-
+ors. This problem is also known by other related names
+such as colored clustering or categorical edge clustering.
+LetH = (V,E ) be a hypergraph where each hyperedge
+e∈ E is associated with one of k colors for somek∈ N.
+The goal of ECC is to assign colors to nodes in such a way
+that hyperedges tend to contain nodes that all have the same
+color as the hyperedge (see Figure 1). This can also be
+described as a clustering problem where one forms a single
+cluster of nodes for each color, and the goal is to do so
+in such a way that the cluster of nodes with color c tends
+to contain hyperedges with color c. Note that the nodes
+in clusterc do not necessarily need to be connected in the
+hypergraph in this formulation. To deﬁned the objective
+1
+=== PDF PAGE 2 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+more precisely, if all of the nodes in a hyperedgee∈E are
+given the same color as e, then the hyperedge is satisﬁed,
+otherwise it is unsatisﬁed and we say the node color assign-
+ment has made a mistake at this hyperedge. The goal is then
+to set node colors in a way that minimizes the number (or
+weight) of unsatisﬁed edges (the MINECC objective), or
+to maximize the number (or weight) of satisﬁed edges (the
+MAXECC objective). These are equivalent at optimality
+but different from the perspective of approximations. ECC
+is NP-hard (Amburg et al., 2020) but permits nontrivial ap-
+proximation algorithms, whose approximation factors may
+depend on the number of colors k and the rank r of the
+hypergraph (the maximum hyperedge size).
+Background and previous results. Angel et al. (2016)
+were the ﬁrst to study the problem over graphs (the r = 2
+case), focusing on MAXECC . They showed the objective
+is polynomial time solvable fork = 2 colors but NP-hard
+whenk≥ 3, and provided a 1
+e2 -approximation algorithm
+by rounding a linear programming (LP) relaxation. A se-
+quence of follow-up papers (Ageev & Kononov, 2014; 2020;
+Alhamdan & Kononov, 2019) improved the best approxima-
+tion factor to 4225/11664≈ 0.3622 (Ageev & Kononov,
+2020), and showed it is NP-hard to approximate above a
+factor 241/249≈ 0.972 (Alhamdan & Kononov, 2019).
+All of these results apply to MAXECC andr = 2. Cai &
+Leung (2018) also focused on graphs but considered the
+problem from the perspective of parameterized complexity,
+showing that MINECC and MAXECC are ﬁxed-parameter
+tractable (FPT) in the solution size.
+Amburg et al. (2020) initiated the study of ECC
+in hypergraphs, focusing on MINECC . They gave a
+min
+{
+2− 1
+k, 2− 1
+r+1
+}
+-approximation algorithm based on
+rounding an LP relaxation, and provided combinatorial al-
+gorithms with approximation factors scaling linearly in r.
+Finally, they showed that the problem can be reduced in
+an approximation-preserving way to node-weighted mul-
+tiway cut (NODE -MC ) (Garg et al., 2004). This leads to
+a 2(1− 1/k) approximation by rounding the NODE -MC
+LP relaxation. Amburg et al. (2022) later extended this
+framework for the task of diverse group discovery and team
+formation. Recently, Kellerhals et al. (2023) gave improved
+FPT algorithms and parameterized hardness results.
+Other related work. ECC is closely related to chromatic
+correlation clustering (Bonchi et al., 2015; Anava et al.,
+2015; Klodt et al., 2021; Xiu et al., 2022), an edge-colored
+generalization of correlation clustering (Bansal et al., 2004).
+The reduction to NODE -MC also situates MINECC within
+a broad class of multiway partition problems (Ene et al.,
+2013; Garg et al., 2004; Dahlhaus et al., 1994; C ˘alinescu
+et al., 2000; Chekuri & Ene, 2011a;b; Chekuri & Madan,
+2016), such as hypergraph multiway cut (HYPER -MC). Ap-
+pendix A provides a deeper discussion of related work.
+Our contributions. There are many natural questions on
+the approximability of ECC that are unresolved in previous
+work, especially relating to the less studied MINECC objec-
+tive. Amburg et al. (2020) provide an indirect 2(1− 1/k)-
+approximation for MINECC by rounding the NODE -MC
+LP relaxation in a reduced graph. When k≤ 2(r + 1),
+this is better than the approximation factor they obtain by
+rounding the canonical MINECC LP relaxation. An open
+question is to understand the exact relationship between
+these LP relaxations. In general, can we improve on the best
+LP rounding algorithms? For combinatorial algorithms, the
+best existing approximation factors scale linearly inr (Am-
+burg et al., 2020). Can we design a combinatorial algorithm
+whose approximation factor is constant with respect to r
+andk? Finally, although the problem is known to be NP-
+hard and MAXECC is known to be APX-hard (Alhamdan
+& Kononov, 2019), can we say anything more about approx-
+imation hardness for MINECC?
+We answer all of these open questions, and in the process
+prove new connections to other well-studied combinatorial
+objectives. In terms of linear programming algorithms:
+• We prove that the MINECC LP relaxation is always at
+least as tight as the NODE -MC LP relaxation, and in some
+cases is strictly tighter (Theorem 2.2).
+• We improve the best approximation factors for rounding
+the MINECC LP relaxation from min
+{
+2− 1
+k, 2− 1
+r+1
+}
+to min
+{
+2− 2
+k, 2− 2
+r+1
+}
+(Theorems 3.1, 3.2, and 4.6).
+• We prove a matching integrality gap, showing that our LP
+rounding schemes are in fact optimal (Lemma 2.1).
+For the graph objective (r = 2), our approximation factor
+is 4
+3, improving on the previous best 5
+3-approximation (Am-
+burg et al., 2020). Our approximation result forr = 2 is the
+most challenging and in-depth result in our paper, and relies
+on a new technique for using auxiliary linear programs to
+bound the worst-case approximation factor obtained when
+rounding the MINECC LP. This proof requires a careful
+case analysis; we also formally prove why alternative strate-
+gies for trying to round the LP relaxation (which appear
+potentially easier at ﬁrst glance) will in fact fail to provide a
+4
+3-approximation (Lemma 4.7). Aside from our linear pro-
+gramming results, our contributions include the following:
+• We prove thatVERTEX COVER is reducible to MINECC in
+an approximation preserving way (Theorem 5.1), implying
+APX-hardness. The details of our reduction allow us to
+further prove UGC-hardness of approximation below 2−
+(2 +or(1)) ln lnr
+lnr (for arbitrarily large k). The reduction
+also implies hardness results for hypergraph MAXECC.
+• We prove that hypergraph MINECC is reducible to VER-
+TEX COVER in an approximation preserving way (Theo-
+rem 5.2). Explicitly forming the reduced VERTEX COVER
+2
+=== PDF PAGE 3 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+instance lead to combinatorial 2-approximation algorithms
+that run in timeO(∑
+v∈V d2
+v +|E|2).
+• We develop more careful 2-approximation algorithms that
+run inO(∑
+e∈E|e|), i.e., linear in the hypergraph size.
+Our results improve signiﬁcantly on the previous best ap-
+proximation guarantees for MINECC and are also tight or
+near-tight with respect to different types of lower bounds.
+Our LP rounding scheme is optimal in that in matches the in-
+tegrality gap we show. All of our algorithms for hypergraph
+MINECC also have asymptotically optimal approximation
+factors assuming the unique games conjecture, since ap-
+proximating VERTEX COVER by a constant smaller than
+2 is UGC-hard (Khot & Regev, 2008). Our combinatorial
+algorithms also have asymptotically optimal runtimes, since
+it takes Ω(∑
+e∈E|e|) time simply to read the hypergraph
+input. In addition to our theoretical results, we conﬁrm in
+numerical experiments that our algorithms are very practical.
+Our empirical contributions include a new large benchmark
+dataset for edge-colored hypergraph clustering and a very
+fast method that uses additional heuristics to improve the
+practical performance of our combinatorial algorithms.
+2. MINECC Linear Programming Framework
+An instance of MINECC is given by an edge-colored hy-
+pergraphH = (V,E,C,𝓁 ) with node set V and edge set
+E; we≥ 0 represents the nonnegative weight for e∈ E.
+We use the term edge even in the hypergraph setting (rather
+than hyperedge), to use uniform terminology between the
+graph and hypergraph setting.C = [k] ={1, 2,...k } is a
+set of edge colors andr denotes the maximum hyperedge
+size. The function𝓁: E→C maps each edge to a color in
+C, andEc⊆E denotes the set of edges with colorc∈C.
+LetY be a map from nodes to colors where Y [v]∈ C is
+the color of nodev. For e∈E, if there is any nodev∈e
+such that Y [v]⁄= 𝓁(e), the map Y has made a mistake at
+edgee, and this incurs a penalty ofwe. This is equivalent to
+partitioning nodes intok clusters, with each cluster corre-
+sponding to one color, in a way that minimizes the weight of
+edges that are not completely contained in the cluster with
+a matching color. GivenY , letMY ⊆E denote the set of
+edges whereY makes a mistake. The objective is
+(MINECC) min Y
+∑
+e∈Ewe1 MY (e), (1)
+where 1 MY is the indicator function for edge mistakes and
+the minimization is over all valid node colorings Y . The
+canonical LP relaxation for this objective is
+min ∑
+e∈Ewexe
+s.t. ∑k
+i=1xi
+v =k− 1 ∀v∈V
+xe≥xc
+v ife∈Ec wherec∈C
+0≤xi
+v≤ 1 ∀v∈V andi∈C
+0≤xe≤ 1 ∀e∈E.
+(2)
+<latexit sha1_base64="c8tp9vqtyTr+UM+TrI1QXqVvLgI=">AAAB7nicbVBNSwMxEJ2tX7V+VT16CbaCp7JbQb0IRS8eK9gPaJeSTbNt2Gw2JFmhLP0RXjwo4tXf481/Y9ruQVsfDDzem2FmXiA508Z1v53C2vrG5lZxu7Szu7d/UD48auskVYS2SMIT1Q2wppwJ2jLMcNqViuI44LQTRHczv/NElWaJeDQTSf0YjwQLGcHGSp1qhG7QRXVQrrg1dw60SrycVCBHc1D+6g8TksZUGMKx1j3PlcbPsDKMcDot9VNNJSYRHtGepQLHVPvZ/NwpOrPKEIWJsiUMmqu/JzIcaz2JA9sZYzPWy95M/M/rpSa89jMmZGqoIItFYcqRSdDsdzRkihLDJ5Zgopi9FZExVpgYm1DJhuAtv7xK2vWad1nzHuqVxm0eRxFO4BTOwYMraMA9NKEFBCJ4hld4c6Tz4rw7H4vWgpPPHMMfOJ8/LfmOJw==</latexit>
+k=3
+<latexit sha1_base64="ga4wmvDMMVCgoJZV+Yph3jsbgsU=">AAACCXicbVC7SgNBFL0bXzG+opY2g4lgFXaDqI0QtLGMYB6QLGF2cpMMmX0wMyuEJa2Nv2JjoYitf2Dn3zibbKGJFwYO59x77tzjRYIrbdvfVm5ldW19I79Z2Nre2d0r7h80VRhLhg0WilC2PapQ8AAbmmuB7Ugi9T2BLW98k+qtB5SKh8G9nkTo+nQY8AFnVBuqVyTlMbkiZ2Xi8YhKY4BEonFQGOispWRX7FmRZeBkoARZ1XvFr24/ZLFvDJigSnUcO9JukpozgdNCN1YYUTamQ+wYGFAflZvMLpmSE8P0ySCU5gWazNjfEwn1lZr4nun0qR6pRS0l/9M6sR5cugkPolhjwOaLBrEgOiRpLKTPJTItJgZQJrn5K2EjKinTJryCCcFZPHkZNKsV57zi3FVLtessjjwcwTGcggMXUINbqEMDGDzCM7zCm/VkvVjv1se8NWdlM4fwp6zPH/gMmUo=</latexit>
+k= 4 bipartite representation
+<latexit sha1_base64="ga4wmvDMMVCgoJZV+Yph3jsbgsU=">AAACCXicbVC7SgNBFL0bXzG+opY2g4lgFXaDqI0QtLGMYB6QLGF2cpMMmX0wMyuEJa2Nv2JjoYitf2Dn3zibbKGJFwYO59x77tzjRYIrbdvfVm5ldW19I79Z2Nre2d0r7h80VRhLhg0WilC2PapQ8AAbmmuB7Ugi9T2BLW98k+qtB5SKh8G9nkTo+nQY8AFnVBuqVyTlMbkiZ2Xi8YhKY4BEonFQGOispWRX7FmRZeBkoARZ1XvFr24/ZLFvDJigSnUcO9JukpozgdNCN1YYUTamQ+wYGFAflZvMLpmSE8P0ySCU5gWazNjfEwn1lZr4nun0qR6pRS0l/9M6sR5cugkPolhjwOaLBrEgOiRpLKTPJTItJgZQJrn5K2EjKinTJryCCcFZPHkZNKsV57zi3FVLtessjjwcwTGcggMXUINbqEMDGDzCM7zCm/VkvVjv1se8NWdlM4fwp6zPH/gMmUo=</latexit>
+k= 4 bipartite representation
+e1 e2 e3 e4
+(1,2)(1,3)(1,4)(2,3)(2,4)(2,3)
+Figure 2. For integersk≥ 3 there is an edge-colored hypergraph
+for which the MINECC LP integrality gap is 2(1− 1/k) = 2(1−
+1/(r + 1)). The instance involvesk edges of different colors, and
+for each pair of distinct edges there is one node in the intersection.
+This can be visualized using a bipartite representation: there is a
+hyperedge-node (squares) for each color, and each standard node
+(circles) is deﬁned by pairs of hyperedge-nodes.
+The variablexi
+u can be interpreted as the distance between
+nodeu and colori. Every node color mapY can be trans-
+lated into a binary feasible solution for this LP by setting
+xi
+v = 0 ifY [v] = i andxi
+v = 1 otherwise, and by setting
+xe = 1 whene∈M Y andxe = 0 otherwise. The con-
+straintsxe≥ xc
+v fore∈ Ec and the nonnegativity of we
+together imply thatxe = maxv∈exc
+v at optimality.
+2.1. Generic LP Rounding Algorithm
+Algorithm 1 is our generic algorithm for rounding the
+MINECC LP relaxation, which takes an intervalI⊆ [0, 1]
+as input. It generates a random thresholdρ∈I, and identi-
+ﬁes the set of nodesv satisfyingxi
+v <ρ for each clusteri.
+Ifxi
+v <ρ , we say that colori “wants” nodev and thati is
+a candidate color for nodei. A node may have more than
+one candidate color, so we generate a random permutation
+of{1, 2,...k } that deﬁnes the priority of each color. In
+Algorithm 1, a color has higher priority if it comes later in
+the permutationπ. We then deﬁneY [v] to be the color that
+has the highest priority among all nodes that wantv. Nodes
+that are not wanted by any color are given an arbitrary color.
+The rounding schemes of Amburg et al. (2020) amount to
+running Algorithm 1 with a ﬁxed threshold (i.e.,I is a single
+point). Here we use a random threshold from an interval
+I, similar to rounding strategies for convex relaxations of
+other multiway cut objectives (C˘alinescu et al., 2000; Ene
+et al., 2013; Chekuri & Madan, 2016). Our goal is to bound
+the probability thate∈M Y for an arbitrarye∈E.
+Observation 1. LetY be the output of Algorithm 1 for some
+intervalI⊆ [0, 1]. If P [e∈M Y ]≤pxe for everye∈E,
+the output node coloringY is ap-approximate solution for
+MINECC, since the expected cost of Y is
+E
+[∑
+e∈E
+we1 MY (e)
+]
+=
+∑
+e∈E
+we·P [e∈M Y ]≤p
+∑
+e∈E
+wexe.
+Given this observation, in order to prove approximation
+guarantees for Algorithm 1, we will simply focus on bound-
+ing P [e∈M Y ] under different conditions onI,r, andk.
+3
+=== PDF PAGE 4 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Algorithm 1 GenColorRound(H,I )
+Input:H = (V,E,C,𝓁 ), intervalI⊆ [0, 1]
+Output: Node coloring mapY : V →C
+Solve the LP-relaxation (2)
+ρ← uniform random value inI
+5: π← uniform random permutation of{1, 2,...,k }
+Fori∈{ 1, 2,...k } deﬁneSi ={v∈V :xi
+v <ρ}
+fori = 1 tok do
+forv∈Sπ(i) do
+Y [v] =π(i)
+10: end for
+end for
+Ifv /∈⋃
+iSi, setY [v] to an arbitrary color
+2.2. Linear Program Integrality Gap
+Before proving new approximation guarantees, we estab-
+lish a new integrality gap result for the canonical MINECC
+LP. This is related to integrality gap results for convex re-
+laxations of NODE -MC (Garg et al., 2004) and HYPER -
+MC (Ene et al., 2013). For these problems, an integrality
+gap was given only in terms of the number of clustersk. For
+MINECC, we establish a gap in terms ofk andr simultane-
+ously by considering a hypergraph wherek =r + 1. See
+Figure 2 for an illustration and the appendix for a proof.
+Lemma 2.1. For every integerk≥ 3, there exists an in-
+stance H = (V,E,C,𝓁 ) of MINECC with k = r + 1
+whose optimal solution makesk− 1 =r mistakes, and for
+which the LP relaxation has a value of k
+2 = r+1
+2 . Thus, the
+integrality gap is 2
+(
+1− 1
+k
+)
+= 2
+(
+1− 1
+r+1
+)
+.
+2.3. Comparison with the N ODE -MC LP Relaxation
+Amburg et al. (2020) showed that MINECC reduces to
+NODE -MC in an approximation-preserving way, implying
+a 2(1− 1/k) approximation based on rounding the NODE -
+MC LP relaxation. Whenk≤ 2(r + 1), this is better than
+the approximation guarantee the authors obtain for directly
+rounding the canonical MINECC LP. Despite this, we show
+that the canonical LP is tighter than the NODE -MC LP.
+Theorem 2.2. The value of the MINECC LP relaxation is
+always at least as large as (and can be strictly larger than)
+the lower bound obtained by reducing to NODE -MC and
+using the NODE -MC LP relaxation.
+Appendix D provides a more formal statement of this result
+and a proof, along with additional details on the relationship
+between MINECC and multiway cut objectives. In particu-
+lar, we detail the approximation-preserving reductions from
+MINECC to NODE -MC and HYPER -MC , and show that
+the best approximation results obtained via these reductions
+are in general not as strong as the approximation guarantees
+we develop using the MINECC LP relaxation.
+3. Optimal LP Rounding for Hypergraphs
+This section covers our optimal rounding scheme for
+the MINECC LP relaxation when r > 2, i.e., the hy-
+pergraph case. We provide our min
+{
+2− 2
+k, 2− 2
+r+1
+}
+-
+approximation by combining two different approximation
+guarantees, obtained by running Algorithm 1 using two dif-
+ferent intervalsI. Most proofs are deferred to the appendix.
+Proof overview. Throughout the section we consider an
+arbitrary ﬁxed edgee with colorc =𝓁(e) and LP variable
+xe = maxv∈exc
+v. Recall that we say colori “wants” node
+v whenxi
+v < ρfor the randomly chosen threshold ρ∈ I.
+In order to guarantee there is no mistake ate, colorc must
+want every node in e, which is true if and only if ρ > xe.
+Even ifρ>x e, there is a chance of making a mistake ate if
+there are any other colors that want nodes frome. Our goal
+is to bound the probability of making a mistake ate in terms
+ofxe. If P [e∈M Y ]≤pxe for somep, then Observation 1
+guarantees Algorithm 1 is ap-approximation.
+The color threshold value. To aid in our results, we deﬁne
+the ﬁrst color threshold ofe to be z(e)
+1 = minv∈e,i⁄=cxi
+v.
+This is the smallest value such thatρ>z (e)
+1 implies there
+exists a color other thanc that wants a node ine.
+Observation 2. 1−z(e)
+1 ≤xe.
+To prove the observation, let j⁄= c andv∈ e be chosen
+so thatz(e)
+1 =xj
+v. The ﬁrst constraint in the MINECC LP
+implies that∑k
+i=1(1−xi
+v) = 1 =⇒ 2−xj
+v−xc
+v≤ 1, so
+1≤ xj
+v +xc
+v≤ z(e)
+1 +xe. We use this observation in the
+proofs of Theorems 3.1 and 3.2.
+To simplify notation, we can writez1 instead ofz(e)
+1 , while
+still noting that this value is speciﬁc to edgee. We keep the
+1 in the subscript ofz1 since this is the ﬁrst color threshold.
+We will deﬁne other color thresholds later for our rounding
+schemes for the graph case (r = 2), but this is not necessary
+for the results in this section.
+Theorem 3.1. Algorithm 1 withI = ( 1
+2, 3
+4) is a 2
+(
+1− 1
+k
+)
+-
+approximation for MINECC.
+Proof. If k = 2 , the constraint matrix for the LP relax-
+ation is totally unimodular, so every basic feasible LP so-
+lution will have binary variables and our rounding proce-
+dure will ﬁnd the optimal solution. Assume for the rest
+of the proof that k≥ 3. By Observation 1, it sufﬁces to
+show that P [e∈M Y ]≤ 2
+(
+1− 1
+k
+)
+xe. If xe≥ 3
+4, then
+P [e∈M Y ]≤ 1≤ 4
+3xe≤ 2
+(
+1− 1
+k
+)
+xe fork≥ 3. We
+break up the remainder of the proof into two cases.
+Case 1: xe < 1/2. Forρ∈ ( 1
+2, 3
+4), color c = 𝓁(e) will
+want all nodes ine becausexe < 1
+2. Observation 2 implies
+that z1 > 1
+2. If z1≥ 3
+4, then no other color i⁄= c will
+want a node from e, meaning that P [e∈M Y ] = 0 . If
+4
+=== PDF PAGE 5 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+1
+2 < z1≤ 3
+4, it is possible to make a mistake at e only if
+ρ>z 1, and even then the probability of making a mistake
+is at most k−1
+k , since there is a 1
+k probability that colorc is
+given the highest priority by the random permutationπ in
+Algorithm 1. Combining this with Observation 2 shows
+P [e∈M Y ] = P [ρ>z 1] P [e∈M Y |ρ>z 1]
+≤
+3
+4−z1
+3
+4− 1
+2
+· k− 1
+k = 4
+(k− 1
+k
+)(
+1−z1− 1
+4
+)
+≤ 4
+(
+1− 1
+k
+)(
+xe− xe
+2
+)
+= 2
+(
+1− 1
+k
+)
+xe.
+Case 2: xe∈
+[ 1
+2, 3
+4
+)
+. We apply a similar set of steps to see
+P [e∈M Y ] = P [ρ≤xe] P [e∈M Y |ρ≤xe]
++ P [ρ>x e] P [e∈M Y |ρ>x e]
+= xe− 1
+2
+3
+4− 1
+2
+· 1 +
+3
+4−xe
+3
+4− 1
+2
+· k− 1
+k
+= 4
+(xe
+k + k− 3
+4k
+)
+≤ 4
+( 1
+k + k− 3
+2k
+)
+xe
+= 2
+(
+1− 1
+k
+)
+xe.
+Theorem 3.2 provides an approximation guarantee in terms
+ofr, using a different interval. The main difference from
+Theorem 3.1 is that we use the fact thatρ< 2
+3 to bound the
+number of different colors that want a node in e, in terms
+ofr. This allows us to bound the probability of making a
+mistake ate in terms ofr instead of in terms ofk.
+Theorem 3.2. Algorithm 1 withI = ( 1
+2, 2
+3) is a 2
+(
+1− 1
+r+1
+)
+-
+approximation for MINECC whenr> 2.
+Combining Theorems 3.1 and 3.2 provides an optimal round-
+ing strategy, matching the integrality gap from Lemma 2.1.
+4. Optimal LP Rounding for Graphs
+If r = 2 , Theorem 3.2 can be slightly adjusted to prove
+that when I = ( 1
+2, 2
+3), Algorithm 1 is a 3
+2-approximation
+for MINECC . Although this improves on the previous 5
+3-
+approximation (Amburg et al., 2020), it does not match
+the integrality gap of 4
+3 established by Lemma 2.1. This
+section shows how to use a larger interval I = ( 1
+2, 7
+8) to
+obtain a 4
+3-approximation guarantee for the graph version
+(r = 2). The overall proof strategy mirrors our results for
+hypergraphs, but it requires several new technical results
+and a substantially more in-depth analysis.
+4.1. Proof Setup, Overview, and Challenges
+We consider a ﬁxed arbitrary edge e = (u,v ) with color
+c = 𝓁(e) and LP variable xe = max{xc
+u,xc
+v}. We will
+show that for every feasible solution to the LP relaxation,
+P [e∈M Y ]≤ 4
+3xe. (3)
+By Observation 1, this guarantees the 4
+3-approximation. In-
+equality (3) is easy to show for extreme values ofxe.
+Lemma 4.1. If xe /∈ ( 1
+8, 3
+4), for Algorithm 1 with I =
+( 1
+2, 7
+8), then P [e∈M Y ]≤ 4
+3xe.
+Proof. Ifxe≥ 3
+4, then P [e∈M Y ]≤ 1≤ 4
+3xe. Ifxe≤ 1
+8,
+then for everyρ∈ ( 1
+2, 7
+8), colorc =𝓁(e) wants bothu andv,
+and the constraint∑k
+j=1xj
+u =k−1 can be used to show that
+no other color wants eitheru orv, so P [e∈M Y ] = 0.
+The following subsections cover the case xe ∈ ( 1
+8, 3
+4),
+which is far more challenging. The difﬁculty in proving
+inequality (3) for this case is that the probability of making
+a mistake depends heavily on the relationship among LP
+variablesxe and{xi
+u,xi
+v : i∈ [k]}, and more speciﬁcally
+the relative ordering of these variables. Since k can be ar-
+bitrarily large, there can be many LP variables to consider,
+many possible orderings of these variables, and many dif-
+ferent colors that want nodesu andv. The best strategy for
+bounding P [e∈M Y ] depends on the conﬁguration of LP
+variables, leading to an in-depth case analysis.
+To provide a systematic proof for all cases, we ﬁrst intro-
+duce a new set of variables{zi}i∈[k−1] that can be viewed
+as a convenient rearrangement of the node-color distance
+variables{xi
+u,xi
+v : i∈ [k]}. These generalize the ﬁrst color
+threshold used in Section 3, and indicate the points at which
+there is a change in the number of distinct colors that “want”
+a node in e. We prove a key lemma on the relationship
+betweenxe and the{zi}i∈[k−1] variables (Lemma 4.2), and
+then show how to express P [e∈M Y ] in terms of these
+variables for different possible feasible LP solutions. We
+ﬁnally prove P [e∈M Y ]≤ 4
+3xe under different possible
+conditions by solving small auxiliary linear programs.
+4.2. The Color Threshold Lemma
+Fori∈{ 0, 1, 2,...,k −1}, theith color thresholdzi is the
+smallest nonnegative value such that for everyρ>z i, there
+are at leasti distinct colors not equal toc =𝓁(e) that want a
+node ine. This deﬁnition does not require the i colors to all
+want the same node ine. More precisely, for each of thei
+colors, there exists a nodev∈e that is wanted by that color.
+By deﬁnition, the color threshold values are monotonic:
+0 =z0≤z1≤z2≤···≤ zk−1≤ 1. (4)
+These values make it easier to express the probability of
+making a mistake ate if we knowρ>x e and we know the
+value ofρ relative to the color threshold values. Formally,
+P [e∈M Y |ρ>x e andzi <ρ ≤zi+1] = i
+i+1. (5)
+5
+=== PDF PAGE 6 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+The following lemma is a generalization of Observation 1,
+though its proof is more involved.
+Lemma 4.2. For every integert≤ k
+2 ,
+t≤xe +zt +zt+1 +··· +z2t−1. (6)
+4.3. Auxiliary LPs for Bounding Probabilities
+If we know where the color threshold values{zi}i∈[k−1] are
+located relative toxe and the endpoints ofI = ( 1
+2, 7
+8), we
+can derive an expression for P [e∈M Y ] in terms of these
+values when applying Algorithm 1. The goal would then
+be to apply a sequence of carefully chosen inequalities to
+prove that this expression is bounded above by 4
+3xe. This
+subsection shows how to accomplish this task when we
+already know the relative ordering of these variables. In the
+next subsection, we apply this strategy to guarantee that this
+holds for all possible orderings. The following lemmas both
+rely on Lemma 4.2.
+Lemma 4.3. Ifxe∈ ( 1
+8, 1
+2) andzp−1≤ 1
+2≤ zp≤ zq≤
+7
+8 ≤ zq+1 for integers p≤ q, then p = 1 , q ≤ 6, and
+P [e∈M Y ]≤ 8
+3Aqxe whereAq is the optimal solution to
+max q
+q + 1
+7
+8χ−
+q∑
+j=1
+1
+j(j + 1)ωj
+s.t. (A{i})ωi−ωi+1≤ 0 fori = 1,..., 5
+(A6)χ−ω1≤ 1
+(A7) 2χ−ω2−ω3≤ 1
+(A8) 3χ− 3ω5≤ 1
+(A9)−χ≤− 2 (A10)ωq− 7
+8χ≤ 0.
+(7)
+We derive an analogous result for the casexe∈ [ 1
+2, 3
+4).
+Lemma 4.4. Ifxe∈ [ 1
+2, 3
+4) andzp−1≤xe≤zp≤zq≤
+7
+8 ≤ zq+1 for integers p≤ q, then p≤ 5, q≤ 10, and
+P [e∈M Y ]≤ 8
+3Bp,qxe whereBp,q is the solution to
+max 1
+p +
+( q
+q + 1
+7
+8− 1
+2
+)
+χ−
+q∑
+j=p
+1
+j(j + 1)ωj
+s.t. (B{i})ωi−ωi+1≤ 0 fori = 1,..., 9
+(B10)χ−ω1≤ 1
+(B11) 2χ−ω2−ω3≤ 1
+(B12) 3χ−ω3−ω4−ω5≤ 1
+(B13) 4χ− 4ω7≤ 1 (B14)ωp−1≤ 1
+(B15)−ωp≤− 1 (B16)ωq− 7
+8χ≤ 0.
+(8)
+In order to prove that P [e∈M Y ]≤ 4
+3xe, it remains to
+show that for all valid choices of p andq, the optimal so-
+lutions LP (7) and LP (8) are bounded above by 1
+2. The
+result will then follow by Lemmas 4.3 and 4.4. The dif-
+ﬁculty is that there are many valid choices of p andq to
+check, each of which requires a different linear program.
+Whenxe∈ ( 1
+8, 1
+2), Lemma 4.3 indicates that p = 1 and
+q∈{ 1, 2, 3, 4, 5, 6}, so we must consider six cases. When
+xe∈ [ 1
+2, 3
+4), Lemma 4.4 shows that any pair (p,q ) satisfy-
+ingp≤ 5, q≤ 10, and p≤ q is a valid case, and there
+are 40 such pairs. If we are content with simply computing
+numerical solutions for each case, we can quickly conﬁrm
+that the optimal solution for each of the 46 linear programs
+is bounded above by 1
+2. In the next subsection, we will show
+how to obtain a complete analytical proof by using LP dual-
+ity theory to extract a set of inequalities for each case that
+will prove an upper bound on the solution to each auxiliary
+LP. Note that there are many additional valid constraints
+that we could add to LPs (7) and (8). We have omitted some
+constraints and have simpliﬁed others in order to obtain the
+smallest and simplest constraint set that sufﬁces to prove
+P [e∈M Y ]≤ 4
+3xe. Adding more constraints makes the
+analysis more cumbersome without improving the bound.
+4.4. Using LP Duality for Case Analysis
+For each valid choice ofq, we can use LP duality to bound
+the optimal solution of LP (7) above by 1
+2. The same basic
+steps also work for LP (8). The dual of LP (7) is another
+LP with a variable for each constraint A{i}. By LP duality
+theory, every feasible solution to the dual provides an upper
+bound on the primal LP objective, so it sufﬁces to ﬁnd a set
+of dual variables with a dual LP value of 1
+2 or less.
+Proof forq = 1. We illustrate this for LP (7) whenq = 1.
+The primal LP objective for this case is 7
+16χ− 1
+2ω1, and we
+must bound this above by 1
+2. Computing an optimal solution
+for the dual LP, we ﬁnd that the constraint (A6) corresponds
+to a dual variable of 1
+2, constraint (A9) has a dual variable
+of 1
+16, and all other dual variables are zero. Multiplying
+constraints by the dual variables and summing produces a
+sequence of inequalities that proves the desired result:
+(A6)χ−ω1≤ 1 and (A9)−χ≤− 2 :
+=⇒ 1
+2(χ−ω1) + 1
+16(−χ)≤ 1
+2(1) + 1
+16(−2)
+=⇒ 7
+16χ− 1
+2ω1≤ 3
+8≤ 1
+2 for all validχ,ω 1.
+Table 3 in Appendix C provides dual variables for LP (7)
+for all other choices ofq, and outlines a similar strategy for
+bounding LP (8). We conclude the following result.
+Lemma 4.5. For any integerq∈{ 1, 2,..., 6}, the optimal
+solution to linear program (7) is at most 1
+2, and for any pair
+of integers (p,q ) satisfying 1≤p≤ 5 andp≤q≤ 10, the
+optimal solution to linear program (8) is at most 1
+2. Hence,
+for everyxe∈ ( 1
+8, 3
+4), P [e∈M Y ]≤ 4
+3xe whereY is the
+node coloring returned by Algorithm 1 whenI = ( 1
+2, 7
+8).
+Our main approximation result for r = 2 is now just a
+corollary of Lemmas 4.1 and 4.5 and Observation 1.
+Theorem 4.6. Algorithm 1 with I = ( 1
+2, 7
+8) is a 4
+3-
+approximation algorithm for COLOR -EC.
+6
+=== PDF PAGE 7 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="R7P1U+hePPBb6e8Xy2jElmY/qHE=">AAAB6HicbVBNS8NAEJ34WetX1aOXxSJ4KomIeix66bEF+wFtKJvtpF272YTdjVBCf4EXD4p49Sd589+4bXPQ1gcDj/dmmJkXJIJr47rfztr6xubWdmGnuLu3f3BYOjpu6ThVDJssFrHqBFSj4BKbhhuBnUQhjQKB7WB8P/PbT6g0j+WDmSToR3QoecgZNVZq1Pqlsltx5yCrxMtJGXLU+6Wv3iBmaYTSMEG17npuYvyMKsOZwGmxl2pMKBvTIXYtlTRC7WfzQ6fk3CoDEsbKljRkrv6eyGik9SQKbGdEzUgvezPxP6+bmvDWz7hMUoOSLRaFqSAmJrOvyYArZEZMLKFMcXsrYSOqKDM2m6INwVt+eZW0LivedcVrXJWrd3kcBTiFM7gAD26gCjWoQxMYIDzDK7w5j86L8+58LFrXnHzmBP7A+fwBn3GM0g==</latexit>
+H
+<latexit sha1_base64="Wvi2dauVFo8Qohybl1ZHjLObTXs=">AAAB6HicbVBNS8NAEJ34WetX1aOXxSJ4KomIeix60GML9gPaUDbbSbt2swm7G6GE/gIvHhTx6k/y5r9x2+agrQ8GHu/NMDMvSATXxnW/nZXVtfWNzcJWcXtnd2+/dHDY1HGqGDZYLGLVDqhGwSU2DDcC24lCGgUCW8Hoduq3nlBpHssHM07Qj+hA8pAzaqxUv+uVym7FnYEsEy8nZchR65W+uv2YpRFKwwTVuuO5ifEzqgxnAifFbqoxoWxEB9ixVNIItZ/NDp2QU6v0SRgrW9KQmfp7IqOR1uMosJ0RNUO96E3F/7xOasJrP+MySQ1KNl8UpoKYmEy/Jn2ukBkxtoQyxe2thA2poszYbIo2BG/x5WXSPK94lxWvflGu3uRxFOAYTuAMPLiCKtxDDRrAAOEZXuHNeXRenHfnY9664uQzR/AHzucPne2M0Q==</latexit>
+G
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="q1WW3rLfU1JyS+tfwms7vtsZuuQ=">AAACH3icbVC7TsMwFHXKq5RXgJHFUCExVQlCgNSlgoWxSPQhNVHlOE5r1bEj20Gqos58Bx/ACp/Ahlj7BfwGTpuBthzZOkfn3qtrnyBhVGnHmVqltfWNza3ydmVnd2//wD48aiuRSkxaWDAhuwFShFFOWppqRrqJJCgOGOkEo/u83nkmUlHBn/Q4IX6MBpxGFCNtrL59iqBX9+owmBM2lJ+wYAIrfbvq1JwZ4KpwC1EFBZp9+8cLBU5jwjVmSKme6yTaz5DUFDMyqXipIgnCIzQgPSM5ionys9lXJvDcOCGMhDSXazhz/05kKFZqHAemM0Z6qJZruflfrZfq6NbPKE9STTieL4pSBrWAeS4wpJJgzcZGICypeSvEQyQR1ia9hS2BECONAjUxybjLOayK9mXNva65j1fVxl2RURmcgDNwAVxwAxrgATRBC2DwAt7AO/iwXq1P68v6nreWrGLmGCzAmv4CujOfTA==</latexit>
+abcde
+<latexit sha1_base64="3yK9BijKdAV6EiQ0+rUoYw4XQ9I=">AAACA3icbVDLSsNAFL2pr1pfUXe6GSyCq5KIqOCm6MZlBfuANpTJZNIOnUzCzEQopeDGX3HjQhG3/oQ7/8ZJmoW2HpjL4Zx7uXOPn3CmtON8W6Wl5ZXVtfJ6ZWNza3vH3t1rqTiVhDZJzGPZ8bGinAna1Exz2kkkxZHPadsf3WR++4FKxWJxr8cJ9SI8ECxkBGsj9e0D7KPeFfJJVkmQ81mlfbvq1JwcaJG4BalCgUbf/uoFMUkjKjThWKmu6yTam2CpGeF0WumliiaYjPCAdg0VOKLKm+Q3TNGxUQIUxtI8oVGu/p6Y4EipceSbzgjroZr3MvE/r5vq8NKbMJGkmgoyWxSmHOkYZYGggElKNB8bgolk5q+IDLHERJvYKiYEd/7kRdI6rbnnNffurFq/LuIowyEcwQm4cAF1uIUGNIHAIzzDK7xZT9aL9W59zFpLVjGzD39gff4Ak/yU7Q==</latexit>
+ab bc cd bd be
+<latexit sha1_base64="3yK9BijKdAV6EiQ0+rUoYw4XQ9I=">AAACA3icbVDLSsNAFL2pr1pfUXe6GSyCq5KIqOCm6MZlBfuANpTJZNIOnUzCzEQopeDGX3HjQhG3/oQ7/8ZJmoW2HpjL4Zx7uXOPn3CmtON8W6Wl5ZXVtfJ6ZWNza3vH3t1rqTiVhDZJzGPZ8bGinAna1Exz2kkkxZHPadsf3WR++4FKxWJxr8cJ9SI8ECxkBGsj9e0D7KPeFfJJVkmQ81mlfbvq1JwcaJG4BalCgUbf/uoFMUkjKjThWKmu6yTam2CpGeF0WumliiaYjPCAdg0VOKLKm+Q3TNGxUQIUxtI8oVGu/p6Y4EipceSbzgjroZr3MvE/r5vq8NKbMJGkmgoyWxSmHOkYZYGggElKNB8bgolk5q+IDLHERJvYKiYEd/7kRdI6rbnnNffurFq/LuIowyEcwQm4cAF1uIUGNIHAIzzDK7xZT9aL9W59zFpLVjGzD39gff4Ak/yU7Q==</latexit>
+ab bc cd bd be
+<latexit sha1_base64="3yK9BijKdAV6EiQ0+rUoYw4XQ9I=">AAACA3icbVDLSsNAFL2pr1pfUXe6GSyCq5KIqOCm6MZlBfuANpTJZNIOnUzCzEQopeDGX3HjQhG3/oQ7/8ZJmoW2HpjL4Zx7uXOPn3CmtON8W6Wl5ZXVtfJ6ZWNza3vH3t1rqTiVhDZJzGPZ8bGinAna1Exz2kkkxZHPadsf3WR++4FKxWJxr8cJ9SI8ECxkBGsj9e0D7KPeFfJJVkmQ81mlfbvq1JwcaJG4BalCgUbf/uoFMUkjKjThWKmu6yTam2CpGeF0WumliiaYjPCAdg0VOKLKm+Q3TNGxUQIUxtI8oVGu/p6Y4EipceSbzgjroZr3MvE/r5vq8NKbMJGkmgoyWxSmHOkYZYGggElKNB8bgolk5q+IDLHERJvYKiYEd/7kRdI6rbnnNffurFq/LuIowyEcwQm4cAF1uIUGNIHAIzzDK7xZT9aL9W59zFpLVjGzD39gff4Ak/yU7Q==</latexit>
+ab bc cd bd be
+<latexit sha1_base64="3yK9BijKdAV6EiQ0+rUoYw4XQ9I=">AAACA3icbVDLSsNAFL2pr1pfUXe6GSyCq5KIqOCm6MZlBfuANpTJZNIOnUzCzEQopeDGX3HjQhG3/oQ7/8ZJmoW2HpjL4Zx7uXOPn3CmtON8W6Wl5ZXVtfJ6ZWNza3vH3t1rqTiVhDZJzGPZ8bGinAna1Exz2kkkxZHPadsf3WR++4FKxWJxr8cJ9SI8ECxkBGsj9e0D7KPeFfJJVkmQ81mlfbvq1JwcaJG4BalCgUbf/uoFMUkjKjThWKmu6yTam2CpGeF0WumliiaYjPCAdg0VOKLKm+Q3TNGxUQIUxtI8oVGu/p6Y4EipceSbzgjroZr3MvE/r5vq8NKbMJGkmgoyWxSmHOkYZYGggElKNB8bgolk5q+IDLHERJvYKiYEd/7kRdI6rbnnNffurFq/LuIowyEcwQm4cAF1uIUGNIHAIzzDK7xZT9aL9W59zFpLVjGzD39gff4Ak/yU7Q==</latexit>
+ab bc cd bd be
+<latexit sha1_base64="3yK9BijKdAV6EiQ0+rUoYw4XQ9I=">AAACA3icbVDLSsNAFL2pr1pfUXe6GSyCq5KIqOCm6MZlBfuANpTJZNIOnUzCzEQopeDGX3HjQhG3/oQ7/8ZJmoW2HpjL4Zx7uXOPn3CmtON8W6Wl5ZXVtfJ6ZWNza3vH3t1rqTiVhDZJzGPZ8bGinAna1Exz2kkkxZHPadsf3WR++4FKxWJxr8cJ9SI8ECxkBGsj9e0D7KPeFfJJVkmQ81mlfbvq1JwcaJG4BalCgUbf/uoFMUkjKjThWKmu6yTam2CpGeF0WumliiaYjPCAdg0VOKLKm+Q3TNGxUQIUxtI8oVGu/p6Y4EipceSbzgjroZr3MvE/r5vq8NKbMJGkmgoyWxSmHOkYZYGggElKNB8bgolk5q+IDLHERJvYKiYEd/7kRdI6rbnnNffurFq/LuIowyEcwQm4cAF1uIUGNIHAIzzDK7xZT9aL9W59zFpLVjGzD39gff4Ak/yU7Q==</latexit>
+ab bc cd bd be
+<latexit sha1_base64="qFeqzbLnersp30zjDsSHpEQzaws=">AAAB7nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseilx4r2A9oQ9lsN+3SzSbsToQS+iO8eFDEq7/Hm//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNM7ud+54lrI2L1iNOE+xEdKREKRtFKnf6YYtaYDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOyMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8NbPhEpS5IotF4WpJBiT+e9kKDRnKKeWUKaFvZWwMdWUoU2oZEPwVl9eJ+2rqlereg/XlfpdHkcRzuAcLsGDG6hDA5rQAgYTeIZXeHMS58V5dz6WrQUnnzmFP3A+fwBpRI+f</latexit>
+ˆH
+Figure 3. MINECC can be reduced to VERTEX COVER by replac-
+ing each hyperedge with a node and adding an edge between nodes
+that represent overlapping hyperedges of different colors. VERTEX
+COVER on a graphG can be reduced to MINECC by introducing
+a node for each edge inG, and a hyperedge of a unique color for
+each node-neighborhood inG.
+The appendix details several challenges that would need
+to be overcome in order to avoid a lengthy case analysis
+when trying to prove a 4
+3-approximation. Among other
+challenges, we prove the following result, indicating that if
+we apply Algorithm 1 with a different intervalI, it would
+either become more challenging or impossible (depending
+on the intervalI) to prove inequality (3).
+Lemma 4.7. LetY denote the node color map returned by
+running Algorithm 1 with I = (a,b )⊆ (0, 1). If a > 1
+2,
+there exists a feasible LP solution such that P [e∈M Y ]>
+4
+3xe. Ifa≤ 1
+2 andb< 7
+8, there exists a feasible LP solution
+such that P [e∈M Y ]> 4
+3xe.
+5. V ertex Cover Equivalence and Algorithms
+Cai & Leung (2018) showed that whenr = 2, MINECC can
+be reduced in an approximation-preserving way to VERTEX
+COVER . We not only extend this result to r >2, but also
+prove an approximation-preserving reduction in the other
+direction that only applies if we consider the hypergraph
+(r> 2) setting. This immediately leads to new combinato-
+rial approximation algorithms and reﬁned hardness results.
+Explicitly forming the reduced VERTEX COVER instance
+and applying existing VERTEX COVER algorithms leads
+to runtimes that scale superlinearly in terms of ∑
+e∈E|e|
+(the size of the hypergraph). As a key algorithmic contribu-
+tion, we design careful implicit implementations of existing
+VERTEX COVER algorithms to provide 2-approximations
+for MINECC that have a runtime of O(∑
+e∈E|e|).
+5.1. V ertex Cover Equivalence
+The equivalence between hypergraph MINECC and VER-
+TEX COVER is summarized in two theorems (see Figure 3).
+Theorem 5.1. LetG = (V,E ) be a graph with maximum
+degree ∆. VERTEX COVER on G can be reduced in an
+approximation-preserving way to MINECC on an edge-
+colored hypergraphH with rankr = ∆.
+Theorem 5.2. An instanceH = (V,E,C,𝓁 ) of MINECC
+can be reduced in an approximation-preserving way to an
+instance of VERTEX COVER on a graphG with|E| nodes.
+Theorem 5.1 implies new hardness results: assumingr and
+k are arbitrarily large, it is NP-hard to approximate hyper-
+graph MINECC to within a factor better than 1.3606 (Dinur
+& Safra, 2005), and UGC-hard to approximate to within
+a factor that is a constant amount smaller than 2 (Khot &
+Regev, 2008). The relationship between maximum degree
+inG and hypergraph rank in H implies furthermore that
+it is UGC-hard to obtain a 2− (2 +or(1)) ln lnr
+lnr approx-
+imation for rank-r MINECC (assuming arbitrarily large
+k), using the VERTEX COVER hardness results of Austrin
+et al. (2011). This result also implies that the maximum
+independent set problem is reducible in an approximation-
+preserving way to hypergraph MAXECC , indicating that
+it is NP-hard to obtain an approximation for hypergraph
+MAXECC that is sublinear in terms of the number of edges
+in the hypergraph (Zuckerman, 2006).
+Theorem 5.2 generalizes the reduction from graph
+MINECC to VERTEX COVER shown by Cai & Leung
+(2018). This can be seen by viewing MINECC as an
+edge deletion problem. In an edge-colored hypergraph
+H = (V,E,C,𝓁 ), we say that (e,f )∈ E×E is a bad
+edge pair ife andf overlap and have different colors. The
+MINECC objective is then equivalent to deleting a mini-
+mum weight set of edges so that no bad edge pairs remain.
+A simple 2-approximation for MINECC can be designed
+by explicitly converting the edge-colored hypergraph into a
+graph and applying existing combinatorial VERTEX COVER
+algorithms. Visiting each node v∈ V and then iterating
+through all pairs of hyperedges incident to v in H takes
+O(∑
+v∈V d2
+v) time wheredv is the degree of node v. The
+fastest algorithms for (unweighted and weighted) VERTEX
+COVER take linear-time in terms of the number of edges in
+the graph (Pitt, 1985; Bar-Yehuda & Even, 1985). There
+can be up toO(|E|2) edges in the reduced graphG, so this
+approach has a runtime ofO(|E|2 +∑
+v∈V d2
+v).
+5.2. Linear-time 2-Approximation Algorithm
+It would be ideal to develop an algorithm for MINECC
+whose runtime is not just linear in terms of the number of
+edges in a reduced graph, but is linear in terms of the hy-
+pergraph size, i.e.,O(∑
+e∈E|e|). This may seem inherently
+challenging, given that existingVERTEX COVER algorithms
+rely on explicitly visiting all edges in a graph. However, this
+can be accomplished using a careful implicit implementa-
+tion of a VERTEX COVER algorithm. Pitt’s algorithm (Pitt,
+1985) is a simple randomized 2-approximation for weighted
+VERTEX COVER that iteratively visits edges in a graph
+G = (VG,EG) in an arbitrary order. Each time it encoun-
+ters an uncovered edge, it samples one of the two endpoints
+(in proportion to the node weight) to include in the cover.
+We will design a variant of Pitt’s algorithm that we can apply
+directly to a MINECC instanceH without ever formingG.
+7
+=== PDF PAGE 8 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Additional notation. Assume a ﬁxed ordering of edges
+E = {e1,e 2,...,e |E|}. For notational simplicity, let
+w(i) = wei and𝓁(i) = 𝓁(ei) denote the weight and color
+of theith edge, respectively. For each node v∈ V , using
+a slight abuse of notation let v(j) denote the index of the
+jth edge that is adjacent to v. These edge indices will be
+stored in a listLE(v) = [v(1), v(2), ··· , v(dv)] where
+dv is the degree of v. For example, if node v is in three
+hyperedges{e2,e 5,e 9}, then LE(v) = [2, 5, 9]. We as-
+sume that edges are ordered by color, so that inLE(v), all
+of the indices for edges of color 1 come ﬁrst, then edges
+with color 2, etc (see Figure 4). If the hypergraph is not
+stored this way, it can easily be re-arranged inO(∑
+e∈E|e|)
+time to satisfy this property. Our main goal is to obtain a set
+D of edge indices to delete that implicitly corresponds to
+an approximate vertex cover inG. Once we have obtained
+such an edge setD, we can iterate through all edges inH,
+and for each e∈ E−D we can assign all nodes in e to
+have color𝓁(e), which takesO(∑
+e∈E|e|) time. It remains
+to show how we can efﬁciently obtain a setD that implicitly
+encodes a 2-approximate vertex cover inG.
+Implicit implementation. Iterating through edges in G
+is equivalent to iterating through bad edge pairs in H. A
+bad edge pair is “covered” if one of the edges is added to
+D. Pitt’s algorithm visits edges inG in an arbitrary order,
+so we can traverse bad edge pairs in H in any way that is
+convenient. We choose to iterate through nodes, and for
+each nodev∈ V we will consider all bad edge pairs that
+containv in their intersection. Explicitly visiting all pairs of
+edges incident tov takesO(d2
+v) time. However, deleting an
+edge will cover multiple bad edge pairs at once, so we will
+be able to “skip” many pairs to speed up the process. To
+accomplish this, we maintain pointers to the front (f) and
+back (b) ofLE(v) = [v(1), v(2), ··· , v(dv)] which we
+initialize tof = 1 andb =dv. Unlessv is only adjacent to
+nodes of one color, in the ﬁrst step we know (ev(f ),ev(b))
+will be a bad edge pair that needs to be covered. Using
+Pitt’s technique, we randomly sample one edge to delete
+based on its weight. If we delete ev(f ), then we no longer
+need to consider any other bad edge pairs involvingev(f ),
+so we update f ← f + 1 and consider the next edge in
+the list. Otherwise, we delete edgeev(b) and decrement the
+back pointer: b← b− 1. If at any point we encounter an
+edge that was added toD previously, we move past it by
+incrementingf or decrementingb. We stop this procedure
+when𝓁(v(f)) = 𝓁(v(b)). Even if f⁄= b, our assumption
+that edges are ordered by color means that there are no
+more bad edge pairs containing v to consider. Figure 4 is
+an illustration of this process. Since we update either f
+orb in each step, and each step involves O(1) operations,
+covering all bad edge pairs containingv takesO(dv) time.
+We refer to this algorithm as PittColoring (see Appendix E
+for pseudocode), and end with a summarizing theorem.
+<latexit sha1_base64="vep7J2D0YQO5avca6G/pRFJmv+M=">AAAB6HicbVBNS8NAEJ34WetX1aOXxSJ4KomIeix68diC/YA2lM120q7dbMLuplBCf4EXD4p49Sd589+4bXPQ1gcDj/dmmJkXJIJr47rfztr6xubWdmGnuLu3f3BYOjpu6jhVDBssFrFqB1Sj4BIbhhuB7UQhjQKBrWB0P/NbY1Sax/LRTBL0IzqQPOSMGivVx71S2a24c5BV4uWkDDlqvdJXtx+zNEJpmKBadzw3MX5GleFM4LTYTTUmlI3oADuWShqh9rP5oVNybpU+CWNlSxoyV39PZDTSehIFtjOiZqiXvZn4n9dJTXjrZ1wmqUHJFovCVBATk9nXpM8VMiMmllCmuL2VsCFVlBmbTdGG4C2/vEqalxXvuuLVr8rVuzyOApzCGVyABzdQhQeoQQMYIDzDK7w5T86L8+58LFrXnHzmBP7A+fwB5SmNAA==</latexit>
+v
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="e3TkHA0LYawL9lPUS7rcVgDba/M=">AAAB73icbVBNS8NAEJ34WetX1aOXxSJ4KomICr0UvXisYD+gCWWz3bRLN5u4OxFK6Z/w4kERr/4db/4bt20O2vpg4PHeDDPzwlQKg6777aysrq1vbBa2its7u3v7pYPDpkkyzXiDJTLR7ZAaLoXiDRQoeTvVnMah5K1weDv1W09cG5GoBxylPIhpX4lIMIpWakfEr/pVEnZLZbfizkCWiZeTMuSod0tffi9hWcwVMkmN6XhuisGYahRM8knRzwxPKRvSPu9YqmjMTTCe3Tshp1bpkSjRthSSmfp7YkxjY0ZxaDtjigOz6E3F/7xOhtF1MBYqzZArNl8UZZJgQqbPk57QnKEcWUKZFvZWwgZUU4Y2oqINwVt8eZk0zyveZcW7vyjXbvI4CnAMJ3AGHlxBDe6gDg1gIOEZXuHNeXRenHfnY9664uQzR/AHzucPlrePBg==</latexit>
+fb
+<latexit sha1_base64="e3TkHA0LYawL9lPUS7rcVgDba/M=">AAAB73icbVBNS8NAEJ34WetX1aOXxSJ4KomICr0UvXisYD+gCWWz3bRLN5u4OxFK6Z/w4kERr/4db/4bt20O2vpg4PHeDDPzwlQKg6777aysrq1vbBa2its7u3v7pYPDpkkyzXiDJTLR7ZAaLoXiDRQoeTvVnMah5K1weDv1W09cG5GoBxylPIhpX4lIMIpWakfEr/pVEnZLZbfizkCWiZeTMuSod0tffi9hWcwVMkmN6XhuisGYahRM8knRzwxPKRvSPu9YqmjMTTCe3Tshp1bpkSjRthSSmfp7YkxjY0ZxaDtjigOz6E3F/7xOhtF1MBYqzZArNl8UZZJgQqbPk57QnKEcWUKZFvZWwgZUU4Y2oqINwVt8eZk0zyveZcW7vyjXbvI4CnAMJ3AGHlxBDe6gDg1gIOEZXuHNeXRenHfnY9664uQzR/AHzucPlrePBg==</latexit>
+fb
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="vep7J2D0YQO5avca6G/pRFJmv+M=">AAAB6HicbVBNS8NAEJ34WetX1aOXxSJ4KomIeix68diC/YA2lM120q7dbMLuplBCf4EXD4p49Sd589+4bXPQ1gcDj/dmmJkXJIJr47rfztr6xubWdmGnuLu3f3BYOjpu6jhVDBssFrFqB1Sj4BIbhhuB7UQhjQKBrWB0P/NbY1Sax/LRTBL0IzqQPOSMGivVx71S2a24c5BV4uWkDDlqvdJXtx+zNEJpmKBadzw3MX5GleFM4LTYTTUmlI3oADuWShqh9rP5oVNybpU+CWNlSxoyV39PZDTSehIFtjOiZqiXvZn4n9dJTXjrZ1wmqUHJFovCVBATk9nXpM8VMiMmllCmuL2VsCFVlBmbTdGG4C2/vEqalxXvuuLVr8rVuzyOApzCGVyABzdQhQeoQQMYIDzDK7w5T86L8+58LFrXnHzmBP7A+fwB5SmNAA==</latexit>
+v
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="j7GWBifaAYUGyEE/nOeXAGWJrUc=">AAACL3icbVBJS8NAFJ7UrdYt6tHLYBHqpSS1LtBLURCPFewCTQiT6bQdOlmYmRRK6D/y4l/pRUQRr/4Lp2kE0/pg4Fve48373JBRIQ3jTcutrW9sbuW3Czu7e/sH+uFRSwQRx6SJAxbwjosEYdQnTUklI52QE+S5jLTd0d3cb48JFzTwn+QkJLaHBj7tU4ykkhz9njjxuGSeT6FVs2owYZUMu8iwaoZd/jJHLxplIym4CswUFEFaDUefWb0ARx7xJWZIiK5phNKOEZcUMzItWJEgIcIjNCBdBX3kEWHHyb1TeKaUHuwHXD1fwkT9OxEjT4iJ56pOD8mhWPbm4n9eN5L9GzumfhhJ4uPFon7EoAzgPDzYo5xgySYKIMyp+ivEQ8QRliriggrBXD55FbQqZfOqbD5Wi/XbNI48OAGnoARMcA3q4AE0QBNg8Axm4B18aC/aq/apfS1ac1o6cwwypX3/APImpCE=</latexit>
+ev(1)ev(2)ev(3)ev(4)ev(5)
+<latexit sha1_base64="/TUjPfh3l0/q29Ehd919cbtkQV8=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRahXsquiHosiuDBQwX7Ae1Ssmm2jc0mS5ItlKX/wYsHRbz6f7z5b0zbPWjrg4HHezPMzAtizrRx3W8nt7K6tr6R3yxsbe/s7hX3DxpaJorQOpFcqlaANeVM0LphhtNWrCiOAk6bwfBm6jdHVGkmxaMZx9SPcF+wkBFsrNS4796WR6fdYsmtuDOgZeJlpAQZat3iV6cnSRJRYQjHWrc9NzZ+ipVhhNNJoZNoGmMyxH3atlTgiGo/nV07QSdW6aFQKlvCoJn6eyLFkdbjKLCdETYDvehNxf+8dmLCKz9lIk4MFWS+KEw4MhJNX0c9pigxfGwJJorZWxEZYIWJsQEVbAje4svLpHFW8S4q3sN5qXqdxZGHIziGMnhwCVW4gxrUgcATPMMrvDnSeXHenY95a87JZg7hD5zPH4jvjnM=</latexit>
+LE(v)
+<latexit sha1_base64="/TUjPfh3l0/q29Ehd919cbtkQV8=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRahXsquiHosiuDBQwX7Ae1Ssmm2jc0mS5ItlKX/wYsHRbz6f7z5b0zbPWjrg4HHezPMzAtizrRx3W8nt7K6tr6R3yxsbe/s7hX3DxpaJorQOpFcqlaANeVM0LphhtNWrCiOAk6bwfBm6jdHVGkmxaMZx9SPcF+wkBFsrNS4796WR6fdYsmtuDOgZeJlpAQZat3iV6cnSRJRYQjHWrc9NzZ+ipVhhNNJoZNoGmMyxH3atlTgiGo/nV07QSdW6aFQKlvCoJn6eyLFkdbjKLCdETYDvehNxf+8dmLCKz9lIk4MFWS+KEw4MhJNX0c9pigxfGwJJorZWxEZYIWJsQEVbAje4svLpHFW8S4q3sN5qXqdxZGHIziGMnhwCVW4gxrUgcATPMMrvDnSeXHenY95a87JZg7hD5zPH4jvjnM=</latexit>
+LE(v)
+<latexit sha1_base64="e3TkHA0LYawL9lPUS7rcVgDba/M=">AAAB73icbVBNS8NAEJ34WetX1aOXxSJ4KomICr0UvXisYD+gCWWz3bRLN5u4OxFK6Z/w4kERr/4db/4bt20O2vpg4PHeDDPzwlQKg6777aysrq1vbBa2its7u3v7pYPDpkkyzXiDJTLR7ZAaLoXiDRQoeTvVnMah5K1weDv1W09cG5GoBxylPIhpX4lIMIpWakfEr/pVEnZLZbfizkCWiZeTMuSod0tffi9hWcwVMkmN6XhuisGYahRM8knRzwxPKRvSPu9YqmjMTTCe3Tshp1bpkSjRthSSmfp7YkxjY0ZxaDtjigOz6E3F/7xOhtF1MBYqzZArNl8UZZJgQqbPk57QnKEcWUKZFvZWwgZUU4Y2oqINwVt8eZk0zyveZcW7vyjXbvI4CnAMJ3AGHlxBDe6gDg1gIOEZXuHNeXRenHfnY9664uQzR/AHzucPlrePBg==</latexit>
+fb
+<latexit sha1_base64="e3TkHA0LYawL9lPUS7rcVgDba/M=">AAAB73icbVBNS8NAEJ34WetX1aOXxSJ4KomICr0UvXisYD+gCWWz3bRLN5u4OxFK6Z/w4kERr/4db/4bt20O2vpg4PHeDDPzwlQKg6777aysrq1vbBa2its7u3v7pYPDpkkyzXiDJTLR7ZAaLoXiDRQoeTvVnMah5K1weDv1W09cG5GoBxylPIhpX4lIMIpWakfEr/pVEnZLZbfizkCWiZeTMuSod0tffi9hWcwVMkmN6XhuisGYahRM8knRzwxPKRvSPu9YqmjMTTCe3Tshp1bpkSjRthSSmfp7YkxjY0ZxaDtjigOz6E3F/7xOhtF1MBYqzZArNl8UZZJgQqbPk57QnKEcWUKZFvZWwgZUU4Y2oqINwVt8eZk0zyveZcW7vyjXbvI4CnAMJ3AGHlxBDe6gDg1gIOEZXuHNeXRenHfnY9664uQzR/AHzucPlrePBg==</latexit>
+fb
+A B C D
+<latexit sha1_base64="AsqJ1j5y7PnEdYdmbbavSmEFqws=">AAAB+nicbVDLTsJAFJ3iC/FVdOlmIpjghrQs1CXRjUtM5JFA00yntzBh+sjMFEMqn+LGhca49Uvc+TcO0IWCJ7nJyTn35t57vIQzqSzr2yhsbG5t7xR3S3v7B4dHZvm4I+NUUGjTmMei5xEJnEXQVkxx6CUCSOhx6Hrj27nfnYCQLI4e1DQBJyTDiAWMEqUl1yz7wEEBroKbTWr2xazqmhWrbi2A14mdkwrK0XLNr4Ef0zSESFFOpOzbVqKcjAjFKIdZaZBKSAgdkyH0NY1ICNLJFqfP8LlWfBzEQlek8EL9PZGRUMpp6OnOkKiRXPXm4n9eP1XBtZOxKEkVRHS5KEg5VjGe54B9JoAqPtWEUMH0rZiOiCBU6bRKOgR79eV10mnU7cu6fd+oNG/yOIroFJ2hGrLRFWqiO9RCbUTRI3pGr+jNeDJejHfjY9laMPKZE/QHxucPlqeS6A==</latexit>
+deleteev(1)
+Figure 4. An illustration for covering bad edge pairs containing a
+nodev. (A) v is contained in 5 edges and 8 bad edge pairs. (B)
+Consider edges at opposite ends ofv’s edge listLE(v), ordered by
+color. Edgesev(1) andev(5) deﬁne a bad edge pair. (C) Given a
+bad edge pair, sample one to delete. (D) Once oneev(1) is deleted,
+we no longer consider bad edge pairs containing this edge, so we
+can advance the pointerf to the next edge inLE(v).
+Table 1. Approximation factors (ratio between algorithm output
+and LP lower bound) and runtimes obtained on ﬁve benchmark
+edge-colored hypergraphs. MajorityVote (MV) is deterministic.
+Our vertex cover algorithms PittColoring and MatchColoring
+both involve some amount of randomization, so we list the mean
+values and standard deviations over 50 runs.
+Ratio to LP lower bound
+Dataset LP MV PittColoring MatchColoring
+Brain 1.0 1.01 1.07 ±0.01 1.08±0.01
+Cooking 1.0 1.21 1.23 ±0.01 1.23±0.0
+DAWN 1.0 1.09 1.57 ±0.04 1.58±0.03
+MAG-10 1.0 1.18 1.39 ±0.01 1.49±0.0
+Walmart 1.0 1.2 1.13 ±0.0 1.18±0.0
+Runtime (in seconds)
+Dataset LP MV PittColoring MatchColoring
+Brain 0.52 0.001 0.006 ±0.028 0.002±0.001
+Cooking 127 0.002 0.01 ±0.003 0.008±0.007
+DAWN 4.23 0.003 0.01 ±0.004 0.005±0.003
+MAG-10 17.0 0.012 0.04 ±0.006 0.04±0.016
+Walmart 321 0.07 0.053 ±0.007 0.05±0.009
+Theorem 5.3. PittColoring is a randomized 2-
+approximation algorithm for weighted MINECC that runs
+inO(∑
+v∈V dv) =O(∑
+e∈E|e|) time.
+Our strategy for iterating through bad edge pairs can also
+be used in conjunction with other VERTEX COVER algo-
+rithms. If edges are unweighted, every time we visit an
+uncovered bad edge pair in the list LE(v) we can instead
+delete both edges and update both pointers f andb. This
+leads to a new 2-approximation algorithm MatchColoring
+for the unweighted objective (see Appendix E).
+6. Implementations and Experiments
+Although our primary focus is to improve the theoretical
+foundations of edge-colored clustering, our algorithms are
+also easy to implement and very practical.
+Results on benchmark datasets. Table 1 reports algorith-
+mic results on the benchmark edge-colored hypergraphs
+8
+=== PDF PAGE 9 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 2. Results (averaged over 50 runs) on the Trivago hyper-
+graph. For PittColoring, the Apx column gives the theoretical
+expected approximation guarantee. For other algorithms, Apx is an
+a posteriori guarantee, improving on the method’s theoretical guar-
+antee, obtained using a lower bound computed by the algorithm.
+Algorithm Mistakes Sat Apx Acc Run
+PittColoring 74624 0.70 2 0.72 0.13
+MatchColoring 77606 0.69 1.74 0.70 0.12
+MajorityVote 67941 0.73 36.43 0.77 0.11
+Hybrid 65192 0.74 1.46 0.78 0.23
+LP 58031 0.77 1.001 0.80 1549
+of Amburg et al. (2020). On all datasets but Walmart, the
+MINECC LP relaxation produces integral solutions, i.e., we
+ﬁnd the optimal MINECC solution without rounding. Even
+for Walmart, the LP solution is nearly integral and a very
+simple rounding scheme (namely, for eachv∈V , assign it
+colori∗ = argminixi
+v), produces a solution that is within a
+factor 1.00003 of optimal. For this reason, while our new
+LP rounding techniques improve the best theoretical results,
+is it not meaningful to compare them empirically against
+previous rounding techniques. It is however very meaning-
+ful to compare our vertex cover based algorithms against
+alternative approaches. Table 1 shows that these algorithms
+are orders of magnitude faster than solving and rounding the
+LP relaxation, and still obtain good approximate solutions.
+They also have the same asymptotic runtime as Majori-
+tyVote, a fast previous combinatorial algorithm that comes
+with a much worse r-approximation guarantee. Statistics
+for these datasets, additional implementation details, and
+more experimental results are provided in the appendix.
+Results for new Trivago hypergraph. Our empirical
+contributions include a new benchmark dataset for edge-
+colored clustering, and a very practical hybrid algorithm
+that combines the strengths of MatchColoring and Major-
+ityVote. The dataset is a hypergraph with 207974 nodes,
+247362 edges, rank r = 85 , and k = 55 colors. Nodes
+correspond to vacation rentals on the booking website
+Trivago, and each edge corresponds to the set of rentals
+that a user clicks on during a single user browsing session.
+Edge colors correspond to countries where the browsing
+session happens (e.g., Trivago.com is the USA platform and
+Trivago.es is for Spain). Nodes also come with ground truth
+colors that deﬁne the country the vacation rental is located in.
+Because users often (even if not always) search for vacation
+rentals within their own country, edge colors and ground
+truth node colors tend to match. This therefore serves as a
+useful new benchmark dataset for the ECC objective, that is
+much larger than previous benchmarks.
+Table 2 shows results for each algorithm on the Trivago
+hypergraph, including the number of mistakes made, the pro-
+portion of satisﬁed edges (Sat), the method’s approximation
+guarantee (Apx), the number of nodes labeled correctly with
+respect to the ground truth (Acc, i.e., accuracy), and the run-
+time (Run, in seconds). PittColoring, MatchColoring and
+MajorityVote produce good results very quickly. A new al-
+gorithm Hybrid obtains even better results by ﬁrst applying
+the edge deletion step of MatchColoring and then using the
+MajorityVote assignment for nodes that are isolated after
+edge deletions. MajorityVote is only guaranteed to return an
+85-approximation sincer = 85, while MatchColoring and
+Hybrid have a deterministic 2-approximation guarantee. We
+obtain improved a posteriori approximation guarantees for
+these three algorithms by comparing the number of mistakes
+they make against a lower bound on the optimal solution
+that can be computed based on the output of each algorithm.
+PittColoring has an expected 2-approximation guarantee,
+but does not produce an explicit lower bound so it does not
+come with improved a posteriori guarantees.
+Solving and rounding the LP relaxation produces a very
+good output on the Trivago dataset, with an a posteriori
+approximation guarantee of 1.0014, an edge satisfaction of
+0.765, and an accuracy of0.80. However, it takes around 25
+minutes to solve the LP relaxation, which is roughly four or-
+ders of magnitude slower than our linear-time combinatorial
+algorithms. This result does indicate that LP-based methods
+for MINECC produce great results when it is possible to run
+them. However, our combinatorial algorithms will be able
+to scale to extremely large datasets where it is infeasible
+to rely on LP-based techniques. More details for all of our
+experimental results are provided in Appendices E and F.
+7. Conclusion and Discussion
+We have presented improved algorithms and hardness re-
+sults for Edge-Colored Clustering. Our combinatorial algo-
+rithms have asymptotically optimal runtimes, and ifk andr
+are arbitrarily large, their 2-approximation guarantee is the
+best possible assuming the unique games conjecture. Our
+LP algorithms are also tight with respect to the integrality
+gap. One open question is to determine whether alternative
+techniques could lead to improved approximations for ﬁxed
+values of r ork. Previous work has shown that the opti-
+mal approximation factor for NODE -MC and HYPER -MC
+coincides with the integrality gap of their LP relaxation,
+assuming the unique games conjecture (Ene et al., 2013).
+An open question is whether a similar result holds for the
+MINECC LP. In other words, is it UGC-hard to approximate
+MINECC below the LP integrality gap? We also proved that
+the MINECC LP relaxation is tighter than the NODE -MC
+relaxation. An open question in this direction is to better
+understand the relationship between the MINECC LP and
+relaxations obtained by considering more general problems,
+such as the Lov´asz relaxation for submodular multiway par-
+tition (Chekuri & Ene, 2011b) or the basic LP for minimum
+constraint satisfaction problems (Ene et al., 2013).
+9
+=== PDF PAGE 10 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+References
+Ageev, A. and Kononov, A. Improved approximations for
+the max k-colored clustering problem. In International
+Workshop on Approximation and Online Algorithms, pp.
+1–10. Springer, 2014.
+Ageev, A. and Kononov, A. A 0.3622-approximation algo-
+rithm for the maximum k-edge-colored clustering prob-
+lem. In International Conference on Mathematical Op-
+timization Theory and Operations Research , pp. 3–15.
+Springer, 2020.
+Alhamdan, Y . M. and Kononov, A. Approximability and in-
+approximability for maximum k-edge-colored clustering
+problem. In International Computer Science Symposium
+in Russia, pp. 1–12. Springer, 2019.
+Amburg, I., Veldt, N., and Benson, A. Clustering in graphs
+and hypergraphs with categorical edge labels. In Proceed-
+ings of The Web Conference 2020, pp. 706–717, 2020.
+Amburg, I., Veldt, N., and Benson, A. R. Diverse
+and experienced group discovery via hypergraph clus-
+tering. In Proceedings of the 2022 SIAM Interna-
+tional Conference on Data Mining (SDM) , SDM ’22,
+pp. 145–153, 2022. doi: 10.1137/1.9781611977172.17.
+URL https://epubs.siam.org/doi/abs/10.
+1137/1.9781611977172.17.
+Anava, Y ., Avigdor-Elgrabli, N., and Gamzu, I. Improved
+theoretical and practical guarantees for chromatic cor-
+relation clustering. In Proceedings of the 24th Inter-
+national Conference on World Wide Web , WWW ’15,
+pp. 55–65, Republic and Canton of Geneva, Switzer-
+land, 2015. International World Wide Web Conferences
+Steering Committee. ISBN 978-1-4503-3469-3. doi: 10.
+1145/2736277.2741629. URL https://doi.org/
+10.1145/2736277.2741629.
+Angel, E., Bampis, E., Kononov, A., Paparas, D., Poun-
+tourakis, E., and Zissimopoulos, V . Clustering on k-
+edge-colored graphs. Discrete Applied Mathematics, 211:
+15–22, 2016.
+Austrin, P., Khot, S., and Safra, M. Inapproximability of ver-
+tex cover and independent set in bounded degree graphs.
+Theory of Computing, 7(1):27–43, 2011.
+Bansal, N., Blum, A., and Chawla, S. Correlation clustering.
+Machine Learning, 56:89–113, 2004.
+Bar-Yehuda, R. and Even, S. A local-ratio theorm for ap-
+proximating the weighted vertex cover problem. Annals
+of Discrete Mathematics, 25:27–46, 1985.
+Bonchi, F., Gionis, A., Gullo, F., and Ukkonen, A.
+Chromatic correlation clustering. In Proceedings of
+the 18th ACM SIGKDD International Conference on
+Knowledge Discovery and Data Mining , KDD ’12, pp.
+1321–1329, New York, NY , USA, 2012. ACM. ISBN
+978-1-4503-1462-6. doi: 10.1145/2339530.2339735.
+URL http://doi.acm.org.ezproxy.lib.
+purdue.edu/10.1145/2339530.2339735.
+Bonchi, F., Gionis, A., Gullo, F., Tsourakakis, C. E.,
+and Ukkonen, A. Chromatic correlation cluster-
+ing. ACM Trans. Knowl. Discov. Data , 9(4):34:1–
+34:24, June 2015. ISSN 1556-4681. doi: 10.1145/
+2728170. URL http://doi.acm.org.ezproxy.
+lib.purdue.edu/10.1145/2728170.
+Cai, L. and Leung, O. Y . Alternating path and coloured
+clustering. arXiv preprint arXiv:1807.10531, 2018.
+Chekuri, C. and Ene, A. Approximation algorithms for
+submodular multiway partition. In 2011 IEEE 52nd An-
+nual Symposium on Foundations of Computer Science ,
+pp. 807–816. IEEE, 2011a.
+Chekuri, C. and Ene, A. Submodular cost allocation prob-
+lem and applications. In International Colloquium on
+Automata, Languages, and Programming, pp. 354–366.
+Springer, 2011b.
+Chekuri, C. and Madan, V . Simple and fast rounding algo-
+rithms for directed and node-weighted multiway cut. In
+Proceedings of the Twenty-Seventh Annual ACM-SIAM
+Symposium on Discrete Algorithms, pp. 797–807. SIAM,
+2016.
+Crossley, N. A., Mechelli, A., V´ertes, P. E., Winton-Brown,
+T. T., Patel, A. X., Ginestet, C. E., McGuire, P., and
+Bullmore, E. T. Cognitive relevance of the commu-
+nity structure of the human brain functional coactiva-
+tion network. Proceedings of the National Academy
+of Sciences, 110(28):11583–11588, 2013. ISSN 0027-
+8424. doi: 10.1073/pnas.1220826110. URL https:
+//www.pnas.org/content/110/28/11583.
+C˘alinescu, G., Karloff, H., and Rabani, Y . An improved
+approximation algorithm for multiway cut. Journal of
+Computer and System Sciences, 60(3):564 – 574, 2000.
+ISSN 0022-0000. doi: https://doi.org/10.1006/jcss.1999.
+1687. URL http://www.sciencedirect.com/
+science/article/pii/S0022000099916872.
+Dahlhaus, E., Johnson, D. S., Papadimitriou, C. H., Sey-
+mour, P. D., and Yannakakis, M. The complexity of
+multiterminal cuts. SIAM Journal on Computing , 23:
+864–894, 1994.
+Dinur, I. and Safra, S. On the hardness of approximating
+minimum vertex cover. Annals of mathematics, pp. 439–
+485, 2005.
+10
+=== PDF PAGE 11 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Ene, A., V ondr´ak, J., and Wu, Y . Local distribution and the
+symmetry gap: Approximability of multiway partitioning
+problems. In Proceedings of the Twenty-Fourth Annual
+ACM-SIAM Symposium on Discrete Algorithms, pp. 306–
+325. SIAM, 2013.
+Fountoulakis, K., Li, P., and Yang, S. Local hyper-
+ﬂow diffusion. In Ranzato, M., Beygelzimer, A.,
+Dauphin, Y ., Liang, P., and Vaughan, J. W. (eds.),
+Advances in Neural Information Processing Systems ,
+volume 34, pp. 27683–27694. Curran Associates,
+Inc., 2021. URL https://proceedings.
+neurips.cc/paper/2021/file/
+e924517087669cf201ea91bd737a4ff4-Paper.
+pdf.
+Garg, N., Vazirani, V . V ., and Yannakakis, M. Multiway
+cuts in node weighted graphs. Journal of Algorithms, 50
+(1):49–61, 2004.
+Hein, M., Setzer, S., Jost, L., and Rangapuram, S. S. The
+total variation on hypergraphs - learning on hypergraphs
+revisited. In Proceedings of the 26th International Confer-
+ence on Neural Information Processing Systems - Volume
+2, NIPS’13, pp. 2427–2435, USA, 2013. Curran Asso-
+ciates Inc. URL http://dl.acm.org/citation.
+cfm?id=2999792.2999883.
+Kellerhals, L., Koana, T., Kunz, P., and Niedermeier, R.
+Parameterized algorithms for colored clustering. In Pro-
+ceedings of The 2023 AAAI Conference on Artiﬁcial In-
+telligence, 2023.
+Khot, S. and Regev, O. Vertex cover might be hard to
+approximate to within 2- ε. Journal of Computer and
+System Sciences, 74(3):335–349, 2008.
+Klodt, N., Seifert, L., Zahn, A., Casel, K., Issac, D., and
+Friedrich, T. A color-blind 3-approximation for chromatic
+correlation clustering and improved heuristics. In Pro-
+ceedings of the 27th ACM SIGKDD Conference on Knowl-
+edge Discovery & Data Mining, pp. 882–891, 2021.
+Li, P. and Milenkovic, O. Inhomogeneous hypergraph clus-
+tering with applications. In Guyon, I., Luxburg, U. V .,
+Bengio, S., Wallach, H., Fergus, R., Vishwanathan, S.,
+and Garnett, R. (eds.), Advances in Neural Information
+Processing Systems 30 , pp. 2308–2318. Curran Asso-
+ciates, Inc., 2017.
+Li, P. and Milenkovic, O. Submodular hypergraphs: p-
+laplacians, cheeger inequalities and spectral clustering.
+In International Conference on Machine Learning , pp.
+3014–3023. PMLR, 2018.
+Pitt, L. B. A simple probabilistic approximation algorithm
+for vertex cover. Yale University, Department of Com-
+puter Science, 1985.
+Xiu, Q., Han, K., Tang, J., Cui, S., and Huang, H. Chromatic
+correlation clustering, revisited. In Oh, A. H., Agarwal,
+A., Belgrave, D., and Cho, K. (eds.), Advances in Neural
+Information Processing Systems, 2022. URL https:
+//openreview.net/forum?id=jjJgLNrCQB.
+Zuckerman, D. Linear degree extractors and the inapprox-
+imability of max clique and chromatic number. In Pro-
+ceedings of the thirty-eighth annual ACM symposium on
+Theory of computing, pp. 681–690, 2006.
+11
+=== PDF PAGE 12 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+A. Extended Related Work
+Chromatic correlation clustering. The graph version of ECC is closely related to chromatic correlation clustering (Bonchi
+et al., 2015; Anava et al., 2015; Klodt et al., 2021; Xiu et al., 2022), an edge-colored generalization of correlation
+clustering (Bansal et al., 2004). Chromatic correlation clustering also takes an edge-colored graph as input and seeks to
+cluster nodes in a way that minimizes edge mistakes. ECC and chromatic correlation clustering both include penalties for
+(1) separating two nodes that share an edge, and (2) placing an edge of one color in a cluster of a different color. The key
+difference is that chromatic correlation clustering also includes a penalty for placing two non-adjacent nodes in the same
+cluster. In other words, chromatic correlation clustering interprets a non-edge as an indication that two nodes are dissimilar
+and should not be clustered together, whereasMINECC treats non-edges simply as missing information and does not include
+this type of penalty. As a result, a solution to chromatic correlation clustering may involve multiple different clusters of the
+same color, rather than one cluster per color. Unlike MINECC , chromatic correlation clustering is known to be NP-hard
+even in the case of a single color. Various constant-factor approximation algorithms have been designed, culminating in a
+2.5-approximation (Xiu et al., 2022), but these do not apply to the general weighted case. Another difference is that there
+are no results for chromatic correlation clustering in hypergraphs.
+Multiway cut and partition problems. The reduction from MINECC to a special case of NODE -MC situates MINECC
+within a broad class of multiway cut and multiway partition problems (Ene et al., 2013; Garg et al., 2004; Dahlhaus et al.,
+1994; C˘alinescu et al., 2000; Chekuri & Ene, 2011a;b; Chekuri & Madan, 2016). For NODE -MC (Garg et al., 2004), one
+is given a node-weighted graphG = (V,E ) withk special terminal nodes, and the goal is to remove a minimum weight
+set of nodes to disconnect all terminals. NODE -MC is approximation equivalent to the hypergraph multiway cut problem
+(HYPER -MC) (Chekuri & Ene, 2011b), where one is give a hypergraphH = (V,E ) andk terminal nodes, and the goal is to
+remove the minimum weight set of edges to separate terminals. These problems generalize the standard edge-weighted
+multiway cut problem in graphs ( GRAPH -MC ) (Dahlhaus et al., 1994), where the goal is to separate k terminal nodes
+in a graph by removing a minimum weight set of edges. NODE -MC and HYPER -MC are also special cases of the more
+general submodular multiway partition problem (SUBMODULAR -MP ), which has a best known approximation factor of
+2(1− 1/k) (Ene et al., 2013). This matches the best approximation guarantee for NODE -MC but requires solving and
+rounding a generalized Lov´asz relaxation (Chekuri & Ene, 2011b). It is worth noting that whenk = 2, MINECC can be
+reduced to the minimums-t cut problem, i.e., the 2-terminal version of GRAPH -MC, but this does not generalize tok> 2.
+Amburg et al. (2020) showed a way to approximate MINECC by approximating a related instance of GRAPH -MC, but the
+objectives differ by a factor (r + 1)/2.
+B. Proofs for Linear Programming Results
+Proof of Lemma 2.1 (LP integrality gap)
+Proof. We will construct a hypergraphH that has exactly one edgeec for each colorc∈{ 1, 2,...,k }, and a total of
+(k
+2
+)
+nodes, each of which participates in exactly two edges. More precisely, we index each node by a pair of color indices
+(i,j )∈ C×C withi⁄= j. We place node (i,j ) in the hyperedge ei and the hyperedge ej. Each edge contains exactly
+r =k− 1 nodes. The optimal ECC solution makes a mistake at all but one edge. To see why, if we do not make a mistake
+atec, this means every node inec is given labelc. For each color i⁄=c, the node with index (i,c ) is inec andei, which
+means we will make a mistake atei since this node was given labelc. Meanwhile, the optimal solution to the LP relaxation
+is k
+2 : for nodev corresponding to color pair (i,j ), we setxi
+v =xj
+v = 1
+2 andxc
+v = 1 for everyc /∈{i,j}. Thus,xe = 1
+2 for
+each hyperedgee∈E, for an overall LP objective of k
+2 . □
+Proof of Theorem 3.2 (Hypergraph approximation result)
+Proof. Lete be an arbitrary edge with colorc =𝓁(e). We need to show that P [e∈M Y ]≤ 2
+(
+1− 1
+r+1
+)
+xe. Ifxe≥ 2
+3, this
+is trivial since P [e∈M Y ]≤ 1≤ 3
+2xe≤ 2
+(
+1− 1
+r+1
+)
+xe as long asr≥ 3. We cover two remaining cases.
+Case 1: xe < 1
+2 . For everyρ∈ ( 1
+2, 2
+3), colorc wants all nodes ine, and Observation 2 implies thatz1 > 1/2. Therefore, the
+algorithm can only make a mistake ate ifρ falls betweenz1 and 2
+3. This never happens ifz1≥ 2
+3, so assume thatz1 < 2
+3.
+Becauseρ < 2
+3, for everyv∈ e it is possible for two different colors to want v, but never three colors. Since color c is
+guaranteed to want everyv∈e, the worse case scenario is whenρ>z 1 and eachv∈e is wanted by a different color that is
+unique to that node. In this case, the probability of making a mistake ate is at most r
+r+1. Putting all of the pieces together
+12
+=== PDF PAGE 13 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+we have
+P [e∈M Y ] = P [ρ>z 1] P [e∈M Y |ρ>z 1]
+=
+2
+3−z1
+2
+3− 1
+2
+· r
+r + 1 = 6r
+r + 1
+(
+1−z1− 1
+3
+)
+≤ 6r
+r + 1
+(
+xe− 2
+3xe
+)
+= 2
+(
+1− 1
+r + 1
+)
+xe.
+Case 2: xe∈
+[ 1
+2, 2
+3
+)
+. Ifρ≤xe, we are guaranteed to make a mistake ate, but this happens with bounded probability. If
+ρ>x e, we can argue as in Case 1 that the probability of making a mistake ate is at most r
+r+1. We therefore have:
+P [e∈M] = P [ρ≤xe] P [e∈M Y |ρ≤xe]
++ P [ρ>x e] P [e∈M Y |ρ>x e]
+= xe− 1
+2
+2
+3− 1
+2
+· 1 +
+2
+3−xe
+2
+3− 1
+2
+· r
+r + 1
+= 6
+(
+xe− 1
+2 + 2r
+3r + 3− xer
+r + 1
+)
+= 6
+( xe
+r + 1 + r− 3
+6r + 6
+)
+≤ 6
+( 3xe
+3r + 3 + (r− 3)xe
+3r + 3
+)
+= 2
+(
+1− 1
+r + 1
+)
+xe.
+□
+Proof of Lemma 4.2 (Color Threshold Lemma)
+Proof. Letm be an arbitrary odd integer less thank. When ρ>z m, the deﬁnition of zm tells us that there arem colors
+(which are distinct from each other and not equal to c = 𝓁(e)) that want at least one of the nodes in e = (u,v ). By the
+pigeonhole principle, at leasth =⌈m
+2⌉ = m+1
+2 of these colors want the same node. Without loss of generality, letu be this
+node and{c1,c 2,...,c h} be theseh colors, arranged so that
+xc1
+u ≤xc2
+u ≤···≤ xch
+u ≤zm.
+Without loss of generality we can assume these h colors are the colors (not including c) that want node u the most, in
+the sense that xj
+u≥ xch
+u for every color j /∈{ c,c 1,c 2,...,c h}. Meanwhile, for every ρ≤ zm, there can be at most
+m−h = m−1
+2 other colors not in{c,c 1,c 2,...,c h} that want nodev. We can show then that forj∈{ 1, 2,...,h },
+xcj
+u ≤zj+m−h. (9)
+If this were not true and we instead assume xcj
+u > zj+m−h, this would mean that for any ρ∈ (zj+m−h,xcj
+u ), there are
+j +m−h distinct colors (not equal toc) that want at least one of the two nodes ine = (u,v ). However, sinceρ<x cj
+u ,
+we know that{c1,c 2,...,c j−1} are the only colors (not countingc) that want nodeu. Furthermore, sinceρ<z m, there
+are at mostm−h distinct colors (again not countingc) that want nodev. Thus, ρ<x cj
+u would imply there are at most
+j +m−h− 1 colors not equal to c that want either u orv. This is a contradiction, so (9) must hold. Combining this
+inequality with the fact that∑k
+i=1xi
+u =k− 1, we obtain
+h≤xc
+u +
+h∑
+j=1
+xcj
+u ≤xe +
+h∑
+j=1
+zj+m−h =xe +z1+m−h +z2+m−h +··· +zm.
+Since we assumed thatm is odd, we knowh = 1 +m−h andm = 2h− 1, so settingt =h yields the inequality in the
+statement of the lemma. □
+13
+=== PDF PAGE 14 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+maximize q
+q + 1
+7
+8χ−
+q∑
+j=1
+1
+j(j + 1)ωj
+subject to (A{i})ωi−ωi+1≤ 0 fori = 1,..., 5
+(A6)χ−ω1≤ 1
+(A7) 2χ−ω2−ω3≤ 1
+(A8) 3χ− 3ω5≤ 1
+(A9)−χ≤− 2
+(A10)ωq− 7
+8χ≤ 0.
+(12)
+Figure 5. This linear program provides an upper bound for P [e∈M Y ]/xe whenxe < 1
+2≤ z1≤ zq≤ 7
+8 for integersq≤ 6. We
+explicitly name each constraint as it will be convenient to reference individual constraints in later parts of the proof.
+Proofs for Lemmas on Auxiliary Linear Programs
+Lemmas 4.3 and 4.4 are concerned with the LPs in Figures 5 and 6. For notational ease in proving these results, letM be
+the evente∈M Y , i.e., the event of making a mistake at edgee when rounding the LP relaxation. These Lemmas allow us
+to bound P[M ]
+xe
+by solving a small linear program, ﬁrst for the case xe∈ ( 1
+8, 1
+2), and then for the casexe∈
+[ 1
+2, 3
+4
+)
+. Both
+results will repeatedly apply the following facts:
+P [M|ρ>x e andρ∈ (zi,zi+1)] = i
+i + 1, (10)
+P [ρ∈ (a,b )] = 8
+3(b−a), for (a,b )⊆
+(1
+2, 7
+8
+)
+. (11)
+Proof of Lemma 4.3
+Proof. Whenxe < 1
+2, we know that for anyρ∈ ( 1
+2, 7
+8), the colorc =𝓁(e) will want both nodes ine = (u,v ). If we use
+Lemma 4.2 witht = 4 and the monotonicity of color thresholds from (4), we can see that
+4≤xe +z4 +z5 +z6 +z7≤xe + 4z7 =⇒ 1− xe
+4 ≤z7 =⇒ z7 > 7
+8.
+This implies that for a random ρ∈ ( 1
+2, 7
+8), at most 6 colors other than c will want a node from e = (u,v ). Thus, if
+zp−1≤ 1
+2≤zp≤zq≤ 7
+8≤zq+1, thenq≤ 6. Similarly, we can see that 1≤xe +z1 =⇒ z1 > 1
+2, so we must have
+p = 1. Next, we use Eq. (10) and Eq. (11) to provide a convenient expression for P [M]:
+P [M] =
+q−1∑
+j=1
+P [M|ρ∈ (zj,zj+1)] P [ρ∈ (zj,zj+1)] + P [M|ρ∈ (zq, 7/8)] P [ρ∈ (zq, 7/8)]
+= 8
+3
+
+ q
+q + 1
+(7
+8−zq
+)
++
+q−1∑
+j=1
+j
+j + 1(zj+1−zj)
+
+ = 8
+3
+
+ q
+q + 1
+7
+8−
+q∑
+j=1
+1
+j(j + 1)zj
+
+.
+Our goal is to upper bound P[M ]
+xe
+. To do so we have the following inequalities and case-speciﬁc assumptions at our disposal:
+(1) the monotonicity of color thresholds: zi ≤ zi+1 for i∈{ 0, 1,...,k }, (2) the relationship between xe and color
+thresholds given in Lemma 4.2, and (3) our assumptions thatxe < 1
+2 andzq≤ 7
+8≤zq+1. Since at most 6 colors other than
+c can want a node ine = (u,v ), we can extract a set of 10 convenient inequalities from these three categories that we know
+14
+=== PDF PAGE 15 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+max 1
+p +
+( q
+q + 1
+7
+8− 1
+2
+)
+χ−
+q∑
+j=p
+1
+j(j + 1)ωj
+s.t. (B{i})ωi−ωi+1≤ 0 fori = 1,..., 9
+(B10)χ−ω1≤ 1
+(B11) 2χ−ω2−ω3≤ 1
+(B12) 3χ−ω3−ω4−ω5≤ 1
+(B13) 4χ− 4ω7≤ 1
+(B14)ωp−1≤ 1
+(B15)−ωp≤− 1
+(B16)ωq− 7
+8χ≤ 0.
+(13)
+Figure 6. This linear program provides an upper bound for P [e∈M Y ]/xe whenxe∈ [ 1
+2, 3
+4 ) andzp−1≤xe≤zp≤zq≤ 7
+8≤zq+1
+for integersp≤ 5 andq≤ 10 satisfyingp≤ q. We explicitly name each constraint as it will be convenient to reference individual
+constraints in later parts of the proof. We could add additional constraints based on the assumptions in Lemma 4.4 and the relationship
+between variables given in Lemma 4.2, but it sufﬁces to consider a subset of these constraints to bound P [e∈M Y ]/xe, and this also
+simpliﬁes the analysis.
+are true forxe and the ﬁrst 6 color threshold values:
+Monotonicity Constraints
+(A1) z1
+xe
+≤ z2
+xe
+, (A2) z2
+xe
+≤ z3
+xe
+, (A3) z3
+xe
+≤ z4
+xe
+, (A4) z4
+xe
+≤ z5
+xe
+, (A5) z5
+xe
+≤ z6
+xe
+Edge-Node Relationship Constraints (Lemma 4.2)
+(A6) 1
+xe
+≤ 1 + z1
+xe
+, (A7) 2
+xe
+≤ 1 + z2
+xe
++ z3
+xe
+, (A8) 3
+xe
+≤ 1 + 3z5
+xe
+Boundary Assumption Constraints
+(A9) 1≤ 1
+2
+1
+xe
+, (A10) zq
+xe
+≤ 7
+8
+1
+xe
+.
+If the maximum value of P[M ]
+xe
+over all values of{xe,z 1,z 2,z 3,z 4,z 5,z 6} that respect these inequalities is at mostP , then
+this guarantees P [M]≤Pxe. Finally, note that P[M ]
+xe
+and the inequalities above can be given as linear expressions in terms
+of 1
+xe
+and
+{zi
+xe
+: i∈{ 1, 2, 3, 4, 5, 6}
+}
+. We can therefore maximize 3
+8
+P[M ]
+xe
+subject to these inequalities by settingχ = 1
+xe
+andωi = zi
+xe
+and solving the linear program in Figure 5. Note that we choose to maximize 3
+8
+P[M ]
+xe
+, rather than simply
+maximizing P[M ]
+xe
+, only because this will simplify some of our analysis later. □
+Proof of Lemma 4.4
+Proof. Combining Lemma 4.2 (witht = 6), the inequalities in (4), and the boundxe < 3
+4, we have
+6≤xe +
+11∑
+j=6
+zj≤xe + 6z11 =⇒ 1− xe
+6 ≤z11 =⇒ z11 > 7
+8.
+Thus, for everyρ∈ ( 1
+2, 7
+8) we knowq≤ 10 and there are at most 10 colors other thanc =𝓁(e) that want a node ine. Using
+similar steps we can show thatz5 > 3
+4 >x e, sop≤ 5. We again use Eq. (10) and Eq. (11) to derive the following useful
+15
+=== PDF PAGE 16 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+expression for P [M]:
+P [M] = P
+[
+M|ρ∈
+(1
+2,xe
+)]
+P
+[
+ρ∈
+(1
+2,xe
+)]
++ P [M|ρ∈ (xe,zp)] P [ρ∈ (xe,zp)]
++
+
+
+q−1∑
+j=p
+P [M|ρ∈ (zj,zj+1)] P [ρ∈ (zj,zj+1)]
+
+ + P
+[
+M|ρ∈
+(
+zq, 7
+8
+)]
+P
+[
+ρ∈
+(
+zq, 7
+8
+)]
+= 8
+3
+
+
+(
+xe− 1
+2
+)
++ p− 1
+p (zp−xe) +
+
+
+q−1∑
+j=p
+j
+j + 1(zj+1−zj)
+
+ + q
+q + 1
+(7
+8−zq
+)
+
+=⇒ P [M]
+xe
+≤ 8
+3
+
+1
+p +
+( q
+q + 1
+7
+8− 1
+2
+) 1
+xe
+−
+q∑
+j=p
+1
+j(j + 1)
+zj
+xe
+
+.
+We apply the monotonicity inequalities (4) for color thresholds, Lemma 4.2, and our assumptions in the statement of the
+lemma to obtain a set of inequalities that can be used to bound P[M ]
+xe
+.
+(B{i}) zi
+xe
+≤ zi+1
+xe
+fori = 1, 2,... 9,
+(B10) 1
+xe
+≤ 1 + z1
+xe
+, (B11) 2
+xe
+≤ 1 + z2
+xe
++ z3
+xe
+, (B12) 3
+xe
+≤ 1 +
+5∑
+j=3
+zj
+xe
+,
+(B13) 4
+xe
+≤ 1 + 4z7
+xe
+, (B14) zp−1
+xe
+≤ 1, (B15) 1≤ zp
+xe
+, (B16) zq
+xe
+≤ 7
+8
+1
+xe
+.
+We can maximize 3
+8
+P[M ]
+xe
+subject to these inequalities by solving the linear program in Figure 6. □
+Proofs not contained in this section of the appendix The proof of Theorem 2.2 is given in Appendix D, which provides
+additional details on the relationship between MINECC and related multiway cut objectives. Details for proving Lemma 4.5,
+and in particular dual LP solutions for 46 auxiliary linear programs needed to prove this result, are contained in Appendix C.
+C. Optimal Dual Variables and LP bounds for r = 2
+In Section 4.4 of the main text we proved that whenq = 1, the solution to the linear program in Figure 5 is bounded above
+by 1
+2. We accomplished this by multiplying constraints in this LP by dual variables corresponding to these constraints.
+In Table 3, we present dual variables for all cases q∈{ 1, 2, 3, 4, 5, 6}. For the sake of completeness, here we provide
+additional details for how to prove an upper bound on the LP solution for all of these values ofq, without having to explicitly
+write down and sum a linear combination of constraints. The upper bound can be shown more succinctly by checking a few
+matrix-vector products, which is the approach we take here. We also provide dual variables for the LP in Figure 6 for all
+valid choices ofp andq, which can be used to prove the desired upper bound on this LP in the same fashion.
+C.1. Overview of LP bounding strategy
+The linear programs in Figures 5 and 6 can both be written in the following format:
+max cT x
+s.t. Ax≤ b. (14)
+The dual of this LP is given by
+min bT y
+s.t. AT y = c
+y≥ 0.
+(15)
+We want to prove that cT x∗≤ 1
+2 where x∗ is the optimal solution to the primal LP (14). By weak duality theory, it is
+sufﬁcient to ﬁnd a vector y of dual variables satisfying the constraints in the dual LP (15), such that bT y≤ 1
+2. Note that our
+16
+=== PDF PAGE 17 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 3. Optimal dual variables (one for each constraint in the primal LP) for the linear program in Figure 5, for each valid integer q.
+Multiplying dual variables by the left and right hand sides of each constraint and adding the left and right hand sides together proves the
+upper bound (last column) on the optimal solution to the primal LP. The bound is always 1
+2 or smaller.
+ω
+1
+−
+ω
+2
+≤
+0
+ω
+2
+−
+ω
+3
+≤
+0
+ω
+3
+−
+ω
+4
+≤
+0
+ω
+4
+−
+ω
+5
+≤
+0
+ω
+5
+−
+ω
+6
+≤
+0
+χ
+−
+ω
+1
+≤
+1
+2χ
+−
+ω
+2
+−
+ω
+3
+≤
+1
+3χ
+−
+3ω
+5
+≤
+1
+−χ
+≤−
+2
+ω
+q
+−
+7 8
+χ
+≤
+0
+q (A1) ( A2) ( A3) ( A4) ( A5) ( A6) ( A7) ( A8) ( A9) ( A10) Bound
+1 0 0 0 0 0 1
+2 0 0 1
+16 0 3
+8
+2 1
+6 0 0 0 0 2
+3 0 0 1
+12 0 1
+2
+3 0 0 0 0 0 1
+2
+1
+6 0 5
+48
+1
+12
+11
+24
+4 0 0 1
+12 0 0 1
+2
+1
+6 0 5
+48
+1
+30
+11
+24
+5 0 0 1
+12
+1
+30 0 1
+2
+1
+6 0 5
+48 0 11
+24
+6 0 0 1
+12
+1
+30
+1
+42
+1
+2
+1
+6
+1
+126
+3
+28 0 29
+63
+goal is actually to prove that this can be done for multiple slight variations of the objective function vector c and constraint
+matrix A. For all cases we have the same right hand side vector b. If{c1, c2,..., cj} denotes the set of objective function
+vectors,{A1, A2,..., Aj} is the set of corresponding constraint matrices, and{y1, y2,..., yj} is an appropriately chosen
+set of dual vectors, then fori = 1, 2,...,j , we need to perform one matrix-vector product and one vector inner product to
+conﬁrm that
+AT
+j yj = cj
+bT yj≤ 1
+2.
+C.2. Matrix computations for bounding LP in Figure 5
+For the linear program in Figure 5, the variable vector is xT =
+[
+ω1 ω2 ω3 ω4 ω5 ω6 χ
+]
+and the right hand
+size vector is bT =
+[0 0 0 0 0 1 1 1 −2 0 ]
+. The dual variables we will use are given in Table 3. For
+eachq∈{ 1, 2,... 6}, let yq denote the vector of dual variables (which corresponds to the qth row in Table 3), and let
+Y =
+[y1 y2 ··· y6
+]
+, so
+Y =
+
+
+0 0 0 0 0 1
+2 0 0 1
+16 0
+1
+6 0 0 0 0 2
+3 0 0 1
+12 0
+0 0 0 0 0 1
+2
+1
+6 0 5
+48
+1
+12
+0 0 1
+12 0 0 1
+2
+1
+6 0 5
+48
+1
+30
+0 0 1
+12
+1
+30 0 1
+2
+1
+6 0 5
+48 0
+0 0 1
+12
+1
+30
+1
+42
+1
+2
+1
+6
+1
+126
+3
+28 0
+
+
+.
+17
+=== PDF PAGE 18 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+In order to check that bT yq≤ 1
+2 for each choice ofq we just need to compute Yb, which is made easier by the fact that
+most entries of b are zero.
+Yb =
+
+
+1
+2 0 0 1
+16
+2
+3 0 0 1
+12
+1
+2
+1
+6 0 5
+48
+1
+2
+1
+6 0 5
+48
+1
+2
+1
+6 0 5
+48
+1
+2
+1
+6
+1
+126
+3
+28
+
+
+
+
+1
+1
+1
+−2
+
+
+=
+
+
+3
+8
+1
+2
+11
+24
+11
+24
+11
+24
+29
+63
+
+
+.
+This conﬁrms that as long as these dual variables are feasible for the dual linear program, the primal LP is always bounded
+above by 1
+2. So, we just need to conﬁrm that AT
+q yq = cq for eachq.
+The constraint matrix Aq is nearly the same for all choices ofq. Only the last constraint (ωq− 7
+8χ≤ 0) is dependent onq.
+The ﬁrst nine rows of the constraint matrix are always given by
+Aq(1: 9, : ) =
+
+
+1 −1 0 0 0 0 0
+0 1 −1 0 0 0 0
+0 0 1 −1 0 0 0
+0 0 0 1 −1 0 0
+0 0 0 0 1 −1 0
+−1 0 0 0 0 0 1
+0 −1 −1 0 0 0 2
+0 0 0 0 −3 0 3
+0 0 0 0 0 0 −1
+
+
+.
+The last row has two entries: Aq(10, 7) =− 7
+8 and Aq(10,q ) = 1. The objective function is
+cT
+q x = 7q
+8(q + 1)χ−
+q∑
+j=1
+1
+j(j + 1)ωj,
+where cq is the objective function vector forq∈{ 1, 2,..., 6}. The matrix C =
+[
+c1 c2 ··· c6
+]
+of objective function
+vectors is given by:
+C =
+
+
+− 1
+2 − 1
+2 − 1
+2 − 1
+2 − 1
+2 − 1
+2
+0 − 1
+6 − 1
+6 − 1
+6 − 1
+6 − 1
+6
+0 0 − 1
+12 − 1
+12 − 1
+12 − 1
+12
+0 0 0 − 1
+20 − 1
+20 − 1
+20
+0 0 0 0 − 1
+30 − 1
+30
+0 0 0 0 0 − 1
+42
+7
+16
+7
+12
+21
+32
+7
+10
+35
+48
+3
+4
+
+
+Given the matrices and vectors listed above, a few simple computations conﬁrm that AT
+q yq = cq indeed holds for every
+q∈{ 1, 2,... 6}.
+C.3. Dual variables for LP in Figure 6
+Tables 4 and 5 give optimal dual variables for the linear program in Figure 6 for all possible values ofp andq. We also list
+the optimal solution to each linear program for each of the 40 cases, which is always less than or equal to 1
+2. We highlight
+again that our proof does not rely on proving that this value is optimal—it sufﬁces to use the dual variables to get a linear
+combination of inequalities such that summing the left hand sides produces the LP objective function, and summing the
+18
+=== PDF PAGE 19 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+right hand sides yields the LP upper bound given in the last column of each row. We can use the strategy outlined in the
+previous subsection to check these dual variables and prove the upper bound by computing a matrix-vector product and a
+vector inner product for each case. We omit detailed calculations as they are straightforward but would take up a signiﬁcant
+amount of space.
+C.4. Challenges in A voiding Case Analysis
+It is natural to wonder whether we can rule out or simultaneously handle a large number of cases for Lemmas 4.3 and 4.4,
+rather than check a different set of dual variables for 46 small linear programs. However, there are several challenges in
+escaping from this lengthy case analysis. First of all, the 46 linear programs we have considered all have feasible solutions,
+so we cannot rule any out on the basis that they they correspond to impossible cases. The optimal solution for many cases is
+exactly 1
+2, so the inequalities we apply to bound P[M ]
+xe
+for these cases must be tight. For many of the other cases, the optimal
+solution is very close to 1
+2. We attempted to use looser bounds to prove a 1
+2 bound for multiple cases at once, but were
+unsuccessful. Each case seems to require a slightly different argument in order to prove the needed bound. Adding more
+constraints to the linear programs also did not lead to a simpler analysis.
+A second natural strategy is to try to ﬁrst identify and prove which values ofxe,p, andq correspond to the worst cases, and
+then simply conﬁrm that the probability bound holds for these cases. However, the worst case values forxe,p, andq are
+not obvious, and are in fact somewhat counterintuitive. At ﬁrst glance it may appear that the worse case is when q is as
+large as possible andp is as small as possible. This maximizes the expected number of colors that want a node ine for a
+randomly chosenρ∈ ( 1
+2, 7
+8), leading to a higher probability of making a mistake at e. However it is important to recall
+that the goal is to bound P[M ]
+xe
+, and not just P [M], so this line of reasoning does not apply. As it turns out, the worst case
+scenario (i.e., largest optimal LP solution) forxe∈ [ 1
+2, 3
+4) is whenq∈{ 2, 4}, but we do not have a proof (other than by
+checking all cases) for why this case leads to the largest value of P[M ]
+xe
+.
+Finally, another natural question is whether we can avoid a lengthy case analysis by choosing an interval other than
+I = ( 1
+2, 7
+8) when applying Algorithm 1. It is especially tempting to use an interval (a,b ) whereb< 7
+8, since this would
+potentially decrease the maximum number of colors that want a node ine = (u,v ). This is desirable because if fewer colors
+want a node ine, then we have fewer color threshold variables to worry about and fewer cases to consider. The following
+result (Lemma 4.7 in the main text) shows why this approach will fail.
+Lemma C.1. LetY denote the node color map returned by running Algorithm 1 withI = (a,b )⊆ (0, 1) on an edge-colored
+graph.
+• Ifa> 1
+2, there exists a feasible LP solution such that P [e∈M Y ]> 4
+3xe.
+• Ifa≤ 1
+2 andb< 7
+8, there exists a feasible LP solution such that P [e∈M Y ]> 4
+3xe.
+Proof. Ifa> 1
+2, then there exists someε> 0 such thata = 1+ε
+2 . Consider an edgee = (u,v ) with colorc =𝓁(e) whose
+LP variables satisfyxe =xc
+u =xc
+v = 1−ε
+2 and wherexi
+u =xj
+v = 1+ε
+2 =a for two colorsi⁄=j that are both distinct fromc.
+This is feasible as long all asxt
+u = 1 fort /∈{c,i} andxt
+v = 1 fort /∈{c,j}. For everyρ∈ (a,b ), colori will want nodeu,
+colorj will want nodev, and colorc will want both of them. Therefore, the probability of making a mistake ate is exactly
+P [e∈M Y ] = 2
+3 = 2
+3· 1
+xe
+xe = 2
+3· 2
+1−εxe > 4
+3xe.
+If insteada≤ 1
+2, consider the feasible solution wherexe =xc
+u =xc
+v =xi
+u =xg
+u =xj
+v =xh
+v = 2
+3 where{c,g,h,i,j } are
+all distinct colors. Ifb< 2
+3 we are guaranteed to make a mistake atxe, so assume that 2
+3≤b< 7
+8. Then we can calculate
+that
+P [e∈M Y ]
+xe
+= 1
+b−a
+(2
+3−a + 4
+5
+(
+b− 2
+3
+))
+· 3
+2 = 2− 3a
+10(b−a) + 6
+5 > 2− 3· 1
+2
+10( 7
+8− 1
+2) + 6
+5 = 4
+3.
+The ﬁrst case in this lemma indicates that we should not use an interval (a,b ) wherea> 1
+2. The second case rules out the
+hope of choosing someb< 7
+8 in order to make the analysis easier. The interval I = ( 1
+2, 7
+8) is chosen to avoid these two
+issues and be as simple to analyze as possible.
+19
+=== PDF PAGE 20 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 4. Optimal dual variables, one for each of the 16 constraints, for the linear program in Figure 6, for each valid pair (p,q ) where
+p∈{ 1, 2}. We omit the column for constraint number 6,ω6−ω7≤ 0, since the dual variable for this constraint is always zero for these
+cases. The last column is the bound on the LP objective (it is in fact the optimal LP solution value) that we can prove for each case using
+the dual variables. It is always 1
+2 or less.
+Constraints
+ω1−ω2≤ 0
+ω2−ω3≤ 0
+ω3−ω4≤ 0
+ω4−ω5≤ 0
+ω5−ω6≤ 0
+ω7−ω8≤ 0
+ω8−ω9≤ 0
+ω9−ω10≤ 0
+χ−ω1≤ 1
+2χ−ω2−ω3≤ 1
+3χ−ω3−ω4−ω5≤ 1
+4χ− 4ω7≤ 1
+ωp−1≤ 1
+−ωp≤− 1
+ωq− 7
+8χ≤ 0
+LP bound
+p,q 1 2 3 4 5 7 8 9 10 11 12 13 14 15 16
+1, 1 0 0 0 0 0 0 0 0 0 0 0 0 0 4
+7
+1
+14
+3
+7
+2 1
+6 0 0 0 0 0 0 0 1
+12 0 0 0 0 7
+12 0 1
+2
+3 3
+32
+1
+192 0 0 0 0 0 0 0 5
+64 0 0 0 19
+32 0 31
+64
+4 1
+10
+1
+30
+1
+20 0 0 0 0 0 0 1
+10 0 0 0 3
+5 0 1
+2
+5 47
+450 0 13
+900 0 0 0 0 0 0 14
+225
+8
+225 0 0 136
+225
+1
+450
+37
+75
+6 3
+28 0 5
+252
+17
+1260
+1
+42 0 0 0 0 5
+84
+11
+252 0 0 17
+28 0 125
+252
+7 7
+64 0 37
+2016
+257
+20160
+1
+42 0 0 0 0 11
+192
+179
+4032
+1
+224 0 39
+64 0 2003
+4032
+8 1
+9 0 13
+756
+23
+1890
+1
+42
+1
+72 0 0 0 1
+18
+17
+378
+1
+126 0 11
+18 0 94
+189
+9 9
+80 0 41
+2520
+59
+5040
+1
+42
+1
+40
+1
+90 0 0 13
+240
+229
+5040
+3
+280 0 49
+80 0 2509
+5040
+10 5
+44 0 43
+2772
+157
+13860
+1
+42
+3
+88
+2
+99
+1
+110 0 7
+132
+127
+2772
+1
+77 0 27
+44 0 1381
+2772
+2, 2 0 0 0 0 0 0 0 0 1
+12 0 0 0 1
+12
+1
+6 0 1
+2
+3 0 1
+192 0 0 0 0 0 0 0 5
+64 0 0 0 3
+32 0 31
+64
+4 0 1
+30
+1
+20 0 0 0 0 0 0 1
+10 0 0 0 1
+10 0 1
+2
+5 0 0 13
+900 0 0 0 0 0 0 14
+225
+8
+225 0 0 47
+450
+1
+450
+37
+75
+6 0 0 5
+252
+17
+1260
+1
+42 0 0 0 0 5
+84
+11
+252 0 0 3
+28 0 125
+252
+7 0 0 37
+2016
+257
+20160
+1
+42 0 0 0 0 11
+192
+179
+4032
+1
+224 0 7
+64 0 2003
+4032
+8 0 0 13
+756
+23
+1890
+1
+42
+1
+72 0 0 0 1
+18
+17
+378
+1
+126 0 1
+9 0 94
+189
+9 0 0 41
+2520
+59
+5040
+1
+42
+1
+40
+1
+90 0 0 13
+240
+229
+5040
+3
+280 0 9
+80 0 2509
+5040
+10 0 0 43
+2772
+157
+13860
+1
+42
+3
+88
+2
+99
+1
+110 0 7
+132
+127
+2772
+1
+77 0 5
+44 0 1381
+2772
+20
+=== PDF PAGE 21 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 5. Optimal dual variables, one for each of the 16 constraints, for the linear program in Figure 6, for each pair (p,q ) when
+p∈{ 3, 4, 5}. We omit columns for constraint 1 (ω1−ω2≤ 0) and constraint 10 (χ−ω1≤ 1), as dual variables for these are always
+zero for these cases.
+Constraints
+ω2−ω3≤ 0
+ω3−ω4≤ 0
+ω4−ω5≤ 0
+ω5−ω6≤ 0
+ω6−ω7≤ 0
+ω7−ω8≤ 0
+ω8−ω9≤ 0
+ω9−ω10≤ 0
+2χ−ω2−ω3≤ 1
+3χ−ω3−ω4−ω5≤ 1
+4χ− 4ω7≤ 1
+ωp−1≤ 1
+−ωp≤− 1
+ωq− 7
+8χ≤ 0
+LP bound
+p,q 2 3 4 5 6 7 8 9 11 12 13 14 15 16
+3, 3 0 0 0 0 0 0 0 0 5
+64 0 0 5
+64
+1
+192 0 31
+64
+4 0 1
+20 0 0 0 0 0 0 1
+10 0 0 1
+10
+1
+30 0 1
+2
+5 0 13
+900 0 0 0 0 0 0 14
+225
+8
+225 0 14
+225 0 1
+450
+37
+75
+6 0 5
+252
+17
+1260
+1
+42 0 0 0 0 5
+84
+11
+252 0 5
+84 0 0 125
+252
+7 0 37
+2016
+257
+20160
+1
+42 0 0 0 0 11
+192
+179
+4032
+1
+224
+11
+192 0 0 2003
+4032
+8 0 13
+756
+23
+1890
+1
+42 0 1
+72 0 0 1
+18
+17
+378
+1
+126
+1
+18 0 0 94
+189
+9 0 41
+2520
+59
+5040
+1
+42 0 1
+40
+1
+90 0 13
+240
+229
+5040
+3
+280
+13
+240 0 0 2509
+5040
+10 0 43
+2772
+157
+13860
+1
+42 0 3
+88
+2
+99
+1
+110
+7
+132
+127
+2772
+1
+77
+7
+132 0 0 1381
+2772
+4, 4 1
+10 0 0 0 0 0 0 0 1
+10 0 0 1
+5
+1
+20 0 1
+2
+5 3
+64 0 0 0 0 0 0 0 3
+64
+1
+20 0 23
+160 0 1
+60
+157
+320
+6 5
+112 0 1
+280
+1
+42 0 0 0 0 5
+112
+3
+56 0 1
+7 0 0 55
+112
+7 39
+896 0 1
+280
+1
+42 0 0 0 0 39
+896
+3
+56
+1
+224
+9
+64 0 0 63
+128
+8 43
+1008 0 1
+280
+1
+42 0 1
+72 0 0 43
+1008
+3
+56
+1
+126
+5
+36 0 0 71
+144
+9 47
+1120 0 1
+280
+1
+42 0 1
+40
+1
+90 0 47
+1120
+3
+56
+3
+280
+11
+80 0 0 79
+160
+10 51
+1232 0 1
+280
+1
+42 0 3
+88
+2
+99
+1
+110
+51
+1232
+3
+56
+1
+77
+3
+22 0 0 87
+176
+5, 5 0 8
+85 0 0 0 0 0 0 0 8
+85 0 16
+85 0 31
+510
+41
+85
+6 0 8
+85 0 31
+510 0 0 0 0 0 8
+85 0 16
+85 0 22
+595
+41
+85
+7 0 8
+85 0 31
+510
+22
+595 0 0 0 0 8
+85 0 16
+85 0 13
+680
+41
+85
+8 0 8
+85 0 31
+510
+22
+595
+13
+680 0 0 0 8
+85 0 16
+85 0 4
+765
+41
+85
+9 0 3
+32 0 29
+480
+41
+1120
+1
+40
+1
+90 0 0 3
+32
+1
+640
+3
+16 0 0 309
+640
+10 0 41
+440 0 79
+1320
+111
+3080
+3
+88
+2
+99
+1
+110 0 41
+440
+7
+1760
+41
+220 0 0 851
+1760
+21
+=== PDF PAGE 22 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+<latexit sha1_base64="Kx1a1gvT5L3igiv8ne7EFpq+9qQ=">AAAB+XicbVBNS8NAEN3Ur1q/oh69BIvgxZL0oB6LvXhRKtgPaEPZbCbt0s0Hu5NiCf0nXjwo4tV/4s1/47bNQVsfDDzem2FmnpcIrtC2v43C2vrG5lZxu7Szu7d/YB4etVScSgZNFotYdjyqQPAImshRQCeRQENPQNsb1Wd+ewxS8Th6xEkCbkgHEQ84o6ilvmn2EJ5Qsew+9uHirj7tm2W7Ys9hrRInJ2WSo9E3v3p+zNIQImSCKtV17ATdjErkTMC01EsVJJSN6AC6mkY0BOVm88un1plWfCuIpa4Irbn6eyKjoVKT0NOdIcWhWvZm4n9eN8Xg2s14lKQIEVssClJhYWzNYrB8LoGhmGhCmeT6VosNqaQMdVglHYKz/PIqaVUrzmXFeaiWazd5HEVyQk7JOXHIFamRW9IgTcLImDyTV/JmZMaL8W58LFoLRj5zTP7A+PwBaSGTgQ==</latexit>
+Node-MC
+<latexit sha1_base64="yrH2SYgEyqTqyQIMYqqjUvYEb1U=">AAAB+nicbVBNT8JAEN3iF+JX0aOXjcTEi6TloB6JXLiYYCIfCTRku2xhw3bb7E5VUvkpXjxojFd/iTf/jQv0oOBLJnl5byYz8/xYcA2O823l1tY3Nrfy24Wd3b39A7t42NJRoihr0khEquMTzQSXrAkcBOvEipHQF6ztj2szv33PlOaRvINJzLyQDCUPOCVgpL5d7AF7BE3TujHV+U1t2rdLTtmZA68SNyMllKHRt796g4gmIZNABdG66zoxeClRwKlg00Iv0SwmdEyGrGuoJCHTXjo/fYpPjTLAQaRMScBz9fdESkKtJ6FvOkMCI73szcT/vG4CwZWXchknwCRdLAoSgSHCsxzwgCtGQUwMIVRxcyumI6IIBZNWwYTgLr+8SlqVsntRdm8rpep1FkceHaMTdIZcdImqqI4aqIkoekDP6BW9WU/Wi/VufSxac1Y2c4T+wPr8AVp3lA0=</latexit>
+Hyper-MC
+<latexit sha1_base64="tjBKw8eXGtCbmVvnKfLqDJUFbOw=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseiF48V7Qe0oWy2m3bpZhN2J0IJ/QlePCji1V/kzX/jts1BWx8MPN6bYWZekEhh0HW/ncLa+sbmVnG7tLO7t39QPjxqmTjVjDdZLGPdCajhUijeRIGSdxLNaRRI3g7GtzO//cS1EbF6xEnC/YgOlQgFo2ilB+x7/XLFrbpzkFXi5aQCORr98ldvELM04gqZpMZ0PTdBP6MaBZN8WuqlhieUjemQdy1VNOLGz+anTsmZVQYkjLUthWSu/p7IaGTMJApsZ0RxZJa9mfif100xvPYzoZIUuWKLRWEqCcZk9jcZCM0ZyokllGlhbyVsRDVlaNMp2RC85ZdXSeui6tWq3v1lpX6Tx1GEEziFc/DgCupwBw1oAoMhPMMrvDnSeXHenY9Fa8HJZ47hD5zPHweQjaI=</latexit>
+t1
+<latexit sha1_base64="E8vRTPNVvaNnwpWuMEUcNZCVWbM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lE1GPRi8cW7Ae0oWy2k3btZhN2N0IJ/QVePCji1Z/kzX/jts1BWx8MPN6bYWZekAiujet+O4W19Y3NreJ2aWd3b/+gfHjU0nGqGDZZLGLVCahGwSU2DTcCO4lCGgUC28H4bua3n1BpHssHM0nQj+hQ8pAzaqzUwH654lbdOcgq8XJSgRz1fvmrN4hZGqE0TFCtu56bGD+jynAmcFrqpRoTysZ0iF1LJY1Q+9n80Ck5s8qAhLGyJQ2Zq78nMhppPYkC2xlRM9LL3kz8z+umJrzxMy6T1KBki0VhKoiJyexrMuAKmRETSyhT3N5K2IgqyozNpmRD8JZfXiWti6p3VfUal5XabR5HEU7gFM7Bg2uowT3UoQkMEJ7hFd6cR+fFeXc+Fq0FJ585hj9wPn8Ay2WM7w==</latexit>
+e
+<latexit sha1_base64="1chVsqYpGeVCSZz7DaNA+C0GR54=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lE1GPRi8eK9gPaUDbbSbt0swm7m0IJ/QlePCji1V/kzX/jts1BWx8MPN6bYWZekAiujet+O4W19Y3NreJ2aWd3b/+gfHjU1HGqGDZYLGLVDqhGwSU2DDcC24lCGgUCW8Hobua3xqg0j+WTmSToR3QgecgZNVZ6HPewV664VXcOskq8nFQgR71X/ur2Y5ZGKA0TVOuO5ybGz6gynAmclrqpxoSyER1gx1JJI9R+Nj91Ss6s0idhrGxJQ+bq74mMRlpPosB2RtQM9bI3E//zOqkJb/yMyyQ1KNliUZgKYmIy+5v0uUJmxMQSyhS3txI2pIoyY9Mp2RC85ZdXSfOi6l1VvYfLSu02j6MIJ3AK5+DBNdTgHurQAAYDeIZXeHOE8+K8Ox+L1oKTzxzDHzifP1lsjdg=</latexit>
+ve
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="mza5dh3P5mTFz8LFzoFCxbfNXDU=">AAACDXicbVC7TsMwFHXKq5RXgJHFoiAxVUmBthJLBQtjkehDaqPKcZ3WquNEtoNURf0BFn6FhQGEWNnZ+BvsNgO0XMlHR+fcq+t7/JhRqRzn28qtrK6tb+Q3C1vbO7t79v5BS0aJwKSJIxaJjo8kYZSTpqKKkU4sCAp9Rtr++Mb47QciJI34vZrExAvRkNOAYqS01LdPXNi7gmUD5wYuDFwaqBioGqj17aJTcmYFl4mbkSLIqtG3v3qDCCch4QozJGXXdWLlpUgoihmZFnqJJDHCYzQkXU05Con00tk1U3iqlQEMIqEfV3Cm/p5IUSjlJPR1Z4jUSC56RvzP6yYqqHkp5XGiCMfzRUHCoIqgiQYOqCBYsYkmCAuq/wrxCAmElQ6woENwF09eJq1yya2U3LtysX6dxZEHR+AYnAEXVEEd3IIGaAIMHsEzeAVv1pP1Yr1bH/PWnJXNHII/ZX3+AKWPlZw=</latexit>
+12345678
+<latexit sha1_base64="/3o7SrHnp2+Vem1FnprcKJwnwEU=">AAAB+HicbVBNS8NAEJ3Ur1o/GvXoJVgETyURUY/FIngRKtgPaEPZbLft0s0m7E7EGvpLvHhQxKs/xZv/xm2bg7Y+GHi8N8PMvCAWXKPrflu5ldW19Y38ZmFre2e3aO/tN3SUKMrqNBKRagVEM8ElqyNHwVqxYiQMBGsGo+rUbz4wpXkk73EcMz8kA8n7nBI0UtcudpA9oqbpLZfX1eqka5fcsjuDs0y8jJQgQ61rf3V6EU1CJpEKonXbc2P0U6KQU8EmhU6iWUzoiAxY21BJQqb9dHb4xDk2Ss/pR8qURGem/p5ISaj1OAxMZ0hwqBe9qfif106wf+mnXMYJMknni/qJcDBypik4Pa4YRTE2hFDFza0OHRJFKJqsCiYEb/HlZdI4LXvnZe/urFS5yuLIwyEcwQl4cAEVuIEa1IFCAs/wCm/Wk/VivVsf89aclc0cwB9Ynz+/VJMl</latexit>
+MinECC
+Figure 7. MINECC can be reduced to NODE -MC and HYPER -MC in an approximation preserving way. Squares represent terminal
+nodes, one for each color. In the instance of NODE -MC , original nodes (numbered circles) are given weight∞, so we can only delete
+hyperedge nodes when separating terminal nodes. In the illustration, green is color 1, and we label one green edge e ={1, 2, 3}, which is
+converted to a new nodeve that is attached to terminalt1 in the NODE -MC instance.
+Lemma 4.7 and the other challenges highlighted above do not imply that it is impossible to design a 4
+3-approximation
+algorithm with a simpler approximation guarantee proof. Indeed, a simpler proof of a tight approximation is a compelling
+direction for future research. Nevertheless, this discussion highlights why it is challenging to escape from using a length
+case analysis when proving that P [e∈M Y ]≤ 4
+3xe for Algorithm 1.
+D. Relation to Multiway Cut Objectives
+In this section we prove that the canonical MINECC LP relaxation is always at least as tight as theNODE -MC LP relaxation,
+and that it can be strictly tighter in some cases. Therefore, although these approaches lead to a matching worst-case guarantee
+whenr is arbitrarily large, applying the canonical relaxation leads to better results in many cases. We will also highlight
+why our approximation guarantees for small values of r are much better than any guarantees we obtain by reducing to
+HYPER -MC.
+D.1. Reductions from M INECC to N ODE -MC and H YPER -MC
+As shown previously (Amburg et al., 2020), an instanceH = (V,E,C,𝓁 ) of MINECC can be reduced to an instance of
+NODE -MC on a graph G via the following steps
+• For every nodev∈V , add a corresponding nodev toG with weight∞.
+• For each color i∈{ 1, 2,...,k }, place a terminal nodeti inG.
+• For each hyperedgee∈ E with weightwe, add a node ve toG with weightwe and place an edge (v,ve) for each
+v∈e.
+The MINECC objective onH is then approximation equivalent to NODE -MC onG. NODE -MC is in turn approximation
+equivalent to HYPER -MC (Chekuri & Ene, 2011b). Although not previously shown explicitly, there is a particularly simple
+reduction from MINECC to HYPER -MC: introduce a terminal nodeti for each colori, and then for a hyperedgee∈E of
+colori, add terminal nodeti to that hyperedge and then ignore the hyperedge color. Figure 7 illustrates the procedure of
+reducing an instance of MINECC to N ODE -MC and H YPER -MC. We note the following simple equivalence result.
+Observation 3. MINECC withk colors is approximation-equivalent to a special type of HYPER -MC problem onk terminal
+nodes where every hyperedge contains a terminal node.
+Approximation guarantees for MINECC via reductions There are a few known approximation guarantees for HYPER -
+MC in terms of the maximum hyperedge size r, but these do not imply any useful results for MINECC . When r = 2,
+HYPER -MC is the well-studied graph multiway cut objective (Dahlhaus et al., 1994; C˘alinescu et al., 2000), but this has
+no direct bearing on MINECC since an instance of MINECC with maximum hyperedge size r≥ 2 corresponds to an
+instance of HYPER -MC with maximum hyperedge sizer + 1≥ 3. Chekuri & Ene (2011b) gave anHr approximation for
+22
+=== PDF PAGE 23 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Node-MC LP: path constraints version
+min
+∑
+v∈V−T
+wvdv
+s.t. ∑
+v∈pdv≥ 1 ∀p∈P
+dv = 0 ∀v∈T
+dv≥ 0 ∀v∈V−T
+(16)
+Node-MC LP: polynomial constraints version
+min
+∑
+v∈V−T
+wvdv
+s.t. yi
+v≤yi
+u +dv ∀(u,v )∈E,∀i∈ [k]
+yi
+ti = 0 ∀i∈ [k]
+yj
+ti≥ 1 ∀i,j ∈ [k],j ⁄=i
+dv≥ 0 ∀v∈V−T
+(17)
+Figure 8. Two equivalent ways to write the distance-based LP relaxation for node-weighted multiway cut (Garg et al., 2004).P is the set
+of all paths between terminal nodes.
+HYPER -MC whereHi is theith harmonic number. However, this only implies a 1.833-approximation for MINECC when
+r = 3, and is worse than a 2-approximation whenr≥ 4. The approximation guarantees we obtain for small values ofr by
+rounding the MINECC LP relaxation are therefore signiﬁcantly better and than results obtained by reducing to generalized
+multiway cut objectives. In contrast, whenr is arbitrarily large, our approximation guarantee of 2(1− 1
+k) for rounding the
+MINECC LP relaxation matches the guarantee obtained by ﬁrst reducing to NODE -MC and rounding the LP relaxation for
+this objective (Garg et al., 2004). In this appendix we explore the relationship between these linear programs in more depth.
+D.2. The M INECC LP is Tighter than the N ODE -MC LP
+LetG = (V,E ) be a graph with terminal nodes T ={t1,t 2,...,t k} and a weight wv≥ 0 for each node v∈ V . The
+distance-based LP relaxation for the NODE -MC objective onG is shown in Figure 8, whereP represents the set of all paths
+between pairs of terminal nodes. The formulation in (16) uses a single variabledv for each nodev, with the constraint that
+the distance between every pair of terminal nodes is at least 1. This requires an exponential number of path constraints. The
+bottom of Figure 8 shows an alternative way to write the LP using more variables but only polynomially many constraints
+and variables. The two LPs are known to be equivalent (Garg et al., 2004). The variabledu provides an indication for how
+strongly we wish to delete nodeu, and the variableyi
+u is interpreted as the distance between nodeu and clusteri.
+Consider now an instance of MINECC encoded by an edge-colored hypergraphH = (V,E,C,𝓁 ) that we reduce to a node-
+weighted graphG = ( ˆV, ˆE) using the strategy in Section D.1. The node set ˆV =T∪V∪VE is made up of terminal nodes
+T ={ti : i = 1, 2,...,k }, the original node setV from hypergraphH, and the node setVE ={ve : e∈E}. In Figure 7,
+these are represented by square nodes, numbered circular nodes, and irregular shaped hyperedge-nodes, respectively. The
+edge set ˆE =EH∪ET has two parts, deﬁned by
+EH ={(v,ve): v∈e inH} (18)
+ET ={(ti,ve): 𝓁(e) =i inH}. (19)
+The node weight for eachu∈V∪T is given bywu =∞, and the node weight forve∈VE iswe. Focusing speciﬁcally
+on the formulation shown in (17), we see that the NODE -MC LP shares some similarities with the canonical MINECC
+relaxation. For example, both linear programs involve one variable for each node-color pair (u,i )∈V×C. However, in
+terms of the hypergraphH = (V,E,C,𝓁 ), the NODE -MC relaxation involvesO(k|V|+k|E|) variables andO(k∑
+e∈E|e|)
+constraints overall, while the MINECC relaxation has O(k|V| +|E|) variables and O(k|V| +∑
+e∈E|e|) constraints.
+Although the two linear programs both have an integrality gap of 2(1− 1
+k), the following theorem proves that the MINECC
+23
+=== PDF PAGE 24 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+relaxation will always be at least as tight as the lower bound obtained via the NODE -MC relaxation.
+Theorem D.1. (Theorem 2.2 in the main text) The value of the NODE -MC relaxation onG = ( ˆV, ˆE) is at most the value of
+the MINECC relaxation onH = (V,E,C,𝓁 ).
+Proof. Let X ={xi
+v,xe : v∈V,e ∈E,i ∈ [k]} denote an arbitrary set of variables for the MINECC LP relaxation for H.
+Our goal is to use these to construct a set of feasible variables for the NODE -MC LP relaxation on graphG = ( ˆV, ˆE) with
+the same objective score. This means we have to deﬁne yi
+v anddv for eachv∈ ˆV andi∈ [k]. Since there are multiple
+different types of nodes in ˆV , in order to simplify notation we will letyi
+e =yi
+ve andde =dve when we are considering a
+nodeve∈VE that is associated with a hyperedgee∈E. Deﬁne the following set of variables for the N ODE -MC LP:
+• Let dv = 0 forv∈V∪T .
+• For ve∈VE, deﬁneyj
+e =
+{
+xe if𝓁(e) =j inH
+1 otherwise.
+• For ve∈VE, deﬁnede =yc
+e wherec =𝓁(e) inH.
+• For v∈V , deﬁneyi
+v =xi
+v for everyi∈ [k].
+• For ti∈T wherei∈ [k], deﬁneyi
+ti = 0, andyj
+ti = 1 wheneveri⁄=j.
+The objective for the NODE -MC LP relaxation is then ∑
+ve∈Vewede = ∑
+e∈Ewexe, which matches the MINECC
+relaxation value. It only remains to check that the following distance constraints hold for all different types of edges
+(u,v )∈ ˆE and every colorj∈ [k]:
+yj
+v≤yj
+u +dv (20)
+yj
+u≤yj
+v +du. (21)
+For (v,ve)∈EH, if𝓁(e) =c thenyc
+v =xc
+v≤xe =yc
+e =yc
+e +dv, sincedv = 0 forv∈V . Therefore, constraint (20) holds
+in this case. Also, when 𝓁(e) =c, constraint (21) holds becauseyc
+e =xe =de≤yc
+v +de. If (v,ve)∈EH but we consider
+a colori⁄=c =𝓁(e), then constraint (20) is satisﬁed becauseyi
+v =xi
+v≤ 1 =yi
+e =yi
+e +dv. Constraint (21) is satisﬁed as
+well sinceyi
+e = 1≤xi
+v +xc
+v≤xi
+v +xe =yi
+v +de. Here we have used the fact that∑k
+i=1xi
+v = 1 implies 1≤xi
+v +xc
+v.
+Finally, for an edge (ve,tc)∈ET wherec =𝓁(e), constraints (20) and (21) becomeyj
+e≤yj
+tc +de andyj
+tc≤yj
+e. Ifj⁄=c,
+then both of these hold becauseyj
+tc =yj
+e = 1. Meanwhile, ifj =c, then they follow fromyj
+e =de andyj
+ti = 0.
+Strictly tighter instance. Theorem D.1 shows that the MINECC relaxation is at least as tight of a lower bound as using the
+NODE -MC relaxation. Although they have the same integrality gap, we can additionally show that the MINECC relaxation
+can be strictly tighter. Consider color setC ={1, 2, 3} and letH = (V,E ) be a star graph with center nodev0 and three
+leaf nodes{v1,v 2,v 3}, where edgeei = (v0,vi) has colori fori = 1, 2, 3. The optimal MINECC solution will satisfy one
+of the edges and make mistakes at the two other edges. The MINECC LP relaxation will also have an optimal value of 2 by
+settingxi
+vi = 0 fori = 1, 2, 3, and choosing eitherxi
+v0 = 2
+3 for everyi = 1, 2, 3, orxi
+v0 = 1 for exactly onei∈{ 1, 2, 3}.
+Meanwhile, if we reduce to an instance of NODE -MC, each terminal node participates in one edge (vei,ti) fori∈{ 1, 2, 3}.
+If we speciﬁcally consider the path constraints formulation of the NODE -MC LP in (16), we can see that it is feasible to set
+dei = 1
+2, leading to an optimal LP solution of 3
+2. This matches the worst case integrality gap.
+E. Additional Details for V ertex Cover Results
+E.1. Reduction proofs
+Proof of Theorem 5.1
+Proof. See Figure 3. To construct the edge-colored hypergraphH, introduce a nodevij for each (i,j )∈E, and for each
+u∈V deﬁne a hyperedgeeu ={vuj : j where (u,j )∈E)}. Let each hyperedge be associated with its own unique color.
+Each node in G corresponds to a hyperedge in H and deleting a hyperedge in H is equivalent to covering a node in G.
+24
+=== PDF PAGE 25 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Algorithm 2 PittVertexCover(G)
+Input:G = (VG,EG) with node weightwv≥ 0 for eachv∈VG
+Output: Vertex coverC⊆ V .
+C←∅ // Initialize empty vertex cover
+for (u,v )∈EG do
+ifu /∈C andv /∈C then
+Generate uniform randomρ∈ (0, 1)
+ifρ< wv
+wu+wv
+then
+C←C∪{ u}
+else
+C←C∪{ v}
+end if
+end if
+end for
+ReturnC
+Algorithm 3 PittColoring(H)
+Input: Edge-colored hypergraphH = (V,E,C,𝓁 ) with weightw(e)≥ 0 for eache∈E
+Output: SetD⊆ E so thatH = (V,E −D,C,𝓁 ) has no bad edge pairs
+D←∅
+forv∈V do
+LE(v) = [v(1) v(2) ··· v(dv)] // Indices for v’s edges, ordered by color
+f = 1,b =dv // Pointers to front/back of index array
+// Move past all covered bad edge pairs containing v
+whileev(b)∈D andb>f do
+b←b− 1
+end while
+whileev(f )∈D andb>f do
+f←f + 1
+end while
+// Handle uncovered bad edge pairs containing v
+while𝓁(v(f))⁄=𝓁(v(b)) do
+Generateρ∈ (0, 1)
+ifρ< w(v(f ))
+w(v(f ))+w(v(b)) then
+D←D∪{ ev(b)}
+whileev(b)∈D andb>f do
+// Ignore any deleted edges
+b←b− 1
+end while
+else
+D←D∪{ ev(f )}
+whileev(f )∈D andb>f do
+// Ignore any deleted edges
+f←f + 1
+end while
+end if
+end while
+end for
+ReturnD
+25
+=== PDF PAGE 26 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Because all hyperedges have different colors, for every pair of overlapping hyperedges(eu,ev) we know that eithereu orev
+must be deleted. This is equivalent to covering nodeu or nodev when (u,v )∈E. By construction, the degree distribution
+inG is exactly the hyperedge size distribution inH. □
+Proof of Theorem 5.2
+Proof. See Figure 3. To construct the graph G, ﬁrst introduce a node ve for every hyperedgee∈ E. If two hyperedges
+e∈E andf∈E deﬁne a bad hyperedge pair (|e∩f|> 0 and𝓁(e)⁄=𝓁(f)), then we add an edge (ve,vf) in the graphG.
+Ife∈E has weightwe, we give nodeve weightwe inG. Deleting a minimum weight set of hyperedges in H to ensure
+remaining hyperedges of different colors do not overlap is equivalent to deleting a minimum weight set of nodes inG so that
+the remaining nodes form an independent set (i.e., the VERTEX COVER problem). □
+E.2. Details and pseudocode for combinatorial algorithms
+Algorithm 2 is pseudocode for Pitt’s algorithm (Pitt, 1985) for weighted VERTEX COVER . Algorithm 3 is pseudocode
+for PittColoring, which is our 2-approximation for MINECC that implicitly applies Pitt’s algorithm to the VERTEX
+COVER instanceG that is approximation-equivalent to solving the MINECC objective on an edge colored hypergraph
+H = (V,E,C,𝓁 ). Importantly, this algorithm never explicitly formsG, but is still able to identify a set of edges inH to
+delete which correspond to a vertex cover inG. Full details for how to accomplish this is included in the main text, along
+with justiﬁcation for theO(∑
+e∈E|e|) runtime. The fact that this is a 2-approximation for MINECC (even in the weighted
+case) follows directly from the fact that this is implicitly providing a valid2-approximate vertex cover in the (unformed)
+reduced graphG via Pitt’s algorithm.
+MatchColoring. Our algorithm MatchColoring is a 2-approximation for the unweighted version of MINECC . This
+algorithm implicitly applies the common strategy of approximating an unweighted VERTEX COVER problem by ﬁnding a
+maximal matching and then adding both endpoints of each edge in the maximal matching to form a cover. For our problem,
+this corresponds to ﬁnding a maximal edge-disjoint set of bad edge pairs, and deleting all edges in those bad edge pairs. This
+can also be implemented inO(∑
+e|e|) time by carefully iterating through bad edge pairs in the same way that PittColoring
+does. This approach has the additional advantage of providing a deterministic 2-approximate solution for unweighted
+MINECC (PittColoring has an expected 2-approximation). Additionally, the maximal matching (i.e., maximal edge-disjoint
+set of bad edge pairs) that it computes provides a lower bound on the MINECC objective, which can be used in practice to
+check a posteriori approximation guarantees for other methods that do not come with approximation guarantees of their own.
+Improved Hybrid algorithm. Our Hybrid algorithm combines the strengths of MatchColoring and MajorityVote.
+MatchColoring ﬁnds a maximal edge-disjoint set of bad hyperedge pairs, which provides a useful lower bound on the
+optimal MINECC objective. It deletes all edges in this maximal set, which is exactly within a factor 2 of this lower bound.
+In practice, this often deletes more edges than is strictly necessary, and leads to a large set of nodes that are contained
+in no remaining edge. From a theoretical perspective, these can be assigned any color and the algorithm will still be a
+2-approximation. Hybrid works simply by assigning these nodes to have the color determined by the MajorityVote method
+(i.e, the edge color that the node participates in the most). This often ends up satisfying many edges that were deleted
+by MatchColoring even though they did not actually need to be deleted in order to yield a hypergraph with no bad edge
+pairs. Because the ﬁrst step of Hybrid is to run MatchColoring and assign colors based on this algorithm, in theory is still
+enjoys the theoretical 2-approximation guarantee, and it can still make use of the explicit lower bound computed by this
+MatchColoring.
+F . Experimental Results
+Previous work has already shown that the LP relaxation can often be solved on real-world graphs and hypergraphs with
+tens of thousands of nodes and many large hyperedges within minutes (Amburg et al., 2020; 2022). The LP relaxation
+often even ﬁnds the optimal solution even using the simplest rounding techniques. Our improved LP approximation results
+therefore mainly serve as a way bring the best theoretical results closer to what has been observed in practice. On the
+other hand, our combinatorial algorithms provide a very practical new way to obtain approximate solutions with strong
+guarantees on a much larger scale than was ever possible previously. We implement our combinatorial algorithms in Julia.
+All experiments are run on a Mac laptop with 16GB of RAM. Source code and all data is publicly available on the Github
+repo https://github.com/nveldt/ImprovedECC.
+26
+=== PDF PAGE 27 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 6. Statistics for ﬁve benchmark edge-colored hypergraphs from Amburg et al. (2020).
+Dataset |V| | E| r k
+Brain 638 21180 2 2
+Cooking 6714 39774 65 20
+DAWN 2109 87104 22 10
+MAG-10 80198 51889 25 10
+Walmart-Trips 88837 65898 25 44
+Experiments on previous benchmark hypergraphs Table 6 presents statistics for ﬁve benchmark edge-colored clustering
+hypergraphs ﬁrst considered by Amburg et al. (2020). In Table 7, we show the performance of various algorithms in
+approximating ECC on these instances. The LP relaxation produces integral or near integral results on these datasets,
+so it is enough to apply a very simple rounding scheme (for each v∈ V , assign it color i∗ = argminixi
+v) to obtain an
+optimal or near optimal solution to MINECC . PittColoring and MatchColoring exhibit a very straightforward tradeoff
+when compared with LP: they are far more scalable, at the expense of worse approximation guarantees. They nevertheless
+produce clusterings that are within a small factor of the LP lower bound (Approximation Factor in Table 7), and only take a
+fraction of a second.
+The comparison between our combinatorial methods and MajorityVote is arguably more interesting. Although MajorityVote
+only has an r-approximation guarantee in theory, it often produces better clusterings than our combinatorial methods.
+However, on the Walmart dataset, PittColoring and MatchColoring produce better results. This may be due to the fact
+that this dataset has a much larger maximum hyperedge size, though it is not entirely clear. All of these combinatorial
+methods have the same asymptotic runtime ofO(∑
+e|e|), and very similar running times in practice. We have also reported
+results for running PittColoring and MatchColoring 100 times and taking the best result (Pitt+ and Match+ in Table 7).
+This is still very fast, and produces slightly better approximation factors. For each run, we randomize the order in which
+nodes are visited, which changes the order in which bad edge pairs are visited and therefore changes which hyperedges are
+deleted. PittColoring has additional randomization in how it chooses which edge to delete in a bad edge pair.
+Experiments on the Trivago Hypergraph The Trivago hypergraph is derived from the 2019 ACM RecSys Challenge
+dataset (https://recsys.acm.org/recsys19/challenge/). It is closely related to the previous Trivago hyper-
+graph without edge labels available at https://www.cs.cornell.edu/˜arb/data/trivago-clicks/. The
+key difference is that in processing the data, we have kept track of the user location platform when parsing the website
+browsing data, which allows us to obtain edge country labels. We discard nodes that have labels that do not correspond to
+any of the hyperedge labels.
+Table 2 in the main text displays the number of mistakes, edge satisfaction, a posteriori approximation ratio (for all but
+PittColoring, which does not compute an explicit lower bound), accuracy, and runtime of each combinatorial method, all
+averaged over 50 different trials. There is little to no variation between different runs. The a posteriori approximation
+guarantee for MatchColoring and Hybrid is obtained by taking the number of mistakes made by the method and dividing
+by the lower bound computed by MatchColoring. MajorityVote does not compute as good of a lower bound. In theory,
+this provides anr-approximation, because this method can be seen as the optimal solution to an alternative edge-colored
+clustering objective where the penalty at each hyperedge is the number of nodes in the hyperedge with a color that is
+different from the hyperedge’s color. This is always within a factorr of the optimal MINECC objective. Using this fact, it is
+not hard to prove that the optimal MINECC objective will be lower bounded by
+∑
+e∈E
+∑
+v∈e 1 (YMV[v]⁄=𝓁(e))
+r , (22)
+where YMV is the MajorityVote clustering. Dividing the MINECC objective for MajorityVote by this lower bound
+on the optimal MINECC solution produces the approximation in Table 2. Although this is better than the theoretical
+85-approximation, it is still very poor.
+27
+=== PDF PAGE 28 ===
+Optimal LP Rounding and Linear-Time Approximation Algorithms for Clustering Edge-Colored Hypergraphs
+Table 7. Approximation factors (ratio between algorithm output and LP lower bound), edge satisfaction (percentage of edges satisﬁed by
+the clustering), and runtimes obtained by various algorithms on ﬁve benchmark edge-colored hypergraphs from Amburg et al. (2020).
+MajorityVote (MV) is deterministic. Our vertex cover algorithms are randomized, so we list the mean values and standard deviations over
+50 runs. Pitt+ and Match+ correspond to running PittColoring and MatchColoring 100 times and taking the best clustering found.
+Ratio to LP lower bound
+Dataset LP MV PittColoring MatchColoring Pitt+ Match+
+Brain 1.0 1.01 1.07 ±0.01 1.08±0.01 1.06±0.01 1.07±0.01
+Cooking 1.0 1.21 1.23 ±0.01 1.23±0.0 1.22±0.0 1.22±0.01
+DAWN 1.0 1.09 1.57 ±0.04 1.58±0.03 1.54±0.03 1.54±0.03
+MAG-10 1.0 1.18 1.39 ±0.01 1.49±0.0 1.37±0.0 1.48±0.0
+Walmart-Trips 1.0 1.2 1.13 ±0.0 1.18±0.0 1.13±0.0 1.17±0.0
+Edge Satisfaction
+Dataset LP MV PittColoring MatchColoring Pitt+ Match+
+Brain 0.64 0.64 0.62 ±0.0 0.62±0.0 0.62±0.0 0.62±0.0
+Cooking 0.2 0.03 0.01 ±0.0 0.01±0.0 0.02±0.0 0.02±0.0
+DAWN 0.53 0.48 0.26 ±0.02 0.25±0.02 0.27±0.01 0.27±0.01
+MAG-10 0.62 0.55 0.47 ±0.0 0.44±0.0 0.48±0.0 0.44±0.0
+Walmart-Trips 0.24 0.09 0.14 ±0.0 0.11±0.0 0.14±0.0 0.11±0.0
+Runtime
+Dataset LP MV PittColoring MatchColoring Pitt+ Match+
+Brain 0.52 0.001 0.006 ±0.028 0.002±0.001 0.12±0.006 0.028±0.004
+Cooking 127.01 0.002 0.01 ±0.003 0.008±0.007 0.525±0.012 0.228±0.011
+DAWN 4.23 0.003 0.01 ±0.004 0.005±0.003 0.779±0.038 0.221±0.007
+MAG-10 17.0 0.012 0.04 ±0.006 0.04±0.016 0.675±0.037 0.414±0.06
+Walmart-Trips 321.09 0.07 0.053 ±0.007 0.05±0.009 1.545±0.083 1.044±0.067
+28

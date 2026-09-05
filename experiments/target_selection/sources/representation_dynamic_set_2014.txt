@@ -1,0 +1,854 @@
+=== PDF PAGE 1 ===
+arXiv:1407.6755v2  [cs.DS]  5 May 2015
+Dynamic Set Intersection ⋆
+Tsvi Kopelowitz 1 and Seth Pettie 1 and Ely Porat 2
+1 University of Michigan
+2 Bar-Ilan University
+Abstract. Consider the problem of maintaining a family F of dynamic
+sets subject to insertions, deletions, and set-intersecti on reporting queries:
+given S, S ′ ∈ F , report every member of S ∩ S′ in any order. We show
+that in the word RAM model, where w is the word size, given a cap d
+on the maximum size of any set, we can support set intersectio n queries
+in O( d
+w/ log2 w ) expected time, and updates in O(log w) expected time.
+Using this algorithm we can list all t triangles of a graph G = ( V, E ) in
+O(m + mα
+w/ log2 w + t) expected time, where m = |E| and α is the arboric-
+ity of G. This improves a 30-year old triangle enumeration algorith m of
+Chiba and Nishizeki running in O(mα ) time.
+We provide an incremental data structure on F that supports inter-
+section witness queries, where we only need to ﬁnd one e ∈ S ∩ S′.
+Both queries and insertions take O
+( √
+N
+w/ log2 w
+)
+expected time, where
+N = ∑
+S∈F |S|. Finally, we provide time/space tradeoﬀs for the fully dy-
+namic set intersection reporting problem. Using M words of space, each
+update costs O(√ M log N ) expected time, each reporting query costs
+O( N√log N√
+M
+√ op + 1) expected time where op is the size of the output,
+and each witness query costs O( N√log N√
+M + log N ) expected time.
+1 Introduction
+In this paper we explore the power of word level parallelism to speed up algo-
+rithms for dynamic set intersection and triangle enumeration. We as sume a w-bit
+word-RAM model, w > log n, with the standard repertoire of unit-time opera-
+tions on w-bit words: bitwise Boolean operations, left/right shifts, addition, mul-
+tiplication, comparison, and dereferencing. Using the modest para llelism intrinsic
+in this model (sometimes in conjunction with tabulation) it is often pos sible to
+obtain a nearly factor- w (or factor-log n) speedup over traditional algorithms.
+The Four Russians algorithm for boolean matrix multiplication is perhaps the
+oldest algorithm to use this technique. Since then it has been applied t o com-
+puting edit distance [1], regular expression pattern matching [2], APS P in dense
+weighted graphs [3], APSP and transitive closure in sparse graphs [4,5 ], and
+⋆ Supported by NSF grants CCF-1217338 and CNS-1318294 and a gr ant from the
+US-Israel Binational Science Foundation. This research wa s performed in part at the
+Center for Massive Data Algorithmics (MADALGO) at Aarhus Un iversity, which is
+supported by the Danish National Research Foundation grant DNRF84.
+=== PDF PAGE 2 ===
+more recently, to computing the Fr´ echet distance [6] and solving 3 SUM in sub-
+quadratic time [7,8]. Refer to [9] for more examples.
+Set Intersection. The problem is to represent a (possibly dynamic) family of
+sets F with total size N =∑
+S∈F |S| so that given S, S′ ∈ F , one can quickly
+determine if S ∩ S′ = ∅ (emptiness query) or report some x ∈ S ∩ S′ (witness
+query) or report all members of S ∩ S′. Let d be an a priori bound on the size
+of any set. We give a randomized algorithm to preprocess F in O(N ) time such
+that reporting queries can be answered in O(d/ w
+log2 w + |S ∩ S′|) expected time.
+Subsequent insertion and deletion of elements can be handled in O(1) expected
+time.
+We give O(N )-space structures for the three types of queries when there
+is no restriction on the size of sets. For emptiness queries the expe cted up-
+date and query times are O(
+√
+N ); for witness queries the expected update and
+query times are O(√N log N ); for reporting queries the expected update time is
+O(√N log N ) and the expected query time is O(
+√
+N log N (1 + |S ∩ S′|)). These
+fully dynamic structures do not beneﬁt from word-level parallelism. When only
+insertions are allowed we give another structure that handles both insertions and
+emptiness/witness queries in O(
+√
+N/ w
+log2 w ) expected time. 1
+3SUM Hardness. Data structure lower bounds can be proved unconditionally,
+or conditionally, based on the conjectured hardness of some problem. One of the
+most popular conjectures for conditional lower bounds is that the 3SUM problem
+(given n real numbers, determine if any three sum to zero) cannot be solve d in
+truly subquadratic (expected) time, i.e. O(n2−Ω(1)) time. Even if the inputs are
+integers in the range [ −n3, n3] (the Integer3SUM problem), the problem is still
+conjectured to be insoluble in truly subquadratic (expected) time. See [10,11,8]
+and the references therein.
+Pˇ atra¸ scu in [10] showed that theInteger3SUM problem can be reduced to of-
+ﬂine set-intersection, thereby obtaining conditional lower bounds for oﬄine data
+structures for set-intersection. The parameters of this reduc tion were tightened
+by us in [11]. Converting a conditional lower bound for the oﬄine versio n of a
+problem to a conditional lower bound for the incremental (and henc e dynamic)
+version of the same problem is straightforward, and thus we can pr ove conditional
+lower bounds for the incremental (and hence dynamic) set interse ction problems.
+In particular, we are able to show that conditioned on the Integer3SUM conjec-
+ture, for the incremental emptiness version either the update or query time must
+be at least Ω(N 1/2−o(1)) time. This is discussed in more detail, including lower
+bounds for the reporting version, in Appendix A.
+Related work. Most existing set intersection data structures, e.g., [12,13,14],
+work in the comparison model, where sets are represented as sort ed lists or
+arrays. In these data structures the main benchmark is the minimu m number
+1 These data structures oﬀer a tradeoﬀ between space M , query time, and update
+time. We restricted our attention to M = O(N ) here for simplicity.
+2
+=== PDF PAGE 3 ===
+of comparisons needed to certify the answer. Bille, Pagh, and Pagh [15] also
+used similar word-packing techniques to evaluate expressions of se t intersections
+and unions. Their query algorithm ﬁnds the intersection of m sets with a total
+of n elements in O(n/ w
+log2 w + m · op) time, where op is the size of the output.
+Cohen and Porat [16] designed a static O(N )-space data structure for answering
+reporting queries in O(
+√
+N (1 + |S ∩ S′|)) time, which is only O(√log N ) faster
+than the data structure presented here.
+Triangle Enumeration. Itai and Rodeh [17] showed that all t triangles in
+a graph could be enumerated in O(m3/2) time. Thirty years ago Chiba and
+Nishizeki [18] generalized [17] to show that O(mα) time suﬃces, where α is
+the arboricity of the graph. This algorithm has only been improved for dense
+graphs using fast matrix multiplication. The recent algorithm of Bj¨ o rklund,
+Pagh, Williams, and Zwick [19] shows that when the matrix multiplication e x-
+ponent ω = 2, triangle enumeration takes ˜O(min{n2 + nt2/3, m4/3 + mt1/3})
+time. (The actual running time is expressed in terms of ω.) We give the ﬁrst
+asymptotic improvement to Chiba and Nishizeki’s algorithm for graphs that are
+too sparse to beneﬁt from fast matrix multiplication. Using our set in tersection
+data structure, we can enumerate t triangles in O(m + mα/ w
+log2 w + t) expected
+time.
+For simplicity we have stated all bounds in terms of an arbitrary word size
+w. When w = O(log n) the w/ log2 w factor becomes log n/ log log n.
+Overview of the paper. The paper is structured as follows. In Section 2 we
+discuss a packing algorithm for (dynamic) set intersection, and in Se ction 3 we
+show how the packing algorithm for set intersection can be used to s peed up
+triangle listing. In Section 4 we present our data structure for emp tiness queries
+on a fully dynamic family of sets, with time/space tradeoﬀs. In Sectio n 5 we
+combine the packing algorithm for set intersection with the emptines s query
+data structure to obtain a packed data structure for set inters ection witness
+queries on an incremental family of sets. In Section 6 we present no n-packed
+data structures for emptiness, witness, and reporting set inter section queries on
+a fully dynamic family of sets, with time/space tradeoﬀs. Finally, we dis cuss
+conditional lower bounds based on the 3SUM conjecture for dynamic versions of
+the set intersection problem in the Appendix.
+2 Packing Sets
+Theorem 1. A family of sets F = {S1, · · · , St} with d > maxS∈F |S| can be
+preprocessed in linear time to facilitate the following set intersection queries.
+Given two S, S′ ∈ F , one can ﬁnd a witness in S ∩ S′ in O( d log2 w
+w ) expected
+time and list all of the elements of S ∩ S′ in O(|S ∩ S′|) additional expected time.
+If w = O(log n) then the query time is reduced to O( d log log n
+log n ). Furthermore,
+updates (insertions/deletions of elements) to sets in F can be performed O(1)
+expected time, subject to the constraint that d > maxS∈F |S|.
+3
+=== PDF PAGE 4 ===
+Proof. Every set S ∈ F is split into ℓ buckets BS
+1 , . . . , BS
+ℓ where ℓ = d log w
+w . We
+pick a function h from a pairwise independent family of hash functions and assign
+each element e ∈ S into a bucket BS
+h(e). The expected number of elements from
+a set S in each bucket is w
+log w . We use a second hash function h′ from another
+family of pairwise independent hash functions which reduces the univ erse size
+to w2. An h′(e) value is represented with 2 log w + 1 bits, the extra control bit
+being necessary for certain manipulations described below. For eac h S and i we
+represent h′(BS
+i ) as a packed, sorted sequence of h′-values. In expectation each
+h′(BS
+i ) occupies O(1) words, though some buckets may be signiﬁcantly larger.
+Finally, for each bucket BS
+i we maintain a lookup table that translates from
+h′(e) to e. If there is more than one element that is hashed to h′(e) then all such
+elements are maintained in the lookup table via a linked list.
+Notice that S ∩ S′ = ⋃ ℓ
+i=1 BS
+i ∩ BS′
+i . Thus, we can enumerate S ∩ S′ by
+enumerating the intersections of all BS
+i ∩ BS′
+i . Fix one such i. We ﬁrst merge the
+packed sorted lists h′(BS
+i ) and h′(BS′
+i ). Albers and Hagerup [20] showed that
+two words of sorted numbers (separated by control bits) can be merged using
+Batcher’s algorithm in O(log w) time. Using this as a primitive we can merge
+the sorted lists h′(BS
+i ) and h′(BS′
+i ) in time O(|BS
+i | + |BS′
+i |/(w/ log2 w)). Let C
+be the resulting list, with control bits set to 0. Our task is now to enu merate all
+numbers that appear twice (necessarily consecutively) in C. Let C′ be C with
+control bits set to 1. We shift C one ﬁeld to the right (2 log w + 1 bit positions)
+and subtract it from C′.2 Let C′′ be the resulting list, with all control bits reset
+to 0. A ﬁeld is zero in C′′ iﬀ it and its predecessor were identical, so the problem
+now is to enumerate zero ﬁelds. By repeated halving, we can distill ea ch ﬁeld to
+a single bit (0 for zero, 1 for non-zero) in O(log log w) time and then take the
+complement of these bits (1 for zero, 0 for non-zero). We have no w reduced the
+problem to reading oﬀ all the 1s in a w-bit word, which can be done in O(1)
+time per 1 using the most-signiﬁcant-bit algorithm of [21]. 3 For each repeated
+h′-value we lookup all elements in BS
+i and BS′
+i with that value and report any
+occurring in both sets. Every unit of time spent in this step corresp onds to an
+element in the intersection or a false positive.
+The cost of intersecting buckets BS
+i and BS′
+i is
+O
+(
+1 +
+(
+⌈ |BS
+i |
+w/ log w ⌉ + ⌈ |BS′
+i |
+w/ log w ⌉
+)
+log w + |BS
+i ∩ BS′
+i | + fi
+)
+,
+where fi is the number of false positives. The expected value of fi is o(1) since the
+expected sizes of BS
+i and BS′
+i are w/ log w and for e ∈ BS
+i , e′ ∈ BS′
+i , Pr( h′(e) =
+2 The control bits stop carries from crossing ﬁeld boundaries .
+3 This algorithm uses multiplication. Without unit-time mul tiplication [22] one can
+read oﬀ the 1s in O(log log w) time per 1. If w = O(log n) then the instruction set is
+not as relevant since we can build o(n)-size tables to calculate most signiﬁcant bits
+and other useful functions.
+4
+=== PDF PAGE 5 ===
+h′(e′)) = 1 /w2. Thus, the expected runtime for a query is
+ℓ∑
+i=1
+O
+(
+1 +
+(
+⌈ |BS
+i |
+w/ log w ⌉ + ⌈ |BS′
+i |
+w/ log w ⌉
+)
+log w + |BS
+i ∩ BS′
+i | + fi
+)
+= O(ℓ log w + |S ∩ S′|) = O
+( d log2 w
+w + |S ∩ S′|
+)
+.
+It is straightforward to implement insertions and deletions in O(1) time in
+expectation. Suppose we must insert e into S. Once we calculate i = h(e) and
+h′(e) we need to insert h′(e) into the packed sorted list representing h′(BS
+i ).
+Suppose that h′(BS
+i ) ﬁts in one word; let it be D, with all control bits set to
+1.4 With a single multiplication we form a word D′ whose ﬁelds each contain
+h′(e) and whose control bits are zero. If we subtract D′ from D and mask ev-
+erything but the control bits, the most signiﬁcant bit identiﬁes the location of
+the successor of h′(e) in h′(BS
+i ). We can then insert h′(e) into the sorted list in
+D with O(1) masks and shifts. The procedure for deleting an element in O(1)
+time follows the same lines. ⊓ ⊔
+3 A Faster Triangle Enumeration Algorithm
+Theorem 2. Given an undirected graph G = ( V, E) with m = |E| edges and
+arboricity α, all t triangles can be enumerated in O(m + mα
+w/ log2 w + t) expected
+time or in O
+(
+m + mα
+log n/ log log n + t
+)
+expected time if w = O(log n).
+Proof. We will make use of the data structure in Theorem 1. To do this we ﬁrs t
+ﬁnd an acyclic orientation of E in which the out-degree of any vertex is O(α).
+Such an orientation can be found in linear time using the peeling algorith m of
+Chiba and Nishizeki [18]. Deﬁne Γ +(u) = {v | (u, v)} to be the set of out-
+neighbors of u according to this orientation. Begin by preprocessing the family
+F = {Γ +(u) | u ∈ V }, where all sets have size O(α). For each edge ( u, v),
+enumerate all elements in the intersection Γ +(u) ∩ Γ +(v). For each vertex w
+in the intersection output the triangle {u, v, w}. Since the orientation is acyclic,
+every triangle is output exactly once. There are m set intersection queries, each
+taking O(1 + α/ max{ w
+log2 w , log n
+log log n }) time, aside from the cost of reporting the
+output, which is O(1) per triangle. ⊓ ⊔
+4 Dynamic Emptiness Queries with Time/Space Tradeoﬀ
+Theorem 3. There exists an algorithm that maintains a family F of dynamic
+sets using O(M ) space where each update costs O(
+√
+M ) expected time, and each
+emptiness query costs O( N√
+M ) expected time.
+4 If h′(BS
+i ) is larger we apply this procedure to each word of the list h′(BS
+i ). It occupies
+O(1) words in expectation.
+5
+=== PDF PAGE 6 ===
+Proof. Each set S ∈ F maintains its elements in a lookup table using a perfect
+dynamic hash function. So the cost of inserting a new element into S, deleting
+an element from S, or determining whether some element x is in S is expected
+O(1) time. Let N = ∑
+S∈F |S|. We make the standard assumption that N is
+always at least N ′/2 and at most 2 N ′ for some natural number N ′. Standard
+rebuilding de-amortization techniques are used if this is not the case .
+The Structure. We say a set S is large if at some point |S| > 2N ′/
+√
+M , and
+since the last time S was at least that large, its size was never less than N ′/
+√
+M .
+If S is not large, and its size is at least N ′/
+√
+M then we say it is medium. If
+S is neither large nor medium then it is small. Notice that the size of a small
+set is less than N ′/
+√
+M = O(N/
+√
+M ). Let L ⊆ F be the sub-family of large
+and medium sets, and let ℓ = |L|. Notice that ℓ ≤
+√
+M . For each set S ∈ L we
+maintain a unique integer 1 ≤ iS ≤ ℓ, and an intersection-size dynamic look-
+up table TS of size ℓ such that for a large set S′ we have TS[iS′] = |S ∩ S′|.
+Adding and deleting entries from the table takes expected constan t time using
+hashing. Due to the nature of our algorithm we cannot guarantee t hat all of the
+intersection-size tables will always be fully updated. However, we will guarantee
+the following invariant.
+Invariant 1 For every two large sets S and S′, TS[iS′] and TS′[iS] are correctly
+maintained.
+Query. For two sets S, S′ ∈ F where either S or S′ is not large, say S, we
+determine if they intersect by scanning the elements in S and using the lookup
+table for S′. The time cost is O(|S|) = O(N ′/
+√
+M ). If both sets are large, then
+we examine TS[iS′] which determines the size of the intersection (by Invariant 1)
+and decide accordingly if it is empty or not. This takes O(1) time.
+Insertions. When inserting a new element x into S, we ﬁrst update the lookup
+table of S to include x. Next, if S was small and remained small then no addi-
+tional work is done. Otherwise, for each S′ ∈ L we must update the size of S ∩ S′
+in the appropriate intersection-size tables. This is done directly in O(
+√
+M ) time
+by determining whether x is in S′, for each S′, via the lookup tables. We brieﬂy
+recall, as mentioned above, that it is possible that some of the inters ection-size
+tables will not be fully updated, and so incrementing the size of an inte rsection
+is only helpful if the intersection size was correctly maintained befor e. Neverthe-
+less, as explained soon, Invariant 1 will be guaranteed to hold, which suﬃces for
+the correctness of the algorithm since the intersection-size table s are only used
+when intersecting two large sets.
+The more challenging case is when S becomes medium. If this happens we
+would like to increase ℓ by 1, assign iS to be the new ℓ, allocate and initialize
+TS in O(
+√
+M ) time, and for each S′ ∈ L we compute |S ∩ S′| and insert the
+answer into TS[iS′] and TS′[iS]. This entire process is dominated by the the task
+of computing |S ∩S′| for each S′ ∈ L, taking a total of O(∑
+S′∈L |S|) time, which
+could be as large as O(N ) and is too costly. However, this work can be spread
+6
+=== PDF PAGE 7 ===
+over the next N ′/
+√
+M insertions made into S until S becomes large. This is
+done as follows. When S becomes medium we create a list LS of all of the large
+and medium sets at this time (without their elements). This takes O(
+√
+M ) time.
+Next, for every insertion into S we compute the values of O(M/N ′) locations in
+TS by computing the intersection size of S and each of O(M/N ′) sets from LS
+in O( M
+N ′ · N√
+M ) = O(
+√
+M ) time. For each such set S′ we also update TS′ [iS]. By
+the time S becomes large we will have correctly computed the values in TS for
+all O(
+√
+M ) of the sets in LS, and for every set S′ ∈ LS we will have correctly
+computed TS′[iS]. It is possible that between the time S became medium to the
+time S became large, there were other sets such as S′ which became medium
+and perhaps even large, but S′ ⁄∈LS. Notice that in such a case S ∈ LS′ and so
+it is guaranteed that by the time both S and S′ are large, the indicators TS[iS′]
+and TS′[iS] are correctly updated, thereby guaranteeing that Invariant 1 holds.
+Thus the total cost of performing an insertion is O(
+√
+M ) expected time.
+Deletions. When deleting an element x from S, we ﬁrst update the lookup table
+of S to remove x in O(1) expected time. If S was small and remained small then
+no additional work is done. If S was in L then we scan all of the S′ ∈ L and check
+if x is in S′ in order to update the appropriate locations in the intersection-siz e
+tables. This takes O(
+√
+M ) time.
+If S was medium and now became small, we need to decrease ℓ by 1, remove
+the assignment to iS to be the new ℓ, delete TS, and for each S′ ∈ L we need
+to remove TS′[iS]. In addition, in order to accommodate the update process of
+medium sized sets, for each medium set S′ we must remove S from LS′ if it was
+in there. ⊓ ⊔
+Corollary 2 There exists an algorithm that maintains a family F of dynamic
+sets using O(N ) space where each update costs O(
+√
+N ) expected time, and each
+emptiness query costs O(
+√
+N ) expected time.
+5 Incremental Witness Queries
+Theorem 4. Suppose there exists an algorithm A that maintains a family F
+of incremental sets, each of size at most d, such that set intersection witness
+queries can be answered in O( d
+τq
+) expected time and inserts can be performed
+in O(τu) expected time. Then there exists an algorithm to maintain a f amily
+F of incremental sets—with no upper bound on set sizes—that us es O(N ) space
+and performs insertions and witness queries in O(
+√
+N ′/τq) expected time, where
+N =∑
+S∈F |S|.
+Proof. We make the standard assumption that N is always at least N ′/2 and
+at most 2 N ′ for some natural number N ′. Standard rebuilding de-amortization
+techniques are used if this is not the case. In our context, we say t hat a set is large
+if its size is at least
+√
+N ′τq, and is medium if its size is between
+√
+N ′/τq and√ N ′τq. Each medium and large set S maintains a stash of the at most √ N ′τq
+7
+=== PDF PAGE 8 ===
+last elements that were inserted into S (these elements are part of S). This stash
+is the entire set S if S is medium. If S is large then the rest of S (the elements
+not in the stash) is called the primary set of S. Stashes are maintained using
+algorithm A with d =
+√
+N ′τq. Thus, answering intersection queries between two
+medium sets takes O(
+√
+N ′/τq) expected time.
+We maintain for each medium and large set S a witness table PS such that
+for any large set S′ we have that PS[iS′] is either an element (witness) in the
+intersection of S and the primary set of S′, or null if no such element exists.
+This works in the incremental setting as once a witness is established it never
+changes. Since there are at most
+√
+N ′/τq large sets and at most
+√
+N ′τq medium
+sets, the space usage is O(N ′). If a query is between S1 and S2 and S1 is large,
+then: (1) if S2 is small we lookup each element in S2 to see if it is in S1, (2) if
+S2 is medium or large then we use the witness tables to see if there is a witn ess
+of an intersection between S2 and the primary set of S1 or between S1 and the
+primary set of S2, and if there is no such witness then we use algorithm A to
+intersect the stashes of S2 and S1. In any case, the cost of a query is O(
+√
+N ′/τq)
+expected time. The details for maintaining these tables are similar to t he details
+of maintaining the intersection-size array tables from Section 4.
+Insertion. When inserting an element x into S, if S is small then we do nothing.
+If S is medium then we add x to the stash of S in algorithm A. If S is large then
+we add x to the stash of S and verify for every other large set if x is in that
+set, updating the witness table accordingly. If S became medium then we add
+it to the structure of algorithm A. Since the size of S is O(
+√
+N ′/τq) this takes
+O(
+√
+N ′/τq) expected time. Furthermore, when S becomes medium the table PS
+needs to be prepared. To do this, between the time S is of size
+√
+N ′/2τq and the
+time S is of size
+√
+N ′/τq, the table PS is inclemently constructed. If S became
+large then we now allow its primary set to be nonempty, and must also u pdate
+the witness tables. The changes to witness tables in this case is trea ted using
+the same techniques as in Theorem 3, and so we omit their description . This will
+cost O(
+√
+N ′/τq + τu) expected time.
+Finally, for a large set S, once its stash reaches size √ N ′τq we dump the stash
+into the primary set of S, thereby emptying the stash. We describe an amortized
+algorithm for this process, which is deamortized using a standard laz y approach.
+To combine the primary set and the stash we only need to update the witness
+tables for set intersection witnesses between medium sets and the new primary
+set of S as it is possible that a witness was only in the stash. To do this, we
+directly scan all of the medium sets and check if a new witness can be o btained
+from the stash. The number of medium sets is O(
+√
+N ′τq) and the cost of each
+intersection will be O(
+√
+N ′/τq) for a total of O(N ′) time. Since this operation
+only happens after Ω(
+√
+N ′τq) insertions into S the amortized cost is O(
+√
+N ′/τq)
+time.
+⊓ ⊔
+Combining Theorem 1 with Theorem 4 we obtain the following.
+8
+=== PDF PAGE 9 ===
+Corollary 1. There exists an algorithm in the word-RAM model that maintai ns
+a family F of incremental sets using O(N ) space where each insertion costs
+O(
+√
+N
+w/ log2 w + log w) expected time and a witness query costs O(
+√
+N
+w/ log2 w )
+expected time.
+6 Fully Dynamic Set Intersection with Witness and
+Reporting Queries
+Each element in ⋃
+S∈F S is assigned an integer from the range of [2 N ′]. When
+a new element not appearing in ⋃
+S∈F S arrives, it is assigned to the smallest
+available integer, and that integer is used as its key. When keys are d eleted
+(no longer in use), we do not remove their assignment, and instead, we conduct
+a standard rebuilding technique in order to reassign the elements. F inally, we
+use a second assignment via a random permutation of the integers in order to
+uniformly spread the assignments within the range.
+The structure. Consider the following binary tree T of height log N ′ + 1 where
+each vertex v covers some range from U , denoted by [ αv, βv], such that the range
+of the root covers all of U , and the left (right) child of v covers the ﬁrst (second)
+half of [ αv, βv]. A vertex at depth i covers 2N ′
+2i elements of U . For a vertex v
+let Sv = S ∩ [αv, βv]. Let Nv =∑
+S∈F |Sv|. Let Mv = Nv ·M
+N ′ . We say a set S is
+v-large if at some point |Sv| > 2Nv√Mv
+, and since the last time Sv was at least that
+large, its size was never less than Nv√Mv
+.
+Each vertex v ∈ T with children v0 and v1 maintains a structure for emptiness
+queries as in Theorem 3, using Mv space, on the family F v = {Sv : S ∈ F }.
+In addition, we add auxiliary data to the intersection-size tables as f ollows. For
+sets S1, S2 ∈ F the set of all vertices in which S1 and S2 intersect under them
+deﬁnes a connected tree T ′. This tree has some branching vertices which have
+2 children, some non-branching internal vertices with only 1 child, an d some
+leaves. Consider the vertices v in T for which S1 and S2 are v-large and deﬁne
+ˆT to be the connected component of these vertices that includes th e root r.
+(It may be that ˆT does not exist.) To facilitate a fast traversal of ˆT during a
+query we maintain shortcut pointers for every two sets S1, S2 ∈ F and for every
+vertex v ∈ T such that both S1 and S2 are v-large. To this end, we say v is a
+branching-(S1, S2)-vertex if both Sv0
+1 ∩ Sv0
+2 ⁄= ∅ and Sv1
+1 ∩ Sv1
+2 ⁄= ∅. Consider the
+path starting from the left (right) child of v and ending at the ﬁrst descendent
+v′ of v such that:(1) S1 and S2 are relatively large for all of the vertices on the
+path, (2) Sv′
+1 ∩ Sv′
+2 ⁄= ∅, and (3) either v′ is a branching-(S1, S2)-vertex or one
+of the sets S1 and S2 is not v′-large. The left (right) shortcut pointer of v will
+point to v′. Notice that the shortcut pointers are maintained for every vert ex
+v even if on the path from r to v there are some vertices for which either S1
+or S2 are not relatively large, which helps to reduce the update time during
+insertions/deletions. Also notice that using these pointers it is stra ightforward
+to check in O(1) time if Sv0
+1 ∩ Sv0
+2 and Sv1
+1 ∩ Sv1
+2 are empty or not.
+9
+=== PDF PAGE 10 ===
+The space complexity of the structure is as follows. Each vertex v uses O(Mv)
+words of space which is O(M Nv/N′). So the space usage is∑
+v Mv = O(M log N )
+words, since in each level of T the sum of all Mv for the vertices in that level is
+O(M ), and there are O(log N ) levels.
+Reporting queries. For a reporting query on S1 and S2, if op = 0 then either the
+emptiness test at the root will conclude in O(1) time, or we spend O( Nr√Mr
+) =
+O( N√
+M ) time. Otherwise, we recursively examine vertices v in T starting with
+the root r. If both S1 and S2 are v-large and Sv
+1 ∩ Sv
+2 ⁄= ∅, then we continue
+recursively to the vertices pointed to by the appropriate shortcu t pointers. If
+either S1 or S2 is not v-large then we wish to output all of the elements in the
+intersection of Sv
+1 and Sv
+2 . To do this, we check for each element in the smaller
+set if it is contained within the larger set using the lookup table which ta kes
+O( Nv√Mv
+) time.
+For the runtime, as we traverse down T from r using appropriate shortcut
+pointers, we encounter only two types of vertices. The ﬁrst type are vertices v
+for which both S1 and S2 are v-large, and the second type are vertices v for
+which either S1 or S2 is not v-large. Each vertex of the ﬁrst type performs O(1)
+work, and the number of such vertices is at most the number of ver tices of the
+second type, due to the branching nature of the shortcut pointe rs. For vertices of
+the second type, the intersection of S1 and S2 must both be non-empty relative
+to such vertices and so the O( Nv√Mv
+) time cost can be charged to at least one
+element in the output. Denote the vertices of the second type by v1, v2, . . . , vt.
+Notice that t ≤ op as each vi contains at least one element from the intersection,
+and that ∑
+i Nvi < 2N ′ since the vertices are not ancestors of each other. We
+will make use of the following Lemma.
+Lemma 3. If∑ t
+i=1 xi ≤ k then∑ t
+i=1
+√xi ≤
+√
+k · t.
+Proof. Since∑ t
+i=1
+√xi is maximized whenever all the xi are equal, we have that
+∑ t
+i=1
+√xi ≤ t
+√
+k
+t =
+√
+kt. ⊓ ⊔
+Therefore, the total time cost is
+∑
+i
+Nvi√
+Mvi
+=
+∑
+i
+Nvi
+√
+N ′
+√
+M Nvi
+=
+√
+N ′
+M
+∑
+i
+√
+Nvi ≤
+√
+N ′
+M
+√
+2N ′
+√
+t ≤ O
+( N √op√
+M
+)
+.
+Witness queries. A witness query is answered by traversing down T using short-
+cut pointers, but instead of recursively looking at both shortcut p ointers for each
+vertex, we only consider one. Thus the total time it takes until we r each a vertex
+v for which either S1 or S2 is not v-large is O(log N ). Next, we use the hash
+function to ﬁnd an element in the intersection in O( N√
+M ) time, for a total of
+O(log N + N√
+M ) time to answer a witness query.
+10
+=== PDF PAGE 11 ===
+Insertions and Deletions. When inserting a new element x into S1, we ﬁrst locate
+the leaf ℓ of T which covers x. Next, we update our structure on the path from
+ℓ to r as follows. Starting from ℓ, for each vertex v on the path we insert x into
+Sv
+1 . This incurs a cost of √Mv for updating the emptiness query structure at v.
+If there exists some set S2 such that |Sv
+1 ∩ Sv
+2 | becomes non-zero, then we may
+need to update some shortcut pointers on the path from ℓ to r relative to S1
+and S2. Being that such a set S2 must be large, the number of such sets is at
+most Nv√Mv
+.
+To analyze the expected running time of an insertion notice that sinc e the
+elements in the universe are randomly distributed, the expected va lue of Nv and
+Mv for a vertex v at depth i are N
+2i and M
+2i respectively. So the number of v-large
+sets is at most Nv√Mv
+= N√
+2iM . The expected time costs of updating the emptiness
+structure is at most ∑ log N ′
+i=0
+N√
+2iM = O( N√
+M ). The same analysis holds for the
+shortcut pointer. The deletion process is exactly the reverse of t he insertions
+process, and also costs O( N√
+M ) expected time.
+The total space usage is O(M log N ). With a change of variable (substituting
+M/ log N for M in the construction above), we can make the space O(M ) and
+obtain the following result.
+Theorem 5. There exists an algorithm that maintains a family F of dynamic
+sets using O(M ) space where each update costs O(√M log N ) expected time, each
+reporting query costs O( N √log N√
+M
+√op + 1) time, and each witness query costs
+O( N √log N√
+M + log N ) expected time.
+References
+1. Masek, W.J., Paterson, M.: A faster algorithm computing s tring edit distances. J.
+Comput. Syst. Sci. 20(1) (1980) 18–31
+2. Myers, G.: A Four Russians algorithm for regular expressi on pattern matching. J.
+ACM 39(2) (1992) 432–448
+3. Chan, T.M.: More algorithms for all-pairs shortest paths in weighted graphs. SIAM
+J. Comput. 39(5) (2010) 2075–2089
+4. Chan, T.M.: All-pairs shortest paths for unweighted undi rected graphs in o(mn)
+time. ACM Transactions on Algorithms 8(4) (2012) 34
+5. Chan, T.M.: All-pairs shortest paths with real weights in o(n3/ log n) time. Algo-
+rithmica 50(2) (2008) 236–243
+6. Buchin, K., Buchin, M., Meulemans, W., Mulzer, W.: Four So viets walk the dog –
+with an application to Alt’s conjecture. In: Proceedings 25 th Annual ACM-SIAM
+Symposium on Discrete Algorithms (SODA). (2014) 1399–1413
+7. Baran, I., Demaine, E.D., Pˇ atra¸ scu, M.: Subquadratic a lgorithms for 3SUM. Al-
+gorithmica 50(4) (2008) 584–596
+8. Grønlund, A., Pettie, S.: Threesomes, degenerates, and l ove triangles. In: Proceed-
+ings 55th IEEE Symposium on Foundations of Computer Science (FOCS). (2014)
+Full manuscript available as arXiv:1404.0799.
+9. Chan, T.M.: The art of shaving logs. In: Proceedings 13th I nt’l Symposium
+on Algorithms and Data Structures (W ADS). Volume 8037 of Lec ture Notes in
+Computer Science. Springer (2013) 231–231
+11
+=== PDF PAGE 12 ===
+10. Pˇ atra¸ scu, M.: Towards polynomial lower bounds for dyn amic problems. In: Pro-
+ceedings 42nd ACM Symposium on Theory of Computing (STOC). ( 2010) 603–610
+11. Kopelowitz, T., Pettie, S., Porat, E.: 3sum hardness in ( dynamic) data structures.
+CoRR abs/1407.6756 (2014)
+12. Demaine, E.D., L´ opez-Ortiz, A., Munro, J.I.: Adaptive set intersections, unions,
+and diﬀerences. In: Proceedings of the Eleventh Annual ACM- SIAM Symposium
+on Discrete Algorithms. (2000) 743–752
+13. Barbay, J., Kenyon, C.: Adaptive intersection and t-thr eshold problems. In: Pro-
+ceedings 13th Annual ACM-SIAM Symposium on Discrete Algori thms (SODA).
+(2002) 390–399
+14. Baeza-Yates, R.A.: A fast set intersection algorithm fo r sorted sequences. In:
+Combinatorial Pattern Matching, 15th Annual Symposium, CP M. (2004) 400–408
+15. Bille, P., Pagh, A., Pagh, R.: Fast evaluation of union-i ntersection expressions. In
+Tokuyama, T., ed.: ISAAC. Volume 4835 of Lecture Notes in Com puter Science.,
+Springer (2007) 739–750
+16. Cohen, H., Porat, E.: Fast set intersection and two-patt erns matching. Theor.
+Comput. Sci. 411(40-42) (2010) 3795–3800
+17. Itai, A., Rodeh, M.: Finding a minimum circuit in a graph. SIAM J. Comput. 7(4)
+(1978) 413–423
+18. Chiba, N., Nishizeki, T.: Arboricity and subgraph listi ng algorithms. SIAM J.
+Comput. 14(1) (1985) 210–223
+19. Bjorklund, A., Pagh, R., Williams, V.V., Zwick, U.: List ing triangles. In: Au-
+tomata, Languages, and Programming - 41st International Co lloquium, ICALP
+2014, Copenhagen, Denmark, July 8-11, 2014, Proceedings, P art I. (2014) 223–234
+20. Albers, S., Hagerup, T.: Improved parallel integer sort ing without concurrent
+writing. Inf. Comput. 136(1) (1997) 25–51
+21. Fredman, M.L., Willard, D.E.: Surpassing the informati on theoretic bound with
+fusion trees. J. Comput. Syst. Sci. 47(3) (1993) 424–436
+22. Brodnik, A., Miltersen, P.B., Munro, J.I.: Trans-dicho tomous algorithms without
+multiplication – some upper and lower bounds. In: Proceedin gs 5th Int’l Workshop
+on Algorithms and Data Structures (W ADS). Volume 1272 of Lec ture Notes in
+Computer Science. Springer Berlin Heidelberg (1997) 426–4 39
+12
+=== PDF PAGE 13 ===
+A Conditional Lower Bounds from 3SUM
+We ﬁrst make use of the following Theorem, which was proven by Kope lowitz,
+Pettie, and Porat [11].
+Theorem 6 ([11]). For any constants 0 ≤ γ < 1 and 0 < δ ≤ 2, let A be an
+algorithm for the oﬄine set intersection reporting problem on a family F of sets
+such that N =∑
+S∈F |S| = Θ(n
+3+δ −γ
+2 ) and there are Θ(n1+γ ) pairs of sets whose
+intersection needs to be reported such that the total size of these set intersections
+of these t pairs is expected to be O(n2−δ). If A runs in expected O(n2−Ω(1)) time,
+then Integer3SUM can be solved in expected O(n2−Ω(1)) time.
+Theorem 7. (Set Intersection Reporting Lower Bound) For any con-
+stants 0 ≤ γ < 1 and 0 < δ < 1, any algorithm for solving the incremental set
+intersection reporting problem with insertion time of ti and query time tq + tr · op
+(where op is the size of the output) must have N · ti + N
+2(1+γ )
+3+δ −γ tq + N
+4−2δ
+3+δ −γ tr =
+Ω(N
+4
+3+δ −γ −o(1)) unless the Integer3SUM conjecture is false.
+Proof. An algorithm for solving the incremental set intersection decision pr ob-
+lem can be used to solve Integer3SUM via Theorem 6 by ﬁrst inserting all of
+the Θ(n
+3+δ −γ
+2 ) elements into their appropriate sets and then performing the
+Θ(n1+γ) queries. Therefore, unless the Integer3SUM conjecture is false, we have
+Θ(n
+3+δ −γ
+2 ti + n1+γtq + n2−δtr) = Ω(n2−o(1)). Substituting n = N
+2
+3+δ −γ com-
+pletes the proof. ⊓ ⊔
+Let us consider a few points on the lower bound curve of Theorem 7. The coef-
+ﬁcients of the terms ti, tq, and tr are equal when γ = δ = 1/2, which translates to
+ti +tq +tr = Ω(N 1/3−o(1)). Thus, at least one of the operations must cost roughly
+Ω(N 1/3) time. Furthermore, if tq = tr = O(1) then ti = Ω(N
+4
+3+δ −γ −1−o(1)) so
+by making δ as small as possible and γ as large as possible we obtain ti =
+Ω(N 1−o(1)). This matches a trivial algorithm where we explicitly maintain each
+set intersection. However, if ti = tr = O(1) then tq = Ω(N
+2−2γ
+3+δ −γ −o(1)), and so
+by making δ as small as possible and setting γ = 0 we obtain tq = Ω(N 2/3−o(1)).
+Finally, if ti = tq = O(1) then tr = Ω(N
+2δ
+3+δ −γ −o(1)) and so making γ and δ as
+large as possible we obtain tr = Ω(N 2/3−o(1)).
+Theorem 8 ([11]). For any constant 0 < γ < 1 let A be an algorithm for
+oﬄine set intersection decision problem on a family F of sets such that N =∑
+S∈F |S| = Θ(n2−γ), and there are Θ(n1+γ) pairs of sets whose disjointness
+needs to be determined. If A runs in expected O(n2−Ω(1)) time, then Integer3SUM
+can be solved in expected O(n2−Ω(1)) time.
+Theorem 9. (Set Intersection Emptiness Lower Bound) Fix 0 < γ <
+1. Any algorithm for solving the incremental set intersectio n emptiness prob-
+lem with insertion time ti and query time of tq must have N · ti + N
+1+γ
+2−γ tq =
+Ω(N
+2
+2−γ −o(1)) unless the Integer3SUM conjecture is false.
+13
+=== PDF PAGE 14 ===
+Proof. An algorithm for solving the incremental set intersection decision pr ob-
+lem can be used to solve Integer3SUM via Theorem 8 by ﬁrst inserting all
+of the Θ(n2−γ) elements into their appropriate sets and then performing the
+Θ(n1+γ) queries. Therefore, unless the Integer3SUM conjecture is false, we have
+Θ(n2−γti + n1+γtq) = Ω(n2−o(1)). Substituting n = N
+1
+2−γ completes the proof.
+⊓ ⊔
+Let us consider a few points on the lower bound curve of Theorem 9. The
+coeﬃcients of the terms ti and tq are equal when γ = 1 /2, which translates to
+ti + tq = Ω(N 1/3−o(1)). Thus, at least one of the operations must cost roughly
+Ω(N 1/3) time. Furthermore, if ti = O(1) then tq = Ω(N
+1−γ
+2−γ −o(1)) so by making γ
+as small as possible we obtain tq = Ω(N 1/2−o(1)). Finally, if tq = O(1) then ti =
+Ω(N
+γ
+2−γ −o(1)) so by making γ as large as possible we obtain ti = Ω(N 1/2−o(1)).
+14

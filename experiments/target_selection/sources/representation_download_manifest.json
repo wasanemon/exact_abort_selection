@@ -1,0 +1,250 @@
+{
+  "retrieval_date": "2026-09-05",
+  "cutoff": "2026-09-05",
+  "files": [
+    {
+      "path": "representation_dynamic_set_2015.pdf",
+      "url": "https://web.eecs.umich.edu/~pettie/papers/DynamicSetIntersection.pdf",
+      "status": "error",
+      "error": "URLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)'))"
+    },
+    {
+      "path": "representation_ivm_2020.pdf",
+      "url": "https://arxiv.org/pdf/2004.03716",
+      "sha256": "47e75c0902be8eecf4dc7430ee5809855224b9cd71d7efe819f721c1f2fed695",
+      "bytes": 663589,
+      "status": "ok"
+    },
+    {
+      "path": "representation_veldt_2023.pdf",
+      "url": "https://proceedings.mlr.press/v202/veldt23a/veldt23a.pdf",
+      "sha256": "5f58504936e4864d8ed951584eae7732e4e5fab06615104d1da815851ca0f2b1",
+      "bytes": 1008121,
+      "status": "ok"
+    },
+    {
+      "path": "representation_stm_2022.pdf",
+      "url": "https://arxiv.org/pdf/2208.07359",
+      "sha256": "59aabcdd05f774acae3d95d62dabbfe772b5ba82fcfb6cac478d5b32ab547ade",
+      "bytes": 224559,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_2021.pdf",
+      "url": "https://arxiv.org/pdf/2102.04875",
+      "sha256": "298b2444f4019a5f40cec1bcaa4752b88b6d15baa7d79b944caf524bf454410a",
+      "bytes": 702572,
+      "status": "ok"
+    },
+    {
+      "path": "representation_sea_2026.html",
+      "url": "https://drops.dagstuhl.de/storage/00lipics/lipics-vol371-sea2026/html/LIPIcs.SEA.2026.23/LIPIcs.SEA.2026.23.html",
+      "sha256": "f04ead1a58049f41918462908746390facaa46d61b4cc0d48cce39bdb90c3c2e",
+      "bytes": 299086,
+      "status": "ok"
+    },
+    {
+      "path": "representation_matching_2021.pdf",
+      "url": "https://drops.dagstuhl.de/storage/00lipics/lipics-vol204-esa2021/LIPIcs.ESA.2021.8/LIPIcs.ESA.2021.8.pdf",
+      "sha256": "795ef36a33e66354b9ee574f5ee3fecc74e299ed805d8b1904d89953b430c14c",
+      "bytes": 784556,
+      "status": "ok"
+    },
+    {
+      "path": "representation_sea_README.md",
+      "url": "https://raw.githubusercontent.com/arivarasanka/blockchain_parallel_validation/7c070ef20e9fdd1cfeeeac460cf81cfc8af6ada7/README.md",
+      "sha256": "00c28c0f376a576fa42bda8f2f4ae9628c9578fd8daffe09606c7ec0d20e3f29",
+      "bytes": 5334,
+      "status": "ok"
+    },
+    {
+      "path": "representation_sea_simple_and_complex_Heuristics_P1_complex.m",
+      "url": "https://raw.githubusercontent.com/arivarasanka/blockchain_parallel_validation/7c070ef20e9fdd1cfeeeac460cf81cfc8af6ada7/simple%20and%20complex/Heuristics_P1_complex.m",
+      "sha256": "e203e39653093f349883b5b0fb10a1ecab95d1d530f7805d6c624d03063cf016",
+      "bytes": 14947,
+      "status": "ok"
+    },
+    {
+      "path": "representation_sea_simple_Heuristics_P1_simple.m",
+      "url": "https://raw.githubusercontent.com/arivarasanka/blockchain_parallel_validation/7c070ef20e9fdd1cfeeeac460cf81cfc8af6ada7/simple/Heuristics_P1_simple.m",
+      "sha256": "038811fa8be32a10bfdfe250d68646b65222d1ef96558c0b3baaa032618e5625",
+      "bytes": 9376,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_README.md",
+      "url": "https://raw.githubusercontent.com/Parwatsingh/OptSmart/0564abdd04e7bc37a3586982a1d7ca5a97be88d5/README.md",
+      "sha256": "8a0d260d02f9e96e25560b118070367d5c2cc1e632ecea82f65441fc8b3904a1",
+      "bytes": 2970,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.cpp",
+      "url": "https://raw.githubusercontent.com/Parwatsingh/OptSmart/0564abdd04e7bc37a3586982a1d7ca5a97be88d5/1.Coin/BTO-STM/Graph/Lockfree/Graph.cpp",
+      "sha256": "b44392eee31bdcc80c0dafbca3172cb97c5eebb4253606a7c297f0860bcbe1bc",
+      "bytes": 12642,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.h",
+      "url": "https://raw.githubusercontent.com/Parwatsingh/OptSmart/0564abdd04e7bc37a3586982a1d7ca5a97be88d5/1.Coin/BTO-STM/Graph/Lockfree/Graph.h",
+      "sha256": "90d0811f60fcb94c6b5ac3c4c958ea347882a0354578b9b533a07e1e95d0a6e4",
+      "bytes": 2201,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_default-main.cpp",
+      "url": "https://raw.githubusercontent.com/Parwatsingh/OptSmart/0564abdd04e7bc37a3586982a1d7ca5a97be88d5/1.Coin/BTO-STM/default-main.cpp",
+      "sha256": "45e51f2ba5db1183301d0d48c44621d5e261c7f29f8b70ae814ef4e63283bec3",
+      "bytes": 31806,
+      "status": "ok"
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Contract_Coin.cpp",
+      "url": "https://raw.githubusercontent.com/Parwatsingh/OptSmart/0564abdd04e7bc37a3586982a1d7ca5a97be88d5/1.Coin/BTO-STM/Contract/Coin.cpp",
+      "sha256": "620c1c7b4fbeadd368ccc350860177e345eebf5124048668fa34ac5a53a6b667",
+      "bytes": 6037,
+      "status": "ok"
+    },
+    {
+      "path": "representation_dynamic_set_2014.pdf",
+      "url": "https://arxiv.org/pdf/1407.6755",
+      "sha256": "ca9d0d4ea4dff40d09738af8f98d130b865122fc43bd5cee76c6f04a4cfafed4",
+      "bytes": 216228,
+      "status": "ok",
+      "note": "Author-hosted proceedings PDF failed TLS; arXiv manuscript fallback. Bounds can differ by version."
+    }
+  ],
+  "local_files": [
+    {
+      "path": "representation_dynamic_set_2014.pdf",
+      "sha256": "ca9d0d4ea4dff40d09738af8f98d130b865122fc43bd5cee76c6f04a4cfafed4",
+      "bytes": 216228
+    },
+    {
+      "path": "representation_dynamic_set_2014.txt",
+      "sha256": "085c7112fcc6274b84561957870428a1d0ce3a90dd9620a26efb7545c641aad5",
+      "bytes": 39686
+    },
+    {
+      "path": "representation_ivm_2020.pdf",
+      "sha256": "47e75c0902be8eecf4dc7430ee5809855224b9cd71d7efe819f721c1f2fed695",
+      "bytes": 663589
+    },
+    {
+      "path": "representation_ivm_2020.txt",
+      "sha256": "35b8692a5b16bf3f38fc962811a822faba98d81913af4bb57ccd24bab74294c9",
+      "bytes": 172285
+    },
+    {
+      "path": "representation_matching_2021.pdf",
+      "sha256": "795ef36a33e66354b9ee574f5ee3fecc74e299ed805d8b1904d89953b430c14c",
+      "bytes": 784556
+    },
+    {
+      "path": "representation_matching_2021.txt",
+      "sha256": "88623c93b760c7af6a3e45dd363ffe815df2d04086817bb4cad6031b34a8d07b",
+      "bytes": 64468
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Contract_Coin.cpp",
+      "sha256": "620c1c7b4fbeadd368ccc350860177e345eebf5124048668fa34ac5a53a6b667",
+      "bytes": 6037
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.cpp",
+      "sha256": "b44392eee31bdcc80c0dafbca3172cb97c5eebb4253606a7c297f0860bcbe1bc",
+      "bytes": 12642
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_Graph_Lockfree_Graph.h",
+      "sha256": "90d0811f60fcb94c6b5ac3c4c958ea347882a0354578b9b533a07e1e95d0a6e4",
+      "bytes": 2201
+    },
+    {
+      "path": "representation_optsmart_1.Coin_BTO-STM_default-main.cpp",
+      "sha256": "45e51f2ba5db1183301d0d48c44621d5e261c7f29f8b70ae814ef4e63283bec3",
+      "bytes": 31806
+    },
+    {
+      "path": "representation_optsmart_2021.pdf",
+      "sha256": "298b2444f4019a5f40cec1bcaa4752b88b6d15baa7d79b944caf524bf454410a",
+      "bytes": 702572
+    },
+    {
+      "path": "representation_optsmart_2021.txt",
+      "sha256": "ab3cf1129ec32ff5b3128e63834d67bd0b16b5cca509dcc46319c1e43cf7ee25",
+      "bytes": 92392
+    },
+    {
+      "path": "representation_optsmart_README.md",
+      "sha256": "8a0d260d02f9e96e25560b118070367d5c2cc1e632ecea82f65441fc8b3904a1",
+      "bytes": 2970
+    },
+    {
+      "path": "representation_optsmart_commit.json",
+      "sha256": "a0c778f90ace8c48726c5097a95b22604136ffabd54b0fd3dd24ee45e5358713",
+      "bytes": 4540
+    },
+    {
+      "path": "representation_optsmart_tree.json",
+      "sha256": "4c382cb6bba8e97be1b94eb16ac730864e452b46f73c88316d73c0d451978714",
+      "bytes": 380262
+    },
+    {
+      "path": "representation_sea_2026.html",
+      "sha256": "f04ead1a58049f41918462908746390facaa46d61b4cc0d48cce39bdb90c3c2e",
+      "bytes": 299086
+    },
+    {
+      "path": "representation_sea_README.md",
+      "sha256": "00c28c0f376a576fa42bda8f2f4ae9628c9578fd8daffe09606c7ec0d20e3f29",
+      "bytes": 5334
+    },
+    {
+      "path": "representation_sea_commit.json",
+      "sha256": "3c4c7d76c1ba31035831054a663359767eb5cb0a48fc7e125856baddcfcbd0c2",
+      "bytes": 4988
+    },
+    {
+      "path": "representation_sea_simple_Heuristics_P1_simple.m",
+      "sha256": "038811fa8be32a10bfdfe250d68646b65222d1ef96558c0b3baaa032618e5625",
+      "bytes": 9376
+    },
+    {
+      "path": "representation_sea_simple_and_complex_Heuristics_P1_complex.m",
+      "sha256": "e203e39653093f349883b5b0fb10a1ecab95d1d530f7805d6c624d03063cf016",
+      "bytes": 14947
+    },
+    {
+      "path": "representation_sea_tree.json",
+      "sha256": "a3ef297fc499795bd1c22a9e003f54554c354b90faf3ed86b03e87f374e53ac9",
+      "bytes": 8530
+    },
+    {
+      "path": "representation_search_log.json",
+      "sha256": "c028f6c75e6ffac3de5248c54a146435e1f5d04332a55e397d3fea1170bcc9dd",
+      "bytes": 165475
+    },
+    {
+      "path": "representation_stm_2022.pdf",
+      "sha256": "59aabcdd05f774acae3d95d62dabbfe772b5ba82fcfb6cac478d5b32ab547ade",
+      "bytes": 224559
+    },
+    {
+      "path": "representation_stm_2022.txt",
+      "sha256": "2d358b3ee979ac90e692c88e7b2dcadcb90991440c1dbf09c0ab9867a08560af",
+      "bytes": 68268
+    },
+    {
+      "path": "representation_veldt_2023.pdf",
+      "sha256": "5f58504936e4864d8ed951584eae7732e4e5fab06615104d1da815851ca0f2b1",
+      "bytes": 1008121
+    },
+    {
+      "path": "representation_veldt_2023.txt",
+      "sha256": "6998232dfa603216a1aea7ec331b241105b711028f4679d4a4cef60c81dbfb1b",
+      "bytes": 148601
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "retrieved_at_utc": "2026-09-05T09:08:04.438995+00:00",
+  "downloads": [
+    {
+      "url": "https://arxiv.org/abs/2609.03315v1",
+      "local_path": "experiments/target_selection/sources/lantern_abs.html",
+      "status": 200,
+      "bytes": 41227,
+      "sha256": "ebd1ed31eb3d7a3fc5391961b01528fd3ce57a8b8261d1bc0b1e2fc0a112cdd0",
+      "content_type": null
+    },
+    {
+      "url": "https://arxiv.org/html/2609.03315v1",
+      "local_path": "experiments/target_selection/sources/lantern_full.html",
+      "status": 200,
+      "bytes": 330451,
+      "sha256": "5061160caf9ae6135acc1a22e8b5732fec957ef1b7e190bd0e08c3b0cab505ad",
+      "content_type": null
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.03315v1",
+      "local_path": "experiments/target_selection/sources/lantern_full.pdf",
+      "status": 200,
+      "bytes": 713692,
+      "sha256": "fc685485f0b65d14948d1fc129374555221a0e8b7a3d48c8e8b86c84bece32fc",
+      "content_type": null
+    }
+  ]
+}

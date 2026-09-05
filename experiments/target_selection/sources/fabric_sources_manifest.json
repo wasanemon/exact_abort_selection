@@ -1,0 +1,202 @@
+{
+  "audit_date": "2026-09-05",
+  "scope": "read-only primary-source/code audit; no builds or integration; PDFs text extracted via pypdf",
+  "sources": [
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/README.md",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/README.md",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "54e163e5ef654974099efc203a262e8ae1af4ea9f6182decd9ef6ab365b95f38",
+      "bytes": 3101
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/LICENSE",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/LICENSE",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "bytes": 11358
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/Makefile",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/Makefile",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "0205bd3036aee6cf0f1997f00ac994df8bfee387f606cd8ea0546e8d26602003",
+      "bytes": 18064
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/docker-env.mk",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/docker-env.mk",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "a4c2d6fb4b29fc94aabbd646f89df5788e29c5472a2b803f075f25979255cae5",
+      "bytes": 3356
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/blockcutter.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/orderer/common/blockcutter/blockcutter.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "b1805c35c6086a9c8f3e8d683a3481fa62e3411e20b4cc281678899c2a6b2d61",
+      "bytes": 6746
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/latestscheduler/scheduler.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/orderer/common/blockcutter/scheduler/latestscheduler/scheduler.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "081b31852c935d2165eda5ba8d45c363db7ef181c3d10babcbcc327dcc280526",
+      "bytes": 5336
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/sharpscheduler/scheduler.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/orderer/common/blockcutter/scheduler/sharpscheduler/scheduler.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "4a22e8a5b34b4bd40bdf9bdae235c7296100caded03a0428f104553bbddce575",
+      "bytes": 19159
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/common/ds.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/orderer/common/blockcutter/scheduler/common/ds.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "4b23e76b8c51f277509516a01f268e0c277b91b486604e5d41fb2eb8be711877",
+      "bytes": 10464
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/orderer/common/blockcutter/scheduler/common/mv_store.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/orderer/common/blockcutter/scheduler/common/mv_store.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "09d742dbe235878f02cb9e6d1fa683c5e964e9c4e4f216e4faed1ed848054d59",
+      "bytes": 6317
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_sigmod20/supplementary/contract/custom.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/fc639da4cd36aa85f3cb8cd9924e24d061ff2146/supplementary/contract/custom.go",
+      "commit": "fc639da4cd36aa85f3cb8cd9924e24d061ff2146",
+      "sha256": "dfc4d64def2b372fbbea3bace55c61e89021b2cab4b709fbcc91b11da813b764",
+      "bytes": 3615
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/README.md",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/README.md",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "ff854d0cc77d3734b2149fd5ab9eb6aff225200fcf0be4f578f6478f753854e2",
+      "bytes": 653
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/LICENSE",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/LICENSE",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "bytes": 11358
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/Makefile",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/Makefile",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "7ca8cfdb554d6fe8921cb5c63464e4cbac4d80dcac02f89a92ec06606a36099e",
+      "bytes": 18699
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/docker-env.mk",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/docker-env.mk",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "a4c2d6fb4b29fc94aabbd646f89df5788e29c5472a2b803f075f25979255cae5",
+      "bytes": 3356
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/blockcutter/blockcutter.go",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/orderer/common/blockcutter/blockcutter.go",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "f1cf4655c064cf008bf5971421c28fdda109d44080e8ab0e677c613cb592f57b",
+      "bytes": 11777
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/resolver/resolver.go",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/orderer/common/resolver/resolver.go",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "bb6ebf234335715350ed502cce8af7f342fc4cbacfc2fe8a4ea995f8259a4a79",
+      "bytes": 2032
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_code/orderer/common/johnsonce/johnsonce.go",
+      "source_url": "https://github.com/shankur/fabric/blob/bef689d1cf3daadccbe573f5d4ea860934e22d5c/orderer/common/johnsonce/johnsonce.go",
+      "commit": "bef689d1cf3daadccbe573f5d4ea860934e22d5c",
+      "sha256": "37abc3a4486cf02e2b0aa25a2982831d8b53d0ac1467f9e56c220d7e1a119423",
+      "bytes": 5551
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp.pdf",
+      "source_url": "https://arxiv.org/pdf/2003.10064v1",
+      "commit": null,
+      "sha256": "f1e7370eb1d4eef5ec5087752013d638bad292a81d5fe93ec7a3dea36d7244e3",
+      "bytes": 1177750
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp.txt",
+      "source_url": "https://arxiv.org/pdf/2003.10064v1",
+      "commit": null,
+      "sha256": "bd6c61f0a29737d49504c7298f8d67f3a9dd14b58601b27bfd9743c26621d784",
+      "bytes": 75244
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp.pdf",
+      "source_url": "https://arxiv.org/pdf/1810.13177v1",
+      "commit": null,
+      "sha256": "20cdccb16852b34876eca87741878c02414564eb9d6419ddb8cdb57fb555e8ef",
+      "bytes": 3581515
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp.txt",
+      "source_url": "https://arxiv.org/pdf/1810.13177v1",
+      "commit": null,
+      "sha256": "3e40dceea9a7f8432e363b89b32389a6ada97a4850ec100d3c839bb9a923ec23",
+      "bytes": 78669
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_sigmod19.pdf",
+      "source_url": "https://bigdata.uni-saarland.de/publications/mod485-sharma.pdf",
+      "commit": null,
+      "sha256": "ff1bdea8563ea0196d046990d4fb488ba1500f092fc7330c414f081d7792e962",
+      "bytes": 2475042
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricpp_sigmod19.txt",
+      "source_url": "https://bigdata.uni-saarland.de/publications/mod485-sharma.pdf",
+      "commit": null,
+      "sha256": "a0ac8d696b9262c75f66e5777cabeffb1c9ad494d0c4c6651b4be045d95da76c",
+      "bytes": 93623
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_master_README.md",
+      "source_url": "https://raw.githubusercontent.com/ooibc88/FabricSharp/b6011f90c41b79d670fc52d6ee6f92f8046c6674/README.md",
+      "commit": "b6011f90c41b79d670fc52d6ee6f92f8046c6674",
+      "sha256": "d00bfcb2b9620e6dca292383981d840f4a1266098397172602bff674a0acaf2d",
+      "bytes": 6579
+    },
+    {
+      "path": "experiments/target_selection/sources/fabric_flextender_abs.html",
+      "source_url": "https://arxiv.org/abs/2604.27659",
+      "commit": null,
+      "sha256": "6faa1f4943fb58dcd876bbf86ffe92a10965626dcfad8100714e849c6b3363a3",
+      "bytes": 43057
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricsharp_master_smallbank.go",
+      "source_url": "https://github.com/ooibc88/FabricSharp/blob/b6011f90c41b79d670fc52d6ee6f92f8046c6674/benchmark/smallbank/smallbank.go",
+      "commit": "b6011f90c41b79d670fc52d6ee6f92f8046c6674",
+      "sha256": "998dc90a9207f0cb77ef89604b55a940429a7d306f075dc779350d0c32947e39",
+      "bytes": 6279
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricx_readme.md",
+      "source_url": "https://github.com/hyperledger/fabric-x/blob/658ace9f69c6b682422294a17979d0930c3e20a1/README.md",
+      "commit": "658ace9f69c6b682422294a17979d0930c3e20a1",
+      "sha256": "a285bb63409ae854bc658e8a20b804b6e2739d7a676cdf2b598d39652e0f0362",
+      "bytes": 13955
+    },
+    {
+      "path": "experiments/target_selection/sources/fabricx_committer_readme.md",
+      "source_url": "https://github.com/hyperledger/fabric-x-committer/blob/7ca0d43148e90df697b8b3a2cd0b1cd4db6d25a0/README.md",
+      "commit": "7ca0d43148e90df697b8b3a2cd0b1cd4db6d25a0",
+      "sha256": "53d105979ae38f66a5bf66051e6c1f9d2466c6942e2489a7784fdaf5b73596b4",
+      "bytes": 1152
+    }
+  ]
+}

@@ -1,0 +1,2813 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "fixed finite witness reproduction; no random search",
+  "timing_use": "Raw validator timings are retained only as invocation output; not performance evidence and no ratios computed.",
+  "captured_utc": "2026-09-05T09:28:21.263983+00:00",
+  "binary": "/tmp/issue4-clean-release/validator",
+  "binary_sha256": "468d24227a6f77d1a9e273ce847e01c4beea302c2424b5403332d0976088bd7d",
+  "script_sha256": "56e97e8c8a1338435e338f4012de748043b1323bf194194e9cacebe8c6d4171a",
+  "source": "experiments/policy_comparison/quality/witnesses.json",
+  "source_sha256": "5c08924a5ceadc641214aea166479dc3d124cc3b20c1338f3684fc51b9f0a904",
+  "cases_checked": 5,
+  "validator_calls": 35,
+  "subsets_checked": 304,
+  "trace_reproduction": "All modes in a case read one saved temporary trace; exact trace bytes and SHA-256 are embedded below.",
+  "cases": [
+    {
+      "name": "eas_gt_static",
+      "k": 1,
+      "transactions": [
+        {
+          "id": 1,
+          "keys": [
+            3,
+            6
+          ]
+        },
+        {
+          "id": 2,
+          "keys": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 3,
+          "keys": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": 4,
+          "keys": [
+            0,
+            2
+          ]
+        },
+        {
+          "id": 5,
+          "keys": [
+            2,
+            7
+          ]
+        },
+        {
+          "id": 6,
+          "keys": [
+            4,
+            5
+          ]
+        },
+        {
+          "id": 7,
+          "keys": [
+            5,
+            7
+          ]
+        },
+        {
+          "id": 8,
+          "keys": [
+            1,
+            6
+          ]
+        }
+      ],
+      "trace_text": "1\t3,6\n2\t1,3\n3\t0,1\n4\t0,2\n5\t2,7\n6\t4,5\n7\t5,7\n8\t1,6\n",
+      "trace_sha256": "8ce5702eae05b87720f0a6873a350c4e547b5bff22243634bded72002c1b115b",
+      "optimum": {
+        "commit_count": 4,
+        "subsets_checked": 256,
+        "certificates": [
+          [
+            1,
+            3,
+            5,
+            6
+          ]
+        ]
+      },
+      "cfbs_exact_account_reference": {
+        "certificate": [
+          1,
+          3,
+          5,
+          6
+        ],
+        "deferred": [
+          2,
+          4,
+          7,
+          8
+        ]
+      },
+      "raw": {
+        "paper": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "paper",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "paper",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.022001,
+            "peak_rss_kib": 16032,
+            "stats": {
+              "normalize_ms": 0.00327,
+              "build_ms": 0.010392,
+              "select_ms": 0.004393,
+              "trim_ms": 0,
+              "certificate_ms": 0.000547,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 8,
+              "graph_bytes": 656,
+              "index_payload_bytes": 0,
+              "directed_edges": 18,
+              "write_posting_count": 16,
+              "graph_probe_hits": 34
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  4
+                ],
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "graph": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "graph",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "graph",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.035388,
+            "peak_rss_kib": 16032,
+            "stats": {
+              "normalize_ms": 0.011843,
+              "build_ms": 0.004913,
+              "select_ms": 0.006101,
+              "trim_ms": 0.003604,
+              "certificate_ms": 0.000574,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 34,
+              "initial_core_size": 8,
+              "graph_bytes": 64,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  4
+                ],
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "lazy": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "lazy",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "lazy",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.036782,
+            "peak_rss_kib": 16032,
+            "stats": {
+              "normalize_ms": 0.008861,
+              "build_ms": 0.011732,
+              "select_ms": 0.002166,
+              "trim_ms": 0.00288,
+              "certificate_ms": 0.003465,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 15,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 8,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2248,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  4
+                ],
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "profile": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "profile",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "profile",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.055134,
+            "peak_rss_kib": 16032,
+            "stats": {
+              "normalize_ms": 0.008988,
+              "build_ms": 0.025209,
+              "select_ms": 0.006382,
+              "trim_ms": 0.004023,
+              "certificate_ms": 0.002382,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 33,
+              "heavy_updates": 3,
+              "tree_updates": 60,
+              "initial_core_size": 8,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2256,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  4
+                ],
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "adaptive": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "adaptive",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "adaptive",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.037882,
+            "peak_rss_kib": 16032,
+            "stats": {
+              "normalize_ms": 0.010242,
+              "build_ms": 0.012789,
+              "select_ms": 0.002169,
+              "trim_ms": 0.002693,
+              "certificate_ms": 0.002068,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 15,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 8,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2248,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  4
+                ],
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_id": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "accept_id",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "accept_id",
+            "k": 1,
+            "commit_count": 4,
+            "fvs_size": 4,
+            "total_ms": 0.017759,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.008629,
+              "build_ms": 0,
+              "select_ms": 0.00109,
+              "trim_ms": 0,
+              "certificate_ms": 0.000571,
+              "count_ms": 0,
+              "sort_ms": 0.0001,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                3,
+                5,
+                6
+              ],
+              "consideration_order": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "rejected_ids": [
+                2,
+                4,
+                7,
+                8
+              ],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_static_degree": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/eas_gt_static.tsv",
+            "--mode",
+            "accept_static_degree",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 8,
+            "mode": "accept_static_degree",
+            "k": 1,
+            "commit_count": 3,
+            "fvs_size": 5,
+            "total_ms": 0.021175,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.008479,
+              "build_ms": 0,
+              "select_ms": 0.001147,
+              "trim_ms": 0,
+              "certificate_ms": 0.000472,
+              "count_ms": 0.002836,
+              "sort_ms": 0.000526,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 192,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0,
+                0,
+                1,
+                0,
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                4,
+                6
+              ],
+              "consideration_order": [
+                6,
+                1,
+                4,
+                5,
+                7,
+                2,
+                3,
+                8
+              ],
+              "rejected_ids": [
+                5,
+                7,
+                2,
+                3,
+                8
+              ],
+              "initial_degrees": [
+                2,
+                3,
+                3,
+                2,
+                2,
+                1,
+                2,
+                3
+              ]
+            }
+          }
+        }
+      },
+      "stored_reference": {
+        "direction": "eas_gt_static",
+        "maximum": 4,
+        "static_order": [
+          6,
+          1,
+          4,
+          5,
+          7,
+          2,
+          3,
+          8
+        ],
+        "static_degrees": [
+          2,
+          3,
+          3,
+          2,
+          2,
+          1,
+          2,
+          3
+        ],
+        "static_commit": [
+          1,
+          4,
+          6
+        ],
+        "eas_commit": [
+          1,
+          3,
+          5,
+          6
+        ],
+        "eas_rounds": [
+          [
+            8
+          ],
+          [
+            7
+          ],
+          [
+            4
+          ],
+          [
+            2
+          ]
+        ]
+      },
+      "checks": "exact EAS arrays, static order/degrees/certificate/mask and maximum matched Issue #3"
+    },
+    {
+      "name": "static_gt_eas",
+      "k": 1,
+      "transactions": [
+        {
+          "id": 1,
+          "keys": [
+            0,
+            5
+          ]
+        },
+        {
+          "id": 2,
+          "keys": [
+            1,
+            4
+          ]
+        },
+        {
+          "id": 3,
+          "keys": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 4,
+          "keys": [
+            2,
+            5
+          ]
+        },
+        {
+          "id": 5,
+          "keys": [
+            2,
+            4
+          ]
+        }
+      ],
+      "trace_text": "1\t0,5\n2\t1,4\n3\t1,3\n4\t2,5\n5\t2,4\n",
+      "trace_sha256": "3c4a58dfb539ad76ae5157cbd02e49c225bb52c6f0e7f098c0d77c4b5cec0c89",
+      "optimum": {
+        "commit_count": 3,
+        "subsets_checked": 32,
+        "certificates": [
+          [
+            1,
+            3,
+            5
+          ]
+        ]
+      },
+      "cfbs_exact_account_reference": {
+        "certificate": [
+          1,
+          2
+        ],
+        "deferred": [
+          3,
+          4,
+          5
+        ]
+      },
+      "raw": {
+        "paper": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "paper",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "paper",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.013442,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.002312,
+              "build_ms": 0.006379,
+              "select_ms": 0.002511,
+              "trim_ms": 0,
+              "certificate_ms": 0.000366,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 5,
+              "graph_bytes": 369,
+              "index_payload_bytes": 0,
+              "directed_edges": 8,
+              "write_posting_count": 10,
+              "graph_probe_hits": 18
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  5
+                ],
+                [
+                  4
+                ],
+                [
+                  3
+                ]
+              ],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "graph": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "graph",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "graph",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.024814,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.008081,
+              "build_ms": 0.004572,
+              "select_ms": 0.00303,
+              "trim_ms": 0.003028,
+              "certificate_ms": 0.000497,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 18,
+              "initial_core_size": 5,
+              "graph_bytes": 40,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  5
+                ],
+                [
+                  4
+                ],
+                [
+                  3
+                ]
+              ],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "lazy": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "lazy",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "lazy",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.027151,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.006319,
+              "build_ms": 0.006261,
+              "select_ms": 0.001552,
+              "trim_ms": 0.003226,
+              "certificate_ms": 0.00282,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 8,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 5,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2024,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  5
+                ],
+                [
+                  4
+                ],
+                [
+                  3
+                ]
+              ],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "profile": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "profile",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "profile",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.04602,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.006337,
+              "build_ms": 0.021801,
+              "select_ms": 0.005419,
+              "trim_ms": 0.003271,
+              "certificate_ms": 0.001624,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 23,
+              "heavy_updates": 0,
+              "tree_updates": 36,
+              "initial_core_size": 5,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2024,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  5
+                ],
+                [
+                  4
+                ],
+                [
+                  3
+                ]
+              ],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "adaptive": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "adaptive",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "adaptive",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.026916,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.009365,
+              "build_ms": 0.007431,
+              "select_ms": 0.001673,
+              "trim_ms": 0.002624,
+              "certificate_ms": 0.001635,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 8,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 5,
+              "graph_bytes": 0,
+              "index_payload_bytes": 2024,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  5
+                ],
+                [
+                  4
+                ],
+                [
+                  3
+                ]
+              ],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_id": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "accept_id",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "accept_id",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 3,
+            "total_ms": 0.015279,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.007499,
+              "build_ms": 0,
+              "select_ms": 0.000963,
+              "trim_ms": 0,
+              "certificate_ms": 0.000476,
+              "count_ms": 0,
+              "sort_ms": 0.000108,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                1,
+                0,
+                0,
+                0
+              ],
+              "certificate": [
+                1,
+                2
+              ],
+              "consideration_order": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "rejected_ids": [
+                3,
+                4,
+                5
+              ],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_static_degree": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/static_gt_eas.tsv",
+            "--mode",
+            "accept_static_degree",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 5,
+            "mode": "accept_static_degree",
+            "k": 1,
+            "commit_count": 3,
+            "fvs_size": 2,
+            "total_ms": 0.015618,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.006142,
+              "build_ms": 0,
+              "select_ms": 0.000816,
+              "trim_ms": 0,
+              "certificate_ms": 0.000462,
+              "count_ms": 0.001382,
+              "sort_ms": 0.000295,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 128,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0,
+                1,
+                0,
+                1
+              ],
+              "certificate": [
+                1,
+                3,
+                5
+              ],
+              "consideration_order": [
+                1,
+                3,
+                2,
+                4,
+                5
+              ],
+              "rejected_ids": [
+                2,
+                4
+              ],
+              "initial_degrees": [
+                1,
+                2,
+                1,
+                2,
+                2
+              ]
+            }
+          }
+        }
+      },
+      "stored_reference": {
+        "direction": "static_gt_eas",
+        "maximum": 3,
+        "static_order": [
+          1,
+          3,
+          2,
+          4,
+          5
+        ],
+        "static_degrees": [
+          1,
+          2,
+          1,
+          2,
+          2
+        ],
+        "static_commit": [
+          1,
+          3,
+          5
+        ],
+        "eas_commit": [
+          1,
+          2
+        ],
+        "eas_rounds": [
+          [
+            5
+          ],
+          [
+            4
+          ],
+          [
+            3
+          ]
+        ]
+      },
+      "checks": "exact EAS arrays, static order/degrees/certificate/mask and maximum matched Issue #3"
+    },
+    {
+      "name": "lantern_cfbs_eas_star",
+      "k": 1,
+      "transactions": [
+        {
+          "id": 1,
+          "keys": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": 2,
+          "keys": [
+            0,
+            2
+          ]
+        },
+        {
+          "id": 3,
+          "keys": [
+            1,
+            3
+          ]
+        }
+      ],
+      "trace_text": "1\t0,1\n2\t0,2\n3\t1,3\n",
+      "trace_sha256": "bd332efaef0a94e737ec8b0d0916e3262453dd4b9cbb6b0a57e90096e886da01",
+      "optimum": {
+        "commit_count": 2,
+        "subsets_checked": 8,
+        "certificates": [
+          [
+            2,
+            3
+          ]
+        ]
+      },
+      "cfbs_exact_account_reference": {
+        "certificate": [
+          1
+        ],
+        "deferred": [
+          2,
+          3
+        ]
+      },
+      "raw": {
+        "paper": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "paper",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "paper",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.0083,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.002088,
+              "build_ms": 0.002662,
+              "select_ms": 0.001584,
+              "trim_ms": 0,
+              "certificate_ms": 0.000338,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 3,
+              "graph_bytes": 215,
+              "index_payload_bytes": 0,
+              "directed_edges": 4,
+              "write_posting_count": 6,
+              "graph_probe_hits": 10
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "graph": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "graph",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "graph",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.018843,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005216,
+              "build_ms": 0.002631,
+              "select_ms": 0.001632,
+              "trim_ms": 0.001299,
+              "certificate_ms": 0.000488,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 10,
+              "initial_core_size": 3,
+              "graph_bytes": 24,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "lazy": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "lazy",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "lazy",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.019561,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005523,
+              "build_ms": 0.004958,
+              "select_ms": 0.000751,
+              "trim_ms": 0.000947,
+              "certificate_ms": 0.001314,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 3,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 3,
+              "graph_bytes": 0,
+              "index_payload_bytes": 1048,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "profile": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "profile",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "profile",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.042113,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.006857,
+              "build_ms": 0.022568,
+              "select_ms": 0.001906,
+              "trim_ms": 0.001593,
+              "certificate_ms": 0.00134,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 5,
+              "heavy_updates": 8,
+              "tree_updates": 16,
+              "initial_core_size": 3,
+              "graph_bytes": 0,
+              "index_payload_bytes": 1080,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "adaptive": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "adaptive",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "adaptive",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.022072,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005355,
+              "build_ms": 0.0066,
+              "select_ms": 0.000643,
+              "trim_ms": 0.000998,
+              "certificate_ms": 0.001205,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 3,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 3,
+              "graph_bytes": 0,
+              "index_payload_bytes": 1048,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_id": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "accept_id",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "accept_id",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 2,
+            "total_ms": 0.011616,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005393,
+              "build_ms": 0,
+              "select_ms": 0.000689,
+              "trim_ms": 0,
+              "certificate_ms": 0.000232,
+              "count_ms": 0,
+              "sort_ms": 7.5e-05,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [
+                1,
+                2,
+                3
+              ],
+              "rejected_ids": [
+                2,
+                3
+              ],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_static_degree": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/lantern_cfbs_eas_star.tsv",
+            "--mode",
+            "accept_static_degree",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 3,
+            "mode": "accept_static_degree",
+            "k": 1,
+            "commit_count": 2,
+            "fvs_size": 1,
+            "total_ms": 0.014566,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.004966,
+              "build_ms": 0,
+              "select_ms": 0.000597,
+              "trim_ms": 0,
+              "certificate_ms": 0.000425,
+              "count_ms": 0.001211,
+              "sort_ms": 0.000234,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 80,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                0,
+                1,
+                1
+              ],
+              "certificate": [
+                2,
+                3
+              ],
+              "consideration_order": [
+                2,
+                3,
+                1
+              ],
+              "rejected_ids": [
+                1
+              ],
+              "initial_degrees": [
+                2,
+                1,
+                1
+              ]
+            }
+          }
+        }
+      },
+      "checks": "CFBS/accept_id commits center 1; paper/EAS/static commit leaves 2,3; policies differ"
+    },
+    {
+      "name": "same_key_k1",
+      "k": 1,
+      "transactions": [
+        {
+          "id": 1,
+          "keys": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "keys": [
+            0
+          ]
+        }
+      ],
+      "trace_text": "1\t0\n2\t0\n",
+      "trace_sha256": "a1b78672645e4a2e4624112b08812a6a4b40c639a5acf015fae6635acb1d5f9e",
+      "optimum": {
+        "commit_count": 1,
+        "subsets_checked": 4,
+        "certificates": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ]
+      },
+      "cfbs_exact_account_reference": {
+        "certificate": [
+          1
+        ],
+        "deferred": [
+          2
+        ]
+      },
+      "raw": {
+        "paper": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "paper",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "paper",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.006234,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.001929,
+              "build_ms": 0.001671,
+              "select_ms": 0.001142,
+              "trim_ms": 0,
+              "certificate_ms": 0.00018,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 2,
+              "graph_bytes": 138,
+              "index_payload_bytes": 0,
+              "directed_edges": 2,
+              "write_posting_count": 2,
+              "graph_probe_hits": 4
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "graph": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "graph",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "graph",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.01532,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003959,
+              "build_ms": 0.001928,
+              "select_ms": 0.001121,
+              "trim_ms": 0.001117,
+              "certificate_ms": 0.000369,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 6,
+              "initial_core_size": 2,
+              "graph_bytes": 16,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "lazy": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "lazy",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "lazy",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.013627,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005091,
+              "build_ms": 0.001477,
+              "select_ms": 0.00054,
+              "trim_ms": 0.0008,
+              "certificate_ms": 0.000606,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 2,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 184,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "profile": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "profile",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "profile",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.02415,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.004046,
+              "build_ms": 0.011456,
+              "select_ms": 0.001432,
+              "trim_ms": 0.000929,
+              "certificate_ms": 0.000578,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 2,
+              "tree_updates": 10,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 192,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "adaptive": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "adaptive",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "adaptive",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.019868,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003921,
+              "build_ms": 0.009863,
+              "select_ms": 0.001388,
+              "trim_ms": 0.000982,
+              "certificate_ms": 0.000597,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 2,
+              "tree_updates": 10,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 192,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2
+                ]
+              ],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_id": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "accept_id",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "accept_id",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.010297,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.00391,
+              "build_ms": 0,
+              "select_ms": 0.000455,
+              "trim_ms": 0,
+              "certificate_ms": 0.000274,
+              "count_ms": 0,
+              "sort_ms": 8e-05,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [
+                1,
+                2
+              ],
+              "rejected_ids": [
+                2
+              ],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_static_degree": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k1.tsv",
+            "--mode",
+            "accept_static_degree",
+            "--k",
+            "1"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "accept_static_degree",
+            "k": 1,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.00963,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003532,
+              "build_ms": 0,
+              "select_ms": 0.000376,
+              "trim_ms": 0,
+              "certificate_ms": 0.000267,
+              "count_ms": 0.0004,
+              "sort_ms": 9.1e-05,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 8,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [
+                1,
+                2
+              ],
+              "rejected_ids": [
+                2
+              ],
+              "initial_degrees": [
+                1,
+                1
+              ]
+            }
+          }
+        }
+      },
+      "checks": "k=2 frozen paper/EAS commits zero; k=1 and both cheap policies commit one"
+    },
+    {
+      "name": "same_key_k2",
+      "k": 2,
+      "transactions": [
+        {
+          "id": 1,
+          "keys": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "keys": [
+            0
+          ]
+        }
+      ],
+      "trace_text": "1\t0\n2\t0\n",
+      "trace_sha256": "a1b78672645e4a2e4624112b08812a6a4b40c639a5acf015fae6635acb1d5f9e",
+      "optimum": {
+        "commit_count": 1,
+        "subsets_checked": 4,
+        "certificates": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ]
+      },
+      "cfbs_exact_account_reference": {
+        "certificate": [
+          1
+        ],
+        "deferred": [
+          2
+        ]
+      },
+      "raw": {
+        "paper": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "paper",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "paper",
+            "k": 2,
+            "commit_count": 0,
+            "fvs_size": 2,
+            "total_ms": 0.006188,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.001976,
+              "build_ms": 0.001647,
+              "select_ms": 0.001151,
+              "trim_ms": 0,
+              "certificate_ms": 0.0001,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 2,
+              "graph_bytes": 138,
+              "index_payload_bytes": 0,
+              "directed_edges": 2,
+              "write_posting_count": 2,
+              "graph_probe_hits": 4
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                0
+              ],
+              "certificate": [],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "graph": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "graph",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "graph",
+            "k": 2,
+            "commit_count": 0,
+            "fvs_size": 2,
+            "total_ms": 0.014114,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003869,
+              "build_ms": 0.001853,
+              "select_ms": 0.001226,
+              "trim_ms": 0.000736,
+              "certificate_ms": 0.000328,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 4,
+              "initial_core_size": 2,
+              "graph_bytes": 16,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                0
+              ],
+              "certificate": [],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "lazy": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "lazy",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "lazy",
+            "k": 2,
+            "commit_count": 0,
+            "fvs_size": 2,
+            "total_ms": 0.013827,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003866,
+              "build_ms": 0.001452,
+              "select_ms": 0.000775,
+              "trim_ms": 0.000757,
+              "certificate_ms": 0.000477,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 2,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 184,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                0
+              ],
+              "certificate": [],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "profile": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "profile",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "profile",
+            "k": 2,
+            "commit_count": 0,
+            "fvs_size": 2,
+            "total_ms": 0.023248,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003893,
+              "build_ms": 0.011085,
+              "select_ms": 0.00163,
+              "trim_ms": 0.000744,
+              "certificate_ms": 0.00048,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 2,
+              "tree_updates": 8,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 192,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                0
+              ],
+              "certificate": [],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "adaptive": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "adaptive",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "adaptive",
+            "k": 2,
+            "commit_count": 0,
+            "fvs_size": 2,
+            "total_ms": 0.024023,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.00383,
+              "build_ms": 0.012027,
+              "select_ms": 0.001627,
+              "trim_ms": 0.000746,
+              "certificate_ms": 0.000521,
+              "count_ms": 0,
+              "sort_ms": 0,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 2,
+              "tree_updates": 8,
+              "initial_core_size": 2,
+              "graph_bytes": 0,
+              "index_payload_bytes": 192,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [
+                [
+                  2,
+                  1
+                ]
+              ],
+              "commit": [
+                0,
+                0
+              ],
+              "certificate": [],
+              "consideration_order": [],
+              "rejected_ids": [],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_id": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "accept_id",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "accept_id",
+            "k": 2,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.01103,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.005269,
+              "build_ms": 0,
+              "select_ms": 0.000402,
+              "trim_ms": 0,
+              "certificate_ms": 0.000273,
+              "count_ms": 0,
+              "sort_ms": 7.9e-05,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 0,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [
+                1,
+                2
+              ],
+              "rejected_ids": [
+                2
+              ],
+              "initial_degrees": []
+            }
+          }
+        },
+        "accept_static_degree": {
+          "command": [
+            "/tmp/issue4-clean-release/validator",
+            "--trace",
+            "/tmp/issue4_fixed_witnesses_65ip6zyd/same_key_k2.tsv",
+            "--mode",
+            "accept_static_degree",
+            "--k",
+            "2"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "result": {
+            "status": "ok",
+            "verification": "passed",
+            "n": 2,
+            "mode": "accept_static_degree",
+            "k": 2,
+            "commit_count": 1,
+            "fvs_size": 1,
+            "total_ms": 0.009481,
+            "peak_rss_kib": 16356,
+            "stats": {
+              "normalize_ms": 0.003463,
+              "build_ms": 0,
+              "select_ms": 0.00037,
+              "trim_ms": 0,
+              "certificate_ms": 0.000251,
+              "count_ms": 0.000365,
+              "sort_ms": 8.7e-05,
+              "switch_ms": 0,
+              "switches": 0,
+              "degree_queries": 0,
+              "light_scans": 0,
+              "heavy_updates": 0,
+              "tree_updates": 0,
+              "initial_core_size": 0,
+              "graph_bytes": 0,
+              "index_payload_bytes": 8,
+              "directed_edges": null,
+              "write_posting_count": 0,
+              "graph_probe_hits": 0
+            },
+            "decisions": {
+              "abort_rounds": [],
+              "commit": [
+                1,
+                0
+              ],
+              "certificate": [
+                1
+              ],
+              "consideration_order": [
+                1,
+                2
+              ],
+              "rejected_ids": [
+                2
+              ],
+              "initial_degrees": [
+                1,
+                1
+              ]
+            }
+          }
+        }
+      },
+      "checks": "k=2 frozen paper/EAS commits zero; k=1 and both cheap policies commit one"
+    }
+  ]
+}

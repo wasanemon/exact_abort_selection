@@ -1,0 +1,84 @@
+{
+  "audit_date": "2026-09-05",
+  "scope": "Fabric++ / FabricSharp primary paper and code audit, plus bounded related EOV screening; not an exhaustive novelty claim",
+  "queries": [
+    "\"Fabric++\" github",
+    "\"Fabric++\" \"github.com\" \"Databasify\"",
+    "\"How to Databasify\" github",
+    "\"Fabric++\" \"Schuhknecht\" github",
+    "site:bigdata.uni-saarland.de \"Blurring the Lines\" Fabric",
+    "\"execute-order-validate\" \"2025\" graph",
+    "\"execute-order-validate\" \"2026\" transaction",
+    "\"execute-order-validate\" concurrency 2024 2025 scheduler",
+    "\"Fabric-X\" \"SIGMOD 2026\"",
+    "site:research.ibm.com/publications \"Fabric-X\"",
+    "\"RapidSnail\" github",
+    "\"FabricMan\" github"
+  ],
+  "primary_sources_screened": [
+    {
+      "name": "FabricMan",
+      "date": "2024-07-04",
+      "doi": "10.12142/ZTECOM.202402004",
+      "url": "https://www.zte.com.cn/global/about/magazine/zte-communications/2024/en202402/special-topic/en20240204.html",
+      "scope_read": "publisher abstract, web extracted lines 302-308",
+      "observation": "Fabric 2.4-based within-block reordering and graph parallel validation, transfer merging, cross-block version caching. No detailed algorithm or implementation-equivalence claim made.",
+      "artifact": "No original public code was identified in the bounded queries; this does not establish nonexistence."
+    },
+    {
+      "name": "RapidSnail",
+      "date": "early online 2025-10-28; journal Jan 2026",
+      "doi": "10.1109/TC.2025.3625641",
+      "url": "https://scholars.hkbu.edu.hk/en/publications/rapidsnail-improve-scalability-of-blockchain-under-high-contentio/",
+      "scope_read": "coauthor institution primary bibliographic record and abstract, web extracted lines 7-37",
+      "observation": "Uses uncommitted data, new RW-set representation and effect-based conflict graph; full paper/algorithm was not obtained and no EAS subsumption claim is made.",
+      "artifact": "No original public code was identified in the bounded queries; this does not establish nonexistence."
+    },
+    {
+      "name": "Fabric-X",
+      "date": "SIGMOD 2026 industry",
+      "url": "https://2026.sigmod.org/sigmod_industry_papers.shtml",
+      "additional_primary_urls": [
+        "https://research.ibm.com/events/sigmod-pods-2026",
+        "https://github.com/hyperledger/fabric-x/blob/658ace9f69c6b682422294a17979d0930c3e20a1/README.md",
+        "https://github.com/hyperledger/fabric-x-committer/blob/7ca0d43148e90df697b8b3a2cd0b1cd4db6d25a0/README.md"
+      ],
+      "scope_read": "official conference accepted list, project and committer READMEs; raw READMEs saved with pinned commits",
+      "observation": "Dependency graph enables deterministic concurrent validation; committer checks tokens in orderer order. No source-level FVS/degree-selector need or complete-RMW fit is established by this initial screening."
+    },
+    {
+      "name": "FlexTender / Back to the Future: Rethinking Endorsement in Order-Execute Blockchains",
+      "date": "2026-04-30",
+      "url": "https://arxiv.org/abs/2604.27659",
+      "scope_read": "primary arXiv abstract; HTML saved",
+      "observation": "Embeds endorsement in ChainMaker/Tendermint order-execute and compares against EOV simulation. Full-text/code audit not performed; not evidence of EAS superiority."
+    }
+  ],
+  "retrieval_limits": [
+    {
+      "url": "https://github.com/ooibc88/FabricSharp.git",
+      "operation": "git ls-remote, default network sandbox",
+      "result": "Could not resolve host: github.com",
+      "resolution": "Read-only public git access succeeded using authorized require_escalated; no external write."
+    },
+    {
+      "url": "https://eprint.iacr.org/2023/1717.pdf",
+      "result": "web fetch denied by robots; urllib HTTP 403; no full paper saved"
+    },
+    {
+      "url": "https://www.zte.com.cn/global/about/magazine/zte-communications/2024/en202402/special-topic/en20240204.html",
+      "result": "urllib HTTP 403; publisher abstract readable using web"
+    },
+    {
+      "url": "https://www.zte.com.cn/content/dam/zte-site/res-www-zte-com-cn/mediares/magazine/publication/tech_cn/article/en202402/20240204.pdf",
+      "result": "web cache miss; no full paper saved"
+    },
+    {
+      "url": "https://scholars.hkbu.edu.hk/en/publications/rapidsnail-improve-scalability-of-blockchain-under-high-contentio/",
+      "result": "urllib HTTP 403; primary institution abstract readable using web"
+    }
+  ],
+  "build_attempted": false,
+  "integration_attempted": false,
+  "performance_measured": false
+}

@@ -1,0 +1,902 @@
+{
+  "l1-n128-uniform-s101.tsv": {
+    "batch_id": 821642422,
+    "path": "traces/l1-n128-uniform-s101.tsv",
+    "sha256": "a089bc40d057a678dc28e8235e739aa293b4cae4e8da2fc93f9eb07acab4440a"
+  },
+  "l1-n128-uniform-s11.tsv": {
+    "batch_id": 821642422,
+    "path": "traces/l1-n128-uniform-s11.tsv",
+    "sha256": "80fa232eca7f0c8a8ca083818548c4ac51ddc43f58feeaedc020abdb472dbe9b"
+  },
+  "l1-n128-uniform-s29.tsv": {
+    "batch_id": 821642422,
+    "path": "traces/l1-n128-uniform-s29.tsv",
+    "sha256": "059ee073bd11976eb308af481e4858e97fbb0c5550ca48dab1b03ae36cc03a93"
+  },
+  "l1-n128-uniform-s47.tsv": {
+    "batch_id": 821642422,
+    "path": "traces/l1-n128-uniform-s47.tsv",
+    "sha256": "b464daf4cf2a15d3664012a4ce29806bf628fde3bcefb034c4b31fdbe1e1836a"
+  },
+  "l1-n128-uniform-s71.tsv": {
+    "batch_id": 821642422,
+    "path": "traces/l1-n128-uniform-s71.tsv",
+    "sha256": "6742cca07723e0d204c767f4ce36ec6acc93c5306ac0f133917bebd0779e2327"
+  },
+  "l1-n128-zipf-s101.tsv": {
+    "batch_id": 3159282684,
+    "path": "traces/l1-n128-zipf-s101.tsv",
+    "sha256": "4715150f17099c1a31f2f3566a4497ec0d106a798b2a3db59cfbf7582d8c5174"
+  },
+  "l1-n128-zipf-s11.tsv": {
+    "batch_id": 3159282684,
+    "path": "traces/l1-n128-zipf-s11.tsv",
+    "sha256": "0078deca7d219d325ab85ff7335c5565d3c2345ebf04e0f9ffc08a0d14be3669"
+  },
+  "l1-n128-zipf-s29.tsv": {
+    "batch_id": 3159282684,
+    "path": "traces/l1-n128-zipf-s29.tsv",
+    "sha256": "8932524f7c36d6a17fed17ef3599e99dea2629b4db06780ba6e68d696b5f2201"
+  },
+  "l1-n128-zipf-s47.tsv": {
+    "batch_id": 3159282684,
+    "path": "traces/l1-n128-zipf-s47.tsv",
+    "sha256": "afe61a6882da8d969b3e1c3d336dc5a9a583f8270a40f8074e90562062e2ad4f"
+  },
+  "l1-n128-zipf-s71.tsv": {
+    "batch_id": 3159282684,
+    "path": "traces/l1-n128-zipf-s71.tsv",
+    "sha256": "27f89e76d0ad8424c45a55b9a4c59f91b9166cf4a5281f7d2d00d2546158a325"
+  },
+  "l1-n2048-uniform-s101.tsv": {
+    "batch_id": 3545958636,
+    "path": "traces/l1-n2048-uniform-s101.tsv",
+    "sha256": "9f38b00102b4e7587a2b3ad03ec452cef12e5fb52facce289f40caa5d4692cad"
+  },
+  "l1-n2048-uniform-s11.tsv": {
+    "batch_id": 3545958636,
+    "path": "traces/l1-n2048-uniform-s11.tsv",
+    "sha256": "abe87d79f0f0a9f2512023d9c11eb6de96a075474e6be36d7393b052e4ae1dab"
+  },
+  "l1-n2048-uniform-s29.tsv": {
+    "batch_id": 3545958636,
+    "path": "traces/l1-n2048-uniform-s29.tsv",
+    "sha256": "e09b8aa40e53334af6629e36807fdf2ec4f2f7f5ec839571ceeb0eda507fbdd5"
+  },
+  "l1-n2048-uniform-s47.tsv": {
+    "batch_id": 3545958636,
+    "path": "traces/l1-n2048-uniform-s47.tsv",
+    "sha256": "72ae7eda08089ed4c764ae696295a692336dfc7a571353c1be8819b6b7f7476d"
+  },
+  "l1-n2048-uniform-s71.tsv": {
+    "batch_id": 3545958636,
+    "path": "traces/l1-n2048-uniform-s71.tsv",
+    "sha256": "7c3f7ac88d763fd95dcfae669585b0507548bf20a8117718b20bd459f9f78d3d"
+  },
+  "l1-n2048-zipf-s101.tsv": {
+    "batch_id": 3807446043,
+    "path": "traces/l1-n2048-zipf-s101.tsv",
+    "sha256": "13172d53fce8015e7d2cdfa5dad311919bb124d1ab20597d38da7f632384d694"
+  },
+  "l1-n2048-zipf-s11.tsv": {
+    "batch_id": 3807446043,
+    "path": "traces/l1-n2048-zipf-s11.tsv",
+    "sha256": "61a568b9481155e3e8ff1b446bf37cd0b501cca72aa64dd8e120bb17ec6b174d"
+  },
+  "l1-n2048-zipf-s29.tsv": {
+    "batch_id": 3807446043,
+    "path": "traces/l1-n2048-zipf-s29.tsv",
+    "sha256": "f9cd8d4109d2c5b725891595acbc82c6048a18cd2ad8134a815bf38ec1a70acf"
+  },
+  "l1-n2048-zipf-s47.tsv": {
+    "batch_id": 3807446043,
+    "path": "traces/l1-n2048-zipf-s47.tsv",
+    "sha256": "43009325ff6a1946aa17d3b27c96d48848558d406e9fa58a3f81d7a9f5f03300"
+  },
+  "l1-n2048-zipf-s71.tsv": {
+    "batch_id": 3807446043,
+    "path": "traces/l1-n2048-zipf-s71.tsv",
+    "sha256": "aa21e806609c4e40a28a8cd637db96d414d61ea8ad8831af14bd5ac72ab169fa"
+  },
+  "l1-n40-uniform-s101.tsv": {
+    "batch_id": 2675289866,
+    "path": "traces/l1-n40-uniform-s101.tsv",
+    "sha256": "a9c04e794fe863fd2fc3f5f30053608249051c6f83fb989777b5e3deeda4f4f4"
+  },
+  "l1-n40-uniform-s11.tsv": {
+    "batch_id": 2675289866,
+    "path": "traces/l1-n40-uniform-s11.tsv",
+    "sha256": "f748d8ddd7a6c56df5856513de79c5a556690ba98d9bfdfedd07712a95c10c9a"
+  },
+  "l1-n40-uniform-s29.tsv": {
+    "batch_id": 2675289866,
+    "path": "traces/l1-n40-uniform-s29.tsv",
+    "sha256": "a956dedfaf3962a056600a4977d176c4a10b6d3a1bb2e1a1fe01d8219b58b207"
+  },
+  "l1-n40-uniform-s47.tsv": {
+    "batch_id": 2675289866,
+    "path": "traces/l1-n40-uniform-s47.tsv",
+    "sha256": "925b1c3a8ae37f24e4cad72ce3baeaa8f8b2a43d2c78b288754445786219758e"
+  },
+  "l1-n40-uniform-s71.tsv": {
+    "batch_id": 2675289866,
+    "path": "traces/l1-n40-uniform-s71.tsv",
+    "sha256": "0b0898a162e2d34d4b33ebd62a3f40154d76850f8bfefb2e68f7f74fbcb68e17"
+  },
+  "l1-n40-zipf-s101.tsv": {
+    "batch_id": 2786318198,
+    "path": "traces/l1-n40-zipf-s101.tsv",
+    "sha256": "2058513bacb0112b9bf25bb7eb98970f108f26d8108d507cd7b0617f111b64ca"
+  },
+  "l1-n40-zipf-s11.tsv": {
+    "batch_id": 2786318198,
+    "path": "traces/l1-n40-zipf-s11.tsv",
+    "sha256": "dd28a6adb88280a22a9cc53847877848b8e5801327098bce044e634b1928e84b"
+  },
+  "l1-n40-zipf-s29.tsv": {
+    "batch_id": 2786318198,
+    "path": "traces/l1-n40-zipf-s29.tsv",
+    "sha256": "70f189652f78560e85143e66f3a6e71d2af70a3a4da9fc68cb8127633050dfb4"
+  },
+  "l1-n40-zipf-s47.tsv": {
+    "batch_id": 2786318198,
+    "path": "traces/l1-n40-zipf-s47.tsv",
+    "sha256": "3f6e739b36e64ea5f464ab88fa3721732f3915cce166502a1f24ee1d674b9848"
+  },
+  "l1-n40-zipf-s71.tsv": {
+    "batch_id": 2786318198,
+    "path": "traces/l1-n40-zipf-s71.tsv",
+    "sha256": "cfcda95fa16a988840682d7955a01dd54011b968cd9390e5815fb1f04cb461ad"
+  },
+  "l1-n512-uniform-s101.tsv": {
+    "batch_id": 1019056632,
+    "path": "traces/l1-n512-uniform-s101.tsv",
+    "sha256": "f9d9f71e79d4c18382e02feecef8202016b7b1bcefcd0243cd614a95b7eb876e"
+  },
+  "l1-n512-uniform-s11.tsv": {
+    "batch_id": 1019056632,
+    "path": "traces/l1-n512-uniform-s11.tsv",
+    "sha256": "547aa179fe12ba52cf2d2575a725fc9f3fa8d7a6b95b4715ee12cfb42a015b88"
+  },
+  "l1-n512-uniform-s29.tsv": {
+    "batch_id": 1019056632,
+    "path": "traces/l1-n512-uniform-s29.tsv",
+    "sha256": "8db8afac7903a64d077afd3d8fc9fab240a5da9d4228fa5346c42e7db8fcfc0d"
+  },
+  "l1-n512-uniform-s47.tsv": {
+    "batch_id": 1019056632,
+    "path": "traces/l1-n512-uniform-s47.tsv",
+    "sha256": "dbb0264389aa4e0866b84440689f7c1fb1eb8f76c12ae1ad21f501308e3f4407"
+  },
+  "l1-n512-uniform-s71.tsv": {
+    "batch_id": 1019056632,
+    "path": "traces/l1-n512-uniform-s71.tsv",
+    "sha256": "2f246db7273169d43df0871baa92905ad0a4fb16a34f94db0b860665a25f8d23"
+  },
+  "l1-n512-zipf-s101.tsv": {
+    "batch_id": 2545259386,
+    "path": "traces/l1-n512-zipf-s101.tsv",
+    "sha256": "47954c2472d25ced5645c0660a72195a82a87ca709200aeef7f0d3eb517ff65b"
+  },
+  "l1-n512-zipf-s11.tsv": {
+    "batch_id": 2545259386,
+    "path": "traces/l1-n512-zipf-s11.tsv",
+    "sha256": "4a134f67a290f9245524626bab76dd6ea72ef691cd7f744abf04eaa6cde5e480"
+  },
+  "l1-n512-zipf-s29.tsv": {
+    "batch_id": 2545259386,
+    "path": "traces/l1-n512-zipf-s29.tsv",
+    "sha256": "a5ee772d8992b57f9d10dae27cd5d43eed8d2ece56c3e8ef4f8b378b479d11d7"
+  },
+  "l1-n512-zipf-s47.tsv": {
+    "batch_id": 2545259386,
+    "path": "traces/l1-n512-zipf-s47.tsv",
+    "sha256": "220eec002e35d467f93b68a7df5c6dcb95ec725981a490e60b490f6d4912658d"
+  },
+  "l1-n512-zipf-s71.tsv": {
+    "batch_id": 2545259386,
+    "path": "traces/l1-n512-zipf-s71.tsv",
+    "sha256": "a47fbf5321cc40087cab932e47f1585e41cb0307d00e8e9b66bafead385c62cb"
+  },
+  "l2-n1024-identical-s101.tsv": {
+    "batch_id": 598934502,
+    "path": "traces/l2-n1024-identical-s101.tsv",
+    "sha256": "9b6d2d6a31fceccd90060957e498586ff23e3a77537d92fb4034e9868d033775"
+  },
+  "l2-n1024-identical-s11.tsv": {
+    "batch_id": 598934502,
+    "path": "traces/l2-n1024-identical-s11.tsv",
+    "sha256": "4cd80fa380488679a818d16d1b4d67ea4a73fee6a8a3541f078d69ff4f7e731a"
+  },
+  "l2-n1024-identical-s29.tsv": {
+    "batch_id": 598934502,
+    "path": "traces/l2-n1024-identical-s29.tsv",
+    "sha256": "85970eebf4c6ee144ffa64f480f32662cd1033279d87e476f01fcab2b1841da7"
+  },
+  "l2-n1024-identical-s47.tsv": {
+    "batch_id": 598934502,
+    "path": "traces/l2-n1024-identical-s47.tsv",
+    "sha256": "f0910f20f9baa41421c9f19490bb7ad775f39d97dbdd696552d17cde116afa2a"
+  },
+  "l2-n1024-identical-s71.tsv": {
+    "batch_id": 598934502,
+    "path": "traces/l2-n1024-identical-s71.tsv",
+    "sha256": "dd0d04759610b44ce8c875bb66fad242e4a5f96dc527fbe8cf5990885012f4e7"
+  },
+  "l2-n128-uniform-s101.tsv": {
+    "batch_id": 2314800788,
+    "path": "traces/l2-n128-uniform-s101.tsv",
+    "sha256": "f213745ead6a713245c327ec934cf2e412fdb6ee3d354fceb800046889c2104b"
+  },
+  "l2-n128-uniform-s11.tsv": {
+    "batch_id": 2314800788,
+    "path": "traces/l2-n128-uniform-s11.tsv",
+    "sha256": "15586b2eae06c1ba59fdd5b709630b3da7c3d9d5202de2eb651ef674513d098b"
+  },
+  "l2-n128-uniform-s29.tsv": {
+    "batch_id": 2314800788,
+    "path": "traces/l2-n128-uniform-s29.tsv",
+    "sha256": "5c33653ba325c995a9bec82e4e84806dac2176e656a80fae604f82328d3df889"
+  },
+  "l2-n128-uniform-s47.tsv": {
+    "batch_id": 2314800788,
+    "path": "traces/l2-n128-uniform-s47.tsv",
+    "sha256": "865a1369e15b42a55c31d649a040b392b86551d170c56cf68df1e9e142da4afb"
+  },
+  "l2-n128-uniform-s71.tsv": {
+    "batch_id": 2314800788,
+    "path": "traces/l2-n128-uniform-s71.tsv",
+    "sha256": "bd620a3ae1a8b83f9afb59db8b233eecfdafcd9e621439a2a7d5cc9d9313af8b"
+  },
+  "l2-n128-zipf-s101.tsv": {
+    "batch_id": 2713289765,
+    "path": "traces/l2-n128-zipf-s101.tsv",
+    "sha256": "0cd4a4b3eecebf03316f54ac6f4e49c130eec16660b7a14669530e71536d4c9b"
+  },
+  "l2-n128-zipf-s11.tsv": {
+    "batch_id": 2713289765,
+    "path": "traces/l2-n128-zipf-s11.tsv",
+    "sha256": "b8b768fb62a85487c8f76a94ab75a2b9b701d4c170586debda80e40808ec632d"
+  },
+  "l2-n128-zipf-s29.tsv": {
+    "batch_id": 2713289765,
+    "path": "traces/l2-n128-zipf-s29.tsv",
+    "sha256": "c70ce2432a92c588b4c69baafc26211e17172fea4d3194e60a6ac44cbfc0e6e8"
+  },
+  "l2-n128-zipf-s47.tsv": {
+    "batch_id": 2713289765,
+    "path": "traces/l2-n128-zipf-s47.tsv",
+    "sha256": "828c1b85416f327617fc9935bd06a1881b69640389e804d5e154f60315b3c4aa"
+  },
+  "l2-n128-zipf-s71.tsv": {
+    "batch_id": 2713289765,
+    "path": "traces/l2-n128-zipf-s71.tsv",
+    "sha256": "962d6d69313c06749d58b13c89f8bc5ce8f601a2ed1d35f96f4be9157c434c1a"
+  },
+  "l2-n2048-uniform-s101.tsv": {
+    "batch_id": 2411806075,
+    "path": "traces/l2-n2048-uniform-s101.tsv",
+    "sha256": "4b82063739cedaa403ad291aaadda5579cb5805bde52be35c4f92a24a0176be8"
+  },
+  "l2-n2048-uniform-s11.tsv": {
+    "batch_id": 2411806075,
+    "path": "traces/l2-n2048-uniform-s11.tsv",
+    "sha256": "3d2781a38142567d65e130df20a110a626f133dc8ddcaa54ca5326c68504655c"
+  },
+  "l2-n2048-uniform-s29.tsv": {
+    "batch_id": 2411806075,
+    "path": "traces/l2-n2048-uniform-s29.tsv",
+    "sha256": "d6af00895fba56d80d493623222ef9ffea5df1d3d1a3d6ba0e5cca4d03d832d2"
+  },
+  "l2-n2048-uniform-s47.tsv": {
+    "batch_id": 2411806075,
+    "path": "traces/l2-n2048-uniform-s47.tsv",
+    "sha256": "f1899bed31fdebabb1e9d26ba03ac72b070cf89add929e86fc3b4d47d901ca59"
+  },
+  "l2-n2048-uniform-s71.tsv": {
+    "batch_id": 2411806075,
+    "path": "traces/l2-n2048-uniform-s71.tsv",
+    "sha256": "74d14ecdca42a16bdba9682d1f6cbe05199311118247f9f8883eceffd0320e0e"
+  },
+  "l2-n2048-zipf-s101.tsv": {
+    "batch_id": 1325848017,
+    "path": "traces/l2-n2048-zipf-s101.tsv",
+    "sha256": "9bdb85dce23469b899f3e3e964d230884159cf2247421bd0f6783fecc6165a69"
+  },
+  "l2-n2048-zipf-s11.tsv": {
+    "batch_id": 1325848017,
+    "path": "traces/l2-n2048-zipf-s11.tsv",
+    "sha256": "867552927bba7c17a77c483cb9ef6ab1dd2373f93fe068598a5eeea165d682b8"
+  },
+  "l2-n2048-zipf-s29.tsv": {
+    "batch_id": 1325848017,
+    "path": "traces/l2-n2048-zipf-s29.tsv",
+    "sha256": "fc2f39933fffb1063bcc16b90d6ba0713e5462c49246449334f7e3156e387076"
+  },
+  "l2-n2048-zipf-s47.tsv": {
+    "batch_id": 1325848017,
+    "path": "traces/l2-n2048-zipf-s47.tsv",
+    "sha256": "8e913f41b7d4f6c76059912e1a552a6a12d11c009e988166d2c972c251a80673"
+  },
+  "l2-n2048-zipf-s71.tsv": {
+    "batch_id": 1325848017,
+    "path": "traces/l2-n2048-zipf-s71.tsv",
+    "sha256": "45a8132b5bff2039d40e0c06c6a275d30862533889f551b9cfaf5b3563d3fd61"
+  },
+  "l2-n40-uniform-s101.tsv": {
+    "batch_id": 55646018,
+    "path": "traces/l2-n40-uniform-s101.tsv",
+    "sha256": "805baa4cf20643b0149773cd98792f6c1a469ccde462f5a094e56d0267b46036"
+  },
+  "l2-n40-uniform-s11.tsv": {
+    "batch_id": 55646018,
+    "path": "traces/l2-n40-uniform-s11.tsv",
+    "sha256": "e3ccb5adafaf0211fbc036525288a215b1332fea68c1b9b0a01e99176671ff6c"
+  },
+  "l2-n40-uniform-s29.tsv": {
+    "batch_id": 55646018,
+    "path": "traces/l2-n40-uniform-s29.tsv",
+    "sha256": "d80f83805b5cf9de2b2956649c01abce34486d8780b722606da381db7251b180"
+  },
+  "l2-n40-uniform-s47.tsv": {
+    "batch_id": 55646018,
+    "path": "traces/l2-n40-uniform-s47.tsv",
+    "sha256": "eb3bce3152b4126557ea85d794a21ac600d2c73fe67e55219edfccf2fd601512"
+  },
+  "l2-n40-uniform-s71.tsv": {
+    "batch_id": 55646018,
+    "path": "traces/l2-n40-uniform-s71.tsv",
+    "sha256": "f2665dd73b1642461b907be3767c4fa370d707713eeaa198f3f9d43a1a030859"
+  },
+  "l2-n40-zipf-s101.tsv": {
+    "batch_id": 4135293994,
+    "path": "traces/l2-n40-zipf-s101.tsv",
+    "sha256": "b2169728eb6c9992def1f4f9402d1f62ab8dfd1e1ca41d4f4aa2c958f655c3fb"
+  },
+  "l2-n40-zipf-s11.tsv": {
+    "batch_id": 4135293994,
+    "path": "traces/l2-n40-zipf-s11.tsv",
+    "sha256": "acb28559d3b7a53a99faac3f158797424a4874bc7f08813c3ebf010d4da2b15d"
+  },
+  "l2-n40-zipf-s29.tsv": {
+    "batch_id": 4135293994,
+    "path": "traces/l2-n40-zipf-s29.tsv",
+    "sha256": "d18e217b7f61c5dfedba45e41bf833c4bcba7ccd063fc59d9efd696a9a3c03d9"
+  },
+  "l2-n40-zipf-s47.tsv": {
+    "batch_id": 4135293994,
+    "path": "traces/l2-n40-zipf-s47.tsv",
+    "sha256": "06c67e8aadb216549b0d75291c9a5d75a8da396e6e6e56d4584df0d0c21afe84"
+  },
+  "l2-n40-zipf-s71.tsv": {
+    "batch_id": 4135293994,
+    "path": "traces/l2-n40-zipf-s71.tsv",
+    "sha256": "9931416d2ba1573bcecd3552b17a85801a6e2f9cacf824298dfdab251e0e422d"
+  },
+  "l2-n4096-identical-s101.tsv": {
+    "batch_id": 4211580878,
+    "path": "traces/l2-n4096-identical-s101.tsv",
+    "sha256": "70eeed9c315b2871098e630206b2028fbbc1c7e64990a1f24a984024e259484f"
+  },
+  "l2-n4096-identical-s11.tsv": {
+    "batch_id": 4211580878,
+    "path": "traces/l2-n4096-identical-s11.tsv",
+    "sha256": "c6b676ee420c4b72b3750b84b6cf11360675c93ccbd4df15067e6942b4bdd611"
+  },
+  "l2-n4096-identical-s29.tsv": {
+    "batch_id": 4211580878,
+    "path": "traces/l2-n4096-identical-s29.tsv",
+    "sha256": "305dbd05283ae6713bb29b50a65a57bf5d75e7cfee60ba6ead2fa2ef9211dad1"
+  },
+  "l2-n4096-identical-s47.tsv": {
+    "batch_id": 4211580878,
+    "path": "traces/l2-n4096-identical-s47.tsv",
+    "sha256": "3dfc68f5ceb153eba7a9b371824256892275d72691cfde1302eb2fc1857edf08"
+  },
+  "l2-n4096-identical-s71.tsv": {
+    "batch_id": 4211580878,
+    "path": "traces/l2-n4096-identical-s71.tsv",
+    "sha256": "a622b1697c47452c84a1a845fa4a7113e68f73d7703f1fcdf2b10444805d0a62"
+  },
+  "l2-n512-uniform-s101.tsv": {
+    "batch_id": 102523812,
+    "path": "traces/l2-n512-uniform-s101.tsv",
+    "sha256": "38501eb31cfd12916f7c432f81eefebbd84b11002f650fafd78e4804461ac747"
+  },
+  "l2-n512-uniform-s11.tsv": {
+    "batch_id": 102523812,
+    "path": "traces/l2-n512-uniform-s11.tsv",
+    "sha256": "e03fa091c6a396103ddb64c858d68097711393a6474339720ac5c67d8430a63a"
+  },
+  "l2-n512-uniform-s29.tsv": {
+    "batch_id": 102523812,
+    "path": "traces/l2-n512-uniform-s29.tsv",
+    "sha256": "c98f4de13dbdd3a5e2c8a1bc92e54b41848cad257db0ac55e2d85cece62a4cd7"
+  },
+  "l2-n512-uniform-s47.tsv": {
+    "batch_id": 102523812,
+    "path": "traces/l2-n512-uniform-s47.tsv",
+    "sha256": "db7a8bb3f693adb1ef7ae394528621d7fe641d2e230c84d966806708df862478"
+  },
+  "l2-n512-uniform-s71.tsv": {
+    "batch_id": 102523812,
+    "path": "traces/l2-n512-uniform-s71.tsv",
+    "sha256": "da2a0400c41129820e62f4df2aeaba7652a8afce69e5c2205543afdda02f2d26"
+  },
+  "l2-n512-zipf-s101.tsv": {
+    "batch_id": 2038519798,
+    "path": "traces/l2-n512-zipf-s101.tsv",
+    "sha256": "f246acb4373c7f6b6c73a2a13d908423a17d2a3d808599993620cb879289639d"
+  },
+  "l2-n512-zipf-s11.tsv": {
+    "batch_id": 2038519798,
+    "path": "traces/l2-n512-zipf-s11.tsv",
+    "sha256": "cd0fc707b24402830b70bac9d1f41e87d2e7a50b7b709886dc7f1cae6e7f7415"
+  },
+  "l2-n512-zipf-s29.tsv": {
+    "batch_id": 2038519798,
+    "path": "traces/l2-n512-zipf-s29.tsv",
+    "sha256": "eae631d898501b293d3e531dffaf6481e5b91612e9615a23b358e9408429352f"
+  },
+  "l2-n512-zipf-s47.tsv": {
+    "batch_id": 2038519798,
+    "path": "traces/l2-n512-zipf-s47.tsv",
+    "sha256": "1a39cb55334e9e19a99046a9986935941b173d31d7ecf12131a0a398b82c0a80"
+  },
+  "l2-n512-zipf-s71.tsv": {
+    "batch_id": 2038519798,
+    "path": "traces/l2-n512-zipf-s71.tsv",
+    "sha256": "f5fdaa310f55de6a81f4668cb3782a2fb5af9c1fcf2cbcff8aa7664260b49be5"
+  },
+  "l2-n8192-uniform-s101.tsv": {
+    "batch_id": 2264312178,
+    "path": "traces/l2-n8192-uniform-s101.tsv",
+    "sha256": "497c8a17d67dc12af3c0c319a0027a9260b29edbf7b7e7383d17f5ad4857f318"
+  },
+  "l2-n8192-uniform-s11.tsv": {
+    "batch_id": 2264312178,
+    "path": "traces/l2-n8192-uniform-s11.tsv",
+    "sha256": "1797736a09bae835c86eab416b7d0f9525b57dbe171b03be9368b96af439824d"
+  },
+  "l2-n8192-uniform-s29.tsv": {
+    "batch_id": 2264312178,
+    "path": "traces/l2-n8192-uniform-s29.tsv",
+    "sha256": "e158b132def976dcf81e57a471de118912cd85497681343bd9a383af13513523"
+  },
+  "l2-n8192-uniform-s47.tsv": {
+    "batch_id": 2264312178,
+    "path": "traces/l2-n8192-uniform-s47.tsv",
+    "sha256": "7b9ed592efffc747559d95479d4a18a544e722e1e51dcd4b2d58b9c540dbabfe"
+  },
+  "l2-n8192-uniform-s71.tsv": {
+    "batch_id": 2264312178,
+    "path": "traces/l2-n8192-uniform-s71.tsv",
+    "sha256": "3ac86fb79a80025f5b04c43e6de8cf3c6c175b3949af7872e103432f0a25c20c"
+  },
+  "l2-n8192-zipf-s101.tsv": {
+    "batch_id": 2520050087,
+    "path": "traces/l2-n8192-zipf-s101.tsv",
+    "sha256": "7cfb72cc1c36e015008c35c9e8095f796796e64119e2d7dfb3eaf5ddab4764e0"
+  },
+  "l2-n8192-zipf-s11.tsv": {
+    "batch_id": 2520050087,
+    "path": "traces/l2-n8192-zipf-s11.tsv",
+    "sha256": "1728b9eaf8a019ff7664316a03e79460b1bcc3368b68a8196d31519d14b55303"
+  },
+  "l2-n8192-zipf-s29.tsv": {
+    "batch_id": 2520050087,
+    "path": "traces/l2-n8192-zipf-s29.tsv",
+    "sha256": "394934ac233d7f62025e80ff78ad9a03c90df514bdf4b8cbfa4e6408ed61450f"
+  },
+  "l2-n8192-zipf-s47.tsv": {
+    "batch_id": 2520050087,
+    "path": "traces/l2-n8192-zipf-s47.tsv",
+    "sha256": "b820d149e09982f1ca5bbfb32e0c3da3dcee73fb578a2256551c17c1c1bd628b"
+  },
+  "l2-n8192-zipf-s71.tsv": {
+    "batch_id": 2520050087,
+    "path": "traces/l2-n8192-zipf-s71.tsv",
+    "sha256": "b8952f0418b6476d2d253ba78329ae28e3eddf14400f77184258bc012279fee3"
+  },
+  "l3-n128-uniform-s101.tsv": {
+    "batch_id": 3427719598,
+    "path": "traces/l3-n128-uniform-s101.tsv",
+    "sha256": "fbfc35d4cf1b0c7fb4dda721475991fbcd244c92f4a09bc9477504e60147829b"
+  },
+  "l3-n128-uniform-s11.tsv": {
+    "batch_id": 3427719598,
+    "path": "traces/l3-n128-uniform-s11.tsv",
+    "sha256": "662a2bfdf124da1f60a58c467a79da728b94a5fa0015c2280b02a09d306fdcce"
+  },
+  "l3-n128-uniform-s29.tsv": {
+    "batch_id": 3427719598,
+    "path": "traces/l3-n128-uniform-s29.tsv",
+    "sha256": "92f30cd307429caa38c58396892f31b307219851fee3379b3b6601b279ef4c2e"
+  },
+  "l3-n128-uniform-s47.tsv": {
+    "batch_id": 3427719598,
+    "path": "traces/l3-n128-uniform-s47.tsv",
+    "sha256": "41a389907557dcc2158bfad0a01ac54187e62ccf096f83aa73e9807d5f331207"
+  },
+  "l3-n128-uniform-s71.tsv": {
+    "batch_id": 3427719598,
+    "path": "traces/l3-n128-uniform-s71.tsv",
+    "sha256": "171d28b991d49092f923e092e5cc9976aa11b85e3044730dae4558f1b9c8283a"
+  },
+  "l3-n128-zipf-s101.tsv": {
+    "batch_id": 4207755608,
+    "path": "traces/l3-n128-zipf-s101.tsv",
+    "sha256": "b33626805da85d72f6e879b87dcb1bde73087deff39c2af386e755c6ead2f67b"
+  },
+  "l3-n128-zipf-s11.tsv": {
+    "batch_id": 4207755608,
+    "path": "traces/l3-n128-zipf-s11.tsv",
+    "sha256": "d2f1fb8551cf2e8e6d9ecf7fe33bddc23c0c6033b4122599061e6f510fe0d065"
+  },
+  "l3-n128-zipf-s29.tsv": {
+    "batch_id": 4207755608,
+    "path": "traces/l3-n128-zipf-s29.tsv",
+    "sha256": "7f57a5a786d6ac27a9386164ee0d1fb2c3bebc047c8db0dd73e8d404f174af17"
+  },
+  "l3-n128-zipf-s47.tsv": {
+    "batch_id": 4207755608,
+    "path": "traces/l3-n128-zipf-s47.tsv",
+    "sha256": "34b1b04d46b110146ec2d803bba017631dc57e7272218559513f1945088a542b"
+  },
+  "l3-n128-zipf-s71.tsv": {
+    "batch_id": 4207755608,
+    "path": "traces/l3-n128-zipf-s71.tsv",
+    "sha256": "9504bc3c5e48ec7838347b15053a0d2a8b674a9873a1198cc6f51cf4cd0cb24f"
+  },
+  "l3-n2048-uniform-s101.tsv": {
+    "batch_id": 39919712,
+    "path": "traces/l3-n2048-uniform-s101.tsv",
+    "sha256": "c2da2fc88ea5288c0d1ba6b86c2ab2ceedd1e205aff0e355ad4287f3f1f854ad"
+  },
+  "l3-n2048-uniform-s11.tsv": {
+    "batch_id": 39919712,
+    "path": "traces/l3-n2048-uniform-s11.tsv",
+    "sha256": "884fe06b761e82680b485267f2d9f9f96ef1e38f89c5a132eb0e7da2e5bb17db"
+  },
+  "l3-n2048-uniform-s29.tsv": {
+    "batch_id": 39919712,
+    "path": "traces/l3-n2048-uniform-s29.tsv",
+    "sha256": "a561c13fd617d77617603b4a3563b252d1f8b2e31a454d13eb2f8c16de7d7a3a"
+  },
+  "l3-n2048-uniform-s47.tsv": {
+    "batch_id": 39919712,
+    "path": "traces/l3-n2048-uniform-s47.tsv",
+    "sha256": "2b47dde01212b3bf9e3dedd750826f4df8b2a8f6dac6a457759f09451c715c71"
+  },
+  "l3-n2048-uniform-s71.tsv": {
+    "batch_id": 39919712,
+    "path": "traces/l3-n2048-uniform-s71.tsv",
+    "sha256": "dea54918ec5f54c0fbaf6c813dbc061ce33b1a206eeb0ca74f369504acde8668"
+  },
+  "l3-n2048-zipf-s101.tsv": {
+    "batch_id": 2454005391,
+    "path": "traces/l3-n2048-zipf-s101.tsv",
+    "sha256": "8eae1d3bcdbad0a2f55d7749269379ce167cac77cd642ca14889daa0a329bcd4"
+  },
+  "l3-n2048-zipf-s11.tsv": {
+    "batch_id": 2454005391,
+    "path": "traces/l3-n2048-zipf-s11.tsv",
+    "sha256": "c4874a233326a568562efc0cb0185cf35b93d907f310194cd11a6925328ebd65"
+  },
+  "l3-n2048-zipf-s29.tsv": {
+    "batch_id": 2454005391,
+    "path": "traces/l3-n2048-zipf-s29.tsv",
+    "sha256": "f3cc1a99405a686eb3ce0040292720ca4b297933cfcb4b5b2a0e3331a1433712"
+  },
+  "l3-n2048-zipf-s47.tsv": {
+    "batch_id": 2454005391,
+    "path": "traces/l3-n2048-zipf-s47.tsv",
+    "sha256": "c748f3c78d2ffe41687380a67cbb6d6ea6df572999f32a161c69cba7aa04534a"
+  },
+  "l3-n2048-zipf-s71.tsv": {
+    "batch_id": 2454005391,
+    "path": "traces/l3-n2048-zipf-s71.tsv",
+    "sha256": "6e40c8bf95517d739faee325cbb71069b882981c9d9e3fe757eaffebb1600c3a"
+  },
+  "l3-n40-uniform-s101.tsv": {
+    "batch_id": 2470292039,
+    "path": "traces/l3-n40-uniform-s101.tsv",
+    "sha256": "2cab21c9152cc5d2e57cc0dc023076124a80412ee449cf327c0cc62fd335ab6b"
+  },
+  "l3-n40-uniform-s11.tsv": {
+    "batch_id": 2470292039,
+    "path": "traces/l3-n40-uniform-s11.tsv",
+    "sha256": "4018b1af19769d0d84992b14509a4646c584c04b1d377fe4e0e95aea866ae6a0"
+  },
+  "l3-n40-uniform-s29.tsv": {
+    "batch_id": 2470292039,
+    "path": "traces/l3-n40-uniform-s29.tsv",
+    "sha256": "42b5cf294bac6870d4eb361a029e3befb94022ddffd010176d7b329d16d5021d"
+  },
+  "l3-n40-uniform-s47.tsv": {
+    "batch_id": 2470292039,
+    "path": "traces/l3-n40-uniform-s47.tsv",
+    "sha256": "52bc74266025f53cd087e564f900e59aeb6efa0006e44178338486998d88ae11"
+  },
+  "l3-n40-uniform-s71.tsv": {
+    "batch_id": 2470292039,
+    "path": "traces/l3-n40-uniform-s71.tsv",
+    "sha256": "7faf01024dc261be43ebbf611c979bbd55e917f9ac7a8075f4ca425f0b36c46e"
+  },
+  "l3-n40-zipf-s101.tsv": {
+    "batch_id": 1759580645,
+    "path": "traces/l3-n40-zipf-s101.tsv",
+    "sha256": "d3d2c5a758333a3cbec58fed54e9cbf3b699b839eb726b8dced5969080be065d"
+  },
+  "l3-n40-zipf-s11.tsv": {
+    "batch_id": 1759580645,
+    "path": "traces/l3-n40-zipf-s11.tsv",
+    "sha256": "3c5cdef9735e1f28ad80b372aea1b063a0e6b092d6fdf80cb67a278ce0173601"
+  },
+  "l3-n40-zipf-s29.tsv": {
+    "batch_id": 1759580645,
+    "path": "traces/l3-n40-zipf-s29.tsv",
+    "sha256": "cb29b25b93df978b967751592001ca12763560072bd286987f34ad62684178b3"
+  },
+  "l3-n40-zipf-s47.tsv": {
+    "batch_id": 1759580645,
+    "path": "traces/l3-n40-zipf-s47.tsv",
+    "sha256": "02389fddd145ebf0ae8d61c2c2cb6dd30bd38cefde0af2f54b0b8197e25ebab6"
+  },
+  "l3-n40-zipf-s71.tsv": {
+    "batch_id": 1759580645,
+    "path": "traces/l3-n40-zipf-s71.tsv",
+    "sha256": "7278f3fb3126daa9b6b37a434c731d4137fccd628eb508757c5a27b3ee13f406"
+  },
+  "l3-n512-uniform-s101.tsv": {
+    "batch_id": 1694830426,
+    "path": "traces/l3-n512-uniform-s101.tsv",
+    "sha256": "afb84fcbdd0eef1ed4352f4e6318a3c697ac0dfc1eec5e998c446ad189403f41"
+  },
+  "l3-n512-uniform-s11.tsv": {
+    "batch_id": 1694830426,
+    "path": "traces/l3-n512-uniform-s11.tsv",
+    "sha256": "b251713ae3b30d40cc73abdbd51195480058b716c8182a5e5364a41ebea4374f"
+  },
+  "l3-n512-uniform-s29.tsv": {
+    "batch_id": 1694830426,
+    "path": "traces/l3-n512-uniform-s29.tsv",
+    "sha256": "a6de465c73e08ca4210298c49ef41b71eb4fc5e54e63bb0a1898dd8fdd3e20ab"
+  },
+  "l3-n512-uniform-s47.tsv": {
+    "batch_id": 1694830426,
+    "path": "traces/l3-n512-uniform-s47.tsv",
+    "sha256": "ba974f5a412b553685c72840493870f68daa7655b4300e87e1711bad9d0eb937"
+  },
+  "l3-n512-uniform-s71.tsv": {
+    "batch_id": 1694830426,
+    "path": "traces/l3-n512-uniform-s71.tsv",
+    "sha256": "e0ede0e516f84b6c1d422c7642a5a4bf6b5e5d18b91b6d68ff0c4b814e65f519"
+  },
+  "l3-n512-zipf-s101.tsv": {
+    "batch_id": 3279957086,
+    "path": "traces/l3-n512-zipf-s101.tsv",
+    "sha256": "24d226341e66ee538c0dab394378036d122c8f49bbab789d20b82d53e54bfa83"
+  },
+  "l3-n512-zipf-s11.tsv": {
+    "batch_id": 3279957086,
+    "path": "traces/l3-n512-zipf-s11.tsv",
+    "sha256": "d2fbc235412bdc1c738468c43bdab4839e097b96c6e02959e30364b91992c67f"
+  },
+  "l3-n512-zipf-s29.tsv": {
+    "batch_id": 3279957086,
+    "path": "traces/l3-n512-zipf-s29.tsv",
+    "sha256": "bc916f42755c880310f5868aa77f5670825a7fbe2aa595b205b12793b89e3309"
+  },
+  "l3-n512-zipf-s47.tsv": {
+    "batch_id": 3279957086,
+    "path": "traces/l3-n512-zipf-s47.tsv",
+    "sha256": "e255d4be796745a7788fa26cc927ff23e9edaade82c88a306bde3422cfde0de5"
+  },
+  "l3-n512-zipf-s71.tsv": {
+    "batch_id": 3279957086,
+    "path": "traces/l3-n512-zipf-s71.tsv",
+    "sha256": "81bd2e90363a6b4c9aa8eded5c3c452f59e6439a3616659b9527c7abfc4a62df"
+  },
+  "l4-n128-uniform-s101.tsv": {
+    "batch_id": 526876120,
+    "path": "traces/l4-n128-uniform-s101.tsv",
+    "sha256": "30906fd7aa5b2ae71715c6e056335bf1ea7062613cc9e04358fa3c65c48cf40a"
+  },
+  "l4-n128-uniform-s11.tsv": {
+    "batch_id": 526876120,
+    "path": "traces/l4-n128-uniform-s11.tsv",
+    "sha256": "ec46407c21158aaca9edea235eab1fbe9361a051a58e73ce06acdf55722c9cde"
+  },
+  "l4-n128-uniform-s29.tsv": {
+    "batch_id": 526876120,
+    "path": "traces/l4-n128-uniform-s29.tsv",
+    "sha256": "e0771328de43049c6a87abf66dd6b41e919c6ced2fa52f497bbe856ee3f9984c"
+  },
+  "l4-n128-uniform-s47.tsv": {
+    "batch_id": 526876120,
+    "path": "traces/l4-n128-uniform-s47.tsv",
+    "sha256": "1392b36d41fed5c0f0b1e8b50d99988e48ef35a59eacea7f7bef676c0badf30e"
+  },
+  "l4-n128-uniform-s71.tsv": {
+    "batch_id": 526876120,
+    "path": "traces/l4-n128-uniform-s71.tsv",
+    "sha256": "f090c4ff5ebd44bb2c08bd8e10f14e378bae863a0dfde774ad33c811c358ce3b"
+  },
+  "l4-n128-zipf-s101.tsv": {
+    "batch_id": 4074779509,
+    "path": "traces/l4-n128-zipf-s101.tsv",
+    "sha256": "c0bf782a3464ca1b90422180a2c4d30925986a1add45d387b69dcf04138ac1b7"
+  },
+  "l4-n128-zipf-s11.tsv": {
+    "batch_id": 4074779509,
+    "path": "traces/l4-n128-zipf-s11.tsv",
+    "sha256": "9b4e55fab9b6164b9d90a80d4bc607537e6c46d8ed1248387a3ea778a7b3a028"
+  },
+  "l4-n128-zipf-s29.tsv": {
+    "batch_id": 4074779509,
+    "path": "traces/l4-n128-zipf-s29.tsv",
+    "sha256": "62360dc9df94615b9e3514db0d8db27a1d3f737551717ab79972ba3c5133cdd9"
+  },
+  "l4-n128-zipf-s47.tsv": {
+    "batch_id": 4074779509,
+    "path": "traces/l4-n128-zipf-s47.tsv",
+    "sha256": "4ae23f5716a55276e941b416f22b1151164f45ee766de58725c2c01d51b09b5d"
+  },
+  "l4-n128-zipf-s71.tsv": {
+    "batch_id": 4074779509,
+    "path": "traces/l4-n128-zipf-s71.tsv",
+    "sha256": "63cea0d066c22659634e383aede62933045710ec182cf17be128a8d2d4442934"
+  },
+  "l4-n2048-uniform-s101.tsv": {
+    "batch_id": 2579301281,
+    "path": "traces/l4-n2048-uniform-s101.tsv",
+    "sha256": "ab6d39c978859257fed6b32515fef648d378b51569df9d8b5817e1ee8a4b7945"
+  },
+  "l4-n2048-uniform-s11.tsv": {
+    "batch_id": 2579301281,
+    "path": "traces/l4-n2048-uniform-s11.tsv",
+    "sha256": "8bc69a6a8852154bcbe155adb15ce10d4294c732b74a194aa3b6aadde78c0272"
+  },
+  "l4-n2048-uniform-s29.tsv": {
+    "batch_id": 2579301281,
+    "path": "traces/l4-n2048-uniform-s29.tsv",
+    "sha256": "3b44d1c984c62fb5443765ce2d40eb27e15e7688c710e552c806c14826818e39"
+  },
+  "l4-n2048-uniform-s47.tsv": {
+    "batch_id": 2579301281,
+    "path": "traces/l4-n2048-uniform-s47.tsv",
+    "sha256": "39cd1b06a041ec00da6b176da3374489764b4307536ea2db9da101225ff9d308"
+  },
+  "l4-n2048-uniform-s71.tsv": {
+    "batch_id": 2579301281,
+    "path": "traces/l4-n2048-uniform-s71.tsv",
+    "sha256": "58880fc4001382f9abc53e0efd79167b4e0acec90dd75c2c1829f2d0174c18ee"
+  },
+  "l4-n2048-zipf-s101.tsv": {
+    "batch_id": 4196327851,
+    "path": "traces/l4-n2048-zipf-s101.tsv",
+    "sha256": "74958a3204f68077e2bce54165438a6896321a61fd6abd3ef5e0e3de8936e2ce"
+  },
+  "l4-n2048-zipf-s11.tsv": {
+    "batch_id": 4196327851,
+    "path": "traces/l4-n2048-zipf-s11.tsv",
+    "sha256": "9f7d357c54f0692167dca769966651b46b4de7175ee40b9df88866ce5f7d5307"
+  },
+  "l4-n2048-zipf-s29.tsv": {
+    "batch_id": 4196327851,
+    "path": "traces/l4-n2048-zipf-s29.tsv",
+    "sha256": "e69b12a4623b9891a8345554a40e8b28f17b348f765d9d31499a56f4a60d6d2d"
+  },
+  "l4-n2048-zipf-s47.tsv": {
+    "batch_id": 4196327851,
+    "path": "traces/l4-n2048-zipf-s47.tsv",
+    "sha256": "07d11acabb41b75dd1160c2fb3377643be98336cc4d90e335a16640cf9193ec1"
+  },
+  "l4-n2048-zipf-s71.tsv": {
+    "batch_id": 4196327851,
+    "path": "traces/l4-n2048-zipf-s71.tsv",
+    "sha256": "5b345865ee14e38af871404f9f0ecd6057bda2c77bdca2f2bb0c1826125b2b68"
+  },
+  "l4-n40-uniform-s101.tsv": {
+    "batch_id": 3735437924,
+    "path": "traces/l4-n40-uniform-s101.tsv",
+    "sha256": "60505f3f53f78aed6b99169054599f1c34ba47722798e567691831338ae76a86"
+  },
+  "l4-n40-uniform-s11.tsv": {
+    "batch_id": 3735437924,
+    "path": "traces/l4-n40-uniform-s11.tsv",
+    "sha256": "548dbd784586049f7adc4de8d1f9e3a08e27f4bedd73324bb3c732a3904b6103"
+  },
+  "l4-n40-uniform-s29.tsv": {
+    "batch_id": 3735437924,
+    "path": "traces/l4-n40-uniform-s29.tsv",
+    "sha256": "d4c86ef8951d50fab3e10fab7f614c1091d09daf72bb3d7b03a4b992a0208dcf"
+  },
+  "l4-n40-uniform-s47.tsv": {
+    "batch_id": 3735437924,
+    "path": "traces/l4-n40-uniform-s47.tsv",
+    "sha256": "3e72129f3ecbeafa01a54f643adaab8c36a756b6e7eeaa7660cd86bae7fe5116"
+  },
+  "l4-n40-uniform-s71.tsv": {
+    "batch_id": 3735437924,
+    "path": "traces/l4-n40-uniform-s71.tsv",
+    "sha256": "6bd992bec4ef16533c702204c1e04220f2a055a4eb30bf56c9fe397127883b06"
+  },
+  "l4-n40-zipf-s101.tsv": {
+    "batch_id": 638206994,
+    "path": "traces/l4-n40-zipf-s101.tsv",
+    "sha256": "095cdf396056d8359991dd7b9fdd76d503405a8211f072818e84baf3aa1d3169"
+  },
+  "l4-n40-zipf-s11.tsv": {
+    "batch_id": 638206994,
+    "path": "traces/l4-n40-zipf-s11.tsv",
+    "sha256": "0323be042ee82cd9bbff62b68b7fa9e52a007f4da7df1a5460b1d3b169a981da"
+  },
+  "l4-n40-zipf-s29.tsv": {
+    "batch_id": 638206994,
+    "path": "traces/l4-n40-zipf-s29.tsv",
+    "sha256": "40e19bc614ddf82915ab9d6a2be80d4d11d2cfbe6306a65edec1fe4d9d9856cf"
+  },
+  "l4-n40-zipf-s47.tsv": {
+    "batch_id": 638206994,
+    "path": "traces/l4-n40-zipf-s47.tsv",
+    "sha256": "2f4ef7f76453c842d905a07d45009a9580b4279be99375c01dbf67d8c2aab319"
+  },
+  "l4-n40-zipf-s71.tsv": {
+    "batch_id": 638206994,
+    "path": "traces/l4-n40-zipf-s71.tsv",
+    "sha256": "6635d0ae4050929a5c3a968704c03b62204952619c67230ecfd764ff0b599d2d"
+  },
+  "l4-n512-uniform-s101.tsv": {
+    "batch_id": 1614484904,
+    "path": "traces/l4-n512-uniform-s101.tsv",
+    "sha256": "bed17aa3d53bb4a514a510cfdf8aeb8c7fd9bda344df4c03de54b9e02ed03840"
+  },
+  "l4-n512-uniform-s11.tsv": {
+    "batch_id": 1614484904,
+    "path": "traces/l4-n512-uniform-s11.tsv",
+    "sha256": "6c0d8a1f85b92e3812d2e081efb0e950c176e3ad63f980f3041668a7eaf35e29"
+  },
+  "l4-n512-uniform-s29.tsv": {
+    "batch_id": 1614484904,
+    "path": "traces/l4-n512-uniform-s29.tsv",
+    "sha256": "387bf0c9d8be6d189bf333f40b485f7070677073cc51f422e1f834636d59690d"
+  },
+  "l4-n512-uniform-s47.tsv": {
+    "batch_id": 1614484904,
+    "path": "traces/l4-n512-uniform-s47.tsv",
+    "sha256": "e1c0e6a28636a353ef4374f13819da47fe5936770deb4daf3f68705abd3b21c8"
+  },
+  "l4-n512-uniform-s71.tsv": {
+    "batch_id": 1614484904,
+    "path": "traces/l4-n512-uniform-s71.tsv",
+    "sha256": "bd2d76b6341cf161af330ac2e07642535212d303af9a20cf4ecdddb72af460f5"
+  },
+  "l4-n512-zipf-s101.tsv": {
+    "batch_id": 94491002,
+    "path": "traces/l4-n512-zipf-s101.tsv",
+    "sha256": "73ebf64893379ce6a6725409ab8c4abc768f1c19d833fa4679e7b32058c08507"
+  },
+  "l4-n512-zipf-s11.tsv": {
+    "batch_id": 94491002,
+    "path": "traces/l4-n512-zipf-s11.tsv",
+    "sha256": "4b0931a5cadbcae87ba580fe8bf6bd79b96ac7b35c34560ae441ede080d25191"
+  },
+  "l4-n512-zipf-s29.tsv": {
+    "batch_id": 94491002,
+    "path": "traces/l4-n512-zipf-s29.tsv",
+    "sha256": "b841f7e8b9dd292d250b2b9e568633242e8132c14250d32c96e071fa5c06cc50"
+  },
+  "l4-n512-zipf-s47.tsv": {
+    "batch_id": 94491002,
+    "path": "traces/l4-n512-zipf-s47.tsv",
+    "sha256": "babed79df1df64f52cf6b62019112856f7e6cf71111dbf0d7884332f669fc4d3"
+  },
+  "l4-n512-zipf-s71.tsv": {
+    "batch_id": 94491002,
+    "path": "traces/l4-n512-zipf-s71.tsv",
+    "sha256": "649003934e54eab8b49f094dc4b39d1d69343d62bc81a39abdddbb903367277d"
+  }
+}

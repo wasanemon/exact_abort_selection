@@ -1,0 +1,861 @@
+=== PDF PAGE 1 ===
+Fully Dynamic Set Cover via Hypergraph Maximal
+Matching: An Optimal Approximation Through a
+Local Approach
+Sepehr Assadi ✉
+Rutgers University, New Brunswick, NJ, USA
+Shay Solomon ✉
+Tel Aviv University, Israel
+Abstract
+In the (fully) dynamic set cover problem, we have a collection ofm sets from a universe of sizen
+that undergo element insertions and deletions; the goal is to maintain an approximate set cover
+of the universe after each update. We give anO(f 2) update time algorithm for this problem that
+achieves anf-approximation, wheref is the maximum number of sets that an element belongs
+to; under the unique games conjecture, this approximation is best possible for any fixedf. This
+is the first algorithm for dynamic set cover with approximation ratio thatexactly matchesf (as
+opposed to almost f in prior work), as well as the first one with runtimeindependent of n,m (for
+any approximation factor ofo(f 3)).
+Prior to our work, the state-of-the-art algorithms for this problem wereO(f 2) update time
+algorithms of Gupta et al.[STOC’17] and Bhattacharya et al.[IPCO’17] withO(f 3) approximation,
+and the recent algorithm of Bhattacharya et al. [FOCS’19] withO(f· logn/ε2) update time and
+(1 +ε)·f approximation, improving theO(f 2· logn/ε5) bound of Abboud et al. [STOC’19].
+The key technical ingredient of our work is an algorithm for maintaining amaximal matching in
+a dynamic hypergraph of rankr – where each hyperedge has at mostr vertices – that undergoes
+hyperedge insertions and deletions inO(r2) amortized update time; our algorithm is randomized,
+and the bound on the update time holds in expectation and with high probability. This result
+generalizes the maximal matching algorithm of Solomon [FOCS’16] with constant update time in
+ordinary graphs to hypergraphs, and is of independent merit; the previous state-of-the-art algorithms
+for set cover do not translate to (integral) matchings for hypergraphs, let alone a maximal one. Our
+quantitative result for the set cover problem is translated directly from this qualitative result for
+maximal matching using standard reductions.
+An important advantage of our approach over the previous ones for approximation(1 +ε)·f
+(by Abboud et al. [STOC’19] and Bhattacharya et al. [FOCS’19]) is that it is inherentlylocaland
+can thus be distributed efficiently to achieve low amortized round and message complexities.
+2012 ACM Subject ClassificationTheory of computation→ Dynamic graph algorithms; Theory
+of computation→ Graph algorithms analysis; Mathematics of computing→ Graph algorithms;
+Mathematics of computing→ Approximation algorithms
+Keywords and phrasesdynamic graph algorithms, hypergraph, maximal matching, matching, set
+cover
+Digital Object Identifier10.4230/LIPIcs.ESA.2021.8
+Related Version Full Version: https://arxiv.org/pdf/2105.06889.pdf
+Funding Sepehr Assadi: Research supported in part by a NSF CAREER Grant CCF-2047061, and
+a gift from Google Research.
+Shay Solomon: Partially supported by the Israel Science Foundation grant No.1991/19.
+© Sepehr Assadi and Shay Solomon;
+licensed under Creative Commons License CC-BY 4.0
+29th Annual European Symposium on Algorithms (ESA 2021).
+Editors: Petra Mutzel, Rasmus Pagh, and Grzegorz Herman; Article No.8; pp.8:1–8:18
+Leibniz International Proceedings in Informatics
+Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+=== PDF PAGE 2 ===
+8:2 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+1 Introduction
+In the set cover problem, we are given a familyS = (S1,...,S m) of m sets on a universe
+[n]. The goal is to find a minimum-size subfamily of setsF⊆S such thatF covers all the
+elements of [n]. Throughout the paper, we usef to denote the maximum frequency of any
+elementi∈ [n] inside the sets inS (by frequency of elementi, we mean the number of sets
+inS that containi).
+The set cover problem is one of the most fundamental and well-studied NP-hard
+problems, with two classic approximation algorithms, both with runtimeO(fn): greedy
+lnn-approximation and primal-dualf-approximation. One cannot achieve approximation
+(1−ε) lnn unless P = NP [26, 17] or approximationf−ε for any fixedf under the unique
+games conjecture [20].
+In recent years there is a growing body of work on this problem in the dynamic setting,
+where one would like to efficiently maintain a set cover for a universe that is subject to
+element insertions and deletions. The holy grail is to coincide with the bounds of the static
+setting: approximation factor of eitherlnn or f with (amortized) update timeO(f) (as a
+static runtime ofΘ(fn) means that we spendΘ(f) time per each element of the universe
+on average). Indeed, in any dynamic model where element updates are explicit, update
+time Ω(f) is inevitable. Even in stronger models where updates are supported implicitly in
+constant time, recent SETH-based conditional lower bounds imply that update timeO(f 1−ε)
+requires polynomial approximation factor [1].
+The dynamic set cover problem was first studied by Gupta et al. [18] who gave an
+O(logn)-approximation with update timeO(f logn) based on a greedy algorithm. The rest
+of the known algorithms are primal-dual-based and their approximation factor depends only
+on f. The state-of-the-art algorithms are: (1) AnO(f 3)-approximation withO(f 2) update
+time, by Gupta et al.[18] and independently by Bhattacharya et al.[9], and (2) A (1 +ε)·f-
+approximation with update timeO(f· logn/ε2) by Bhattacharya et al.[11], improving the
+O(f 2· logn/ε5) bound of Abboud et al.[1] as well as an earlier result by Bhattacharya et
+al.[10]. Interestingly, the state-of-the-art algorithms for this problem are alldeterministic
+(the algorithm of [1] is randomized however).
+Our Result
+In this work we demonstrate the power of randomization for the dynamic set cover problem
+by achieving the best possible approximation off with runtime independent of bothm,n:
+▶Theorem (Informal). There is an algorithm for the dynamic set cover problem that achieves
+an exact f-approximation inO(f 2) expected (and with high probability) amortized update
+time.
+This gives the first algorithm for dynamic set cover with approximation ratio thatexactly
+matches f (as opposed toalmost f in prior work), as well as the first one with runtime
+independent of n,m (for any approximation factor ofo(f 3)). The bound O(f 2) on the
+update time of our algorithm holds with high probability and in expectation. As in [1] and
+in the great majority of randomized dynamic graph algorithms, we assume an oblivious
+adversary. We shall remark that even for the much simpler problem of dynamic vertex cover
+(corresponding tof = 2 case), no algorithm is known against an adaptive adversary that
+achieves an exact2-approximation in time independent of other input parameters (although
+(2 +ε)-approximation algorithms have been known for some time now [13, 9, 6, 8]).
+=== PDF PAGE 3 ===
+S. Assadi and S. Solomon 8:3
+Maximal Hypergraph Matching
+The key technical ingredient of our work is an algorithm for maintaining amaximal matching
+in a dynamic hypergraph of rankr – where each hyperedge has at mostr vertices – that
+undergoes hyperedge insertions and deletions inO(r2) amortized update time. This result
+generalizes the maximal matching algorithm of Solomon [25] with constant update time
+for ordinary graphs, and is of independent merit; the previous state-of-the-art algorithms
+for set cover do not translate to (integral) matchings for hypergraphs, let alone a maximal
+one (however the algorithm of [1] translates to an integral (non-maximal) matching). The
+result for set cover follows immediately from this: taking all the matched vertices in a
+maximal hypergraph matching of rankf yields anf-approximate hypergraph vertex cover, or
+equivalently, anf-approximate set cover; (see Section 2 for details of this standard reduction).
+We stress that there is an inherent difference between a maximal matching (yielding exactly
+f-approximation) and an almost-maximal matching (yielding(1 +ε)·f-approximation),
+wherein anε-fraction of the potentially matched vertices may be unmatched; this is true in
+general but particularly important in the dynamic setting. Despite extensive work on dynamic
+algorithms for matching and vertex cover in ordinary graphs (f = 2), the state-of-the-art
+deterministic algorithm (or even randomized against adaptive adversary) for 2-approximate
+matching and vertex cover (via a maximal matching) has update timeO(
+√
+|E|) [21], while
+(2+ε)-approximate matching and vertex cover can be maintained deterministically in poly-log
+update time [6, 7]; for approximate vertex cover andfractional matching, the update time
+can be further reduced toO(1/ε2) [13]. Therefore, it is only natural that our algorithm,
+which achieves an integral maximal hypergraph matching, is randomized and assumes an
+oblivious adversary.
+Distributed networks
+There is a growing body of work on distributed networks that change dynamically (cf.
+[22, 24, 15, 3, 19, 14, 2]). A distributed network can be modeled as an undirected (hy-
+per)graph G(V,E ), where each vertexv ∈ V is identified with a unique processor and
+the edge setE corresponds to direct communication links between the processors. In a
+static distributed setting all processors wake up simultaneously, and computation proceeds
+in fault-free synchronous rounds during which every processor exchanges messages of size
+O(logn) with its neighbors. We consider the standardCONGEST model (cf. [23]), which
+captures the essence of spatial locality and congestion. For hypergraphs, the messages should
+be of sizeO(logm), wherem is the number of edges in the graph.
+We focus on the standard setting in dynamic graph algorithms – dynamically changing
+networks that undergo edge updates (both insertions and deletions, a single edge update
+per step), which initially contain no edges. But in adistributed network we are subject
+to the followinglocal constraint: After each edge update, only the affected vertices – the
+endpoints of the updated edge – are woken up; this is referred to in previous work as the
+(CONGEST ) local wakeup model. Those affected vertices initiate an update procedure, which
+also involves waking up the vertices in the network (beyond the affected ones) that are
+required to participate in the update procedure, to adjust all outputs to agree on a valid
+global solution – in our case a maximal hypergraph matching; the output of each vertex is
+the set of its incident edges that belong to the matching. We make a standard assumption
+that the edge updates occur in large enough time gaps, and hence the network is always
+“stable” before the next change occurs (see, e.g., [22, 15, 3]). In this setting, the goal is to
+optimize (1) the number of communication rounds, and (2) the number of messages, needed
+for repairing the solution per edge update, over a worst-case sequence of edge updates.
+ESA 2021
+=== PDF PAGE 4 ===
+8:4 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+Our dynamic maximal hypergraph matching algorithm can be naturally adapted to
+distributed networks. Note that following an edge update, O(1) communication rounds
+trivially suffice for updating a maximal hypergraph matching. However, the number of
+messages sent per update via this naive algorithm may be a factor ofr2 greater than the
+maximum degree in the hypergraph, which could beΩ(
+(n
+r−1
+)
+), wheren is the number of
+vertices and r is the rank. An important objective is to design a dynamic distributed
+algorithm that achieves, in addition to low round complexity, a lowmessage complexity. The
+inclusion-maximality of our maintained matching enforces our algorithm to work persistently
+so there is never any “slack”; that is, the algorithm makes sure that every edge that can be
+added to the matching is added to it, which stands in contrast to “lazy” approximate-maximal
+matching (or approximate set cover) algorithms, which may wait to accumulate anε-factor
+additive slack in size or weight, and only then run an update procedure. However, such
+a lazy update procedure is inherently non-local, where, following an edge updatee, the
+required changes to the maintained graph structure may involve edges and vertices that
+are arbitrarily far frome; indeed, this is the case with the previous algorithms that achieve
+approximation factor close tof [11, 1]; moreover, the “lazy” feature of these algorithms must
+rely on a centralized agent that orchestrates the update algorithm with the use of global
+data structures, and this is, in fact, the key behind the efficiency of these algorithms [11, 1].
+Our algorithm, on the other hand, does not employ any global update procedure or global
+data structures, and as such it is inherentlylocaland can be easily distributed, so that the
+average number of messages sent per update isO(r2), matching the sequential update time.
+The number of rounds is clearly upper bounded by the number of messages. Refer to Section
+9 in the full version [4] for more details.
+Recent related work
+Independently and concurrently to our work, Bhattacharya, Henzinger, Nanongkai, and Wu
+[arXiv’20, SODA’21] obtained an algorithm for dynamic set cover withO(f 2/ε3) amortized
+update time andO(f· log2n/ε3) worst case update time and(1 +ε)·f approximation.
+While closely related, their results and ours are incomparable. Our algorithm can achieve a
+better approximation ratio ofexactly f as opposed to(1 +ε)f (which is the first dynamic
+algorithm with this guarantee) but is randomized, while their result is deterministic and can
+work for weighted set cover (with extralogC-dependence on the update time whereC is
+the maximum weight of any set). Also, as mentioned, our algorithm is inherently local and
+can be distributed efficiently, whereas the algorithm of Bhattacharya et al., as the previous
+aforementioned algorithms, is non-local. In terms of techniques, the two works are disjoint.
+1.1 Technical overview
+At a high level, all the previous state-of-the-art algorithms [18, 9, 11] (as well as the
+independent work of [12]) follow a deterministic primal-dual approach by maintaining a
+fractional packing solution as a dual certificate. The main advantage of this approach over
+ours, of course, is in being deterministic, and its drawbacks are that (1) the approximation
+factor is almostf rather than exactlyf, (2) it does not give rise to anintegral matching in
+the context of hypergraphs, and (3) it is non-local.
+Our algorithm generalizes and strengthens the maximal matching algorithm by Solomon
+[25], which, in turn, builds on and refines the pioneering approach of Baswana et al.[5]. For
+conciseness, we shall sometimes refer only to [25] in the following (to avoid explaining the
+differences between [25] and [5]); of course, by that we do not mean to take any credit of [5],
+on which [25] relies.
+=== PDF PAGE 5 ===
+S. Assadi and S. Solomon 8:5
+Maximal matching algorithm of [5, 25]. Consider a deletion of a matched edge(u,v )
+from the graph (forr = 2), which is the only nontrivial update. Focusing onu, ifu has
+an unmatched neighbor, we need to matchu. To avoid a naive scan of the neighbors of
+u (requiring O(n) time), the key idea is to matchu with a randomly sampled (possibly
+matched) neighborw. Under the oblivious adversarial model, the expected number of edges
+incident onu deleted from the graph before the deletion of edge(u,w ) is roughly half the
+“sample space” size ofu, i.e., the number of neighbors ofu from which we sampledw, which
+can be viewed as “time token” (or potential value) that is expected to arrive in the future.
+To benefit from these tokens, [5, 25] introduces aleveling scheme where the levels of
+vertices are exponentially smaller estimates of these potential values: Unmatched vertices
+have level−1 and matched vertices are assigned the levels of their matched edge, which is
+roughly the logarithm of the sample space size. This defines a dynamic hierarchical partition
+of vertices intoO(logn) levels.
+A key ingredient in the algorithm of [5, 25] is thesampling rule: A random matew is
+chosen for a vertexu among its neighbors of strictly lower level. Intuitively, ifw’s level is
+lower thanu’s, thenw’s potential value is much smaller thanu’s, and the newly created
+matched edge (u,w ) provides enough potential value to cover the cost of deleting the old
+matched edge onw (if any).
+Difficulties of going from ordinary graphs to hypergraphs.The main difficulty of extending
+the prior work in [5, 25] to hypergraphs of rankr >2 has to do with the “vertex-centric”
+approach taken by these works [5, 25]. For instance, even at the definition level, it is already
+unclear how to generalize the sampling rule of the algorithm for hypergraphs, even forr = 3,
+since the hyperedges incident onu may consist of endpoints of various levels, some smaller
+than that ofu, some higher. Ideally we would want to sample the matched hyperedge among
+those whereall endpoints have lower level than that ofu, but it is a-priori unclear how to
+maintain this hyperedge set efficiently. In particular, to perform the sampling rule efficiently,
+the strategy of [25] is to dynamically orient each edge towards the lower level endpoint, and
+a central obstacle is to efficiently cope with edges where both endpoints are at the same level.
+For hypergraphs, naturally, these obstacles become more intricate considering there arer
+different endpoints now.
+There are also other hurdles that need to be carefully dealt with, such as the following.
+Say a matched hyperedgee = (u1,...,u r) gets deleted from the hypergraph. Whenr = 2,
+any edge incident onu1 is different than any edge incident onu2, hence informally the
+update algorithm can handleu1 and u2 independently of each other. Whenr> 2 (even for
+r = 3), different endpoints ofe may share (many) hyperedges in common. Therefore, when
+choosing random matched hyperedges for the newly unmatched endpoints ofe, we need to
+(i) be careful not to create conflicting matched hyperedges, but at the same time (ii) keep
+the sample spaces of endpoints sufficiently large so that the potential values can cover the
+runtime of the update procedure; balancing between these two contradictory requirements is
+a key challenge in our algorithm.
+AnO(r3) update time algorithm. We manage to cope with these and other hurdles by
+instead switching to a “hyperedge-centric” view of the algorithm. Informally speaking, this
+means that instead of letting vertices derive the potential values and levels, we assign these
+values to the hyperedges and use those to define the corresponding level for remaining vertices.
+Under this new view of the algorithm, we can indeed generalize the approach of [25] to obtain
+an O(r4)-update time algorithm for rankr hypergraphs. Considering the intricacies in [25],
+already achieving thisO(r4) time bound turned out to be considerably challenging.
+ESA 2021
+=== PDF PAGE 6 ===
+8:6 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+Improving the update time toO(r3) is based on the following insight. In this hyperedge-
+centric view, a level-ℓ matched hyperedgee is sampled to the matching from a sample space
+S(e) of size roughlyαℓ, whereα = Θ(r). We refer to the hyperedges inS(e) as thecore
+hyperedgesof e. All the core hyperedges ofe are then also assigned a levelℓ. Let us focus on
+an e′ = (u1,...,u r)∈S(e). Subsequently,u1 may initiate the creation of a new matched
+hyperedge at levelℓ′ > ℓ, at which stage we randomly sample a new matched hyperedge,
+denoted bye1, among all its incident hyperedges of level lower thanℓ′, soe′∈S(e1), i.e.,
+hyperedgee′ is now a core hyperedge ofe1 as well. Perhaps lateru2 may initiate the creation
+of a new matched hyperedgee2 at levelℓ′′ >ℓ′, and then hyperedgee′ will become a core
+hyperedge ofe2, and so on and so forth. Thus any hyperedge may serve as a core hyperedge
+of up tor matched hyperedges at any point in time.
+To shave a factor ofr from the runtime, we need to make sure that each hyperedge
+serves as a core hyperedge of asingle matched hyperedge. This is achieved by “freezing” (or
+temporarily deleting) all core hyperedges of a newly created matched hyperedgee; in the
+sequel (see Section 3.2) we shall refer to these hyperedges astemporarily deleted hyperedges
+(due toe) rather than “core hyperedges”, and they will comprise the setD(e). Then, whenever
+the matched hyperedge gets deleted from the matching, we need to “unfreeze” these core
+hyperedges and update all theirignored data structures – our analysis shows that this can
+be carried out efficiently.
+Since this algorithm already requires an entirely new view of the previous approaches for
+ordinary graphs and several nontrivial ideas, we present it as a standalone result in Section 3.
+An O(r2) update time algorithm. The main step is to improve the update time from
+O(r3) to O(r2). We next provide a couple of technical highlights behind this improvement.
+In our algorithm, the potential values of level-ℓ matched hyperedges are in the range
+[αℓ,αℓ+1), forα =O(r), hence they may differ by a factor ofO(r). Consider the moment a
+level-ℓ matched hyperedgee = (u1,...,u r) gets deleted by the adversary; the leveling scheme
+allows us to assume we have anO(αℓ+2) “potential time” for handling this hyperedge. To
+get an update time ofO(r2), we need to handle each of the endpointsui∈e within time
+O(αℓ+1) time or instead “contribute” to the potential by creating a new matched hyperedge.
+If ui has more thanαℓ+1 incident hyperedges of level at mostℓ, we can sample a random
+hyperedge among them to be added to the matching, thereby creating a level-(ℓ + 1)matched
+hyperedge; we discuss some issues related to the creation of matched edges later. But ifui
+has slightly less thanαℓ+1 incident edges, this sample space size suffices only for creating a
+level-ℓ matched edge, but it is crucial that the sample space of a level-ℓ matched edge would
+consist only of edges where all endpoints have level strictly lower thanℓ. Even checking
+whether this is the case is too costly, since iterating over all endpoints of all such edges takes
+time (slightly less than)O(αℓ+2), and if we are in the same scenario for eachui this gives
+rise to a runtime ofO(αℓ+3), and thus to an amortized update time ofO(r3). Even if we
+could check this for free, if most of the edges have endpoints of levelℓ, we need to find those
+endpoints, and to pass the “ownership” of the edges to those endpoints. To cope with these
+issues, we maintain a data structure for each hyperedgee that keeps track of all its endpoints
+of highest level and inO(1) time returns an arbitrary such endpoint or reports that none
+exists. Of course, now the challenge becomes maintaining these data structures for the edges
+with O(r2) update time.
+Consider the moment that a level-ℓ matched edgee is created. At this stage, another
+crucial invariant tells us to “raise” all endpoints of edgee to levelℓ, and then to update the
+ownership set of each endpoint according to its up-to-date level. One challenging case is when
+=== PDF PAGE 7 ===
+S. Assadi and S. Solomon 8:7
+each endpointui of e now owns slightly less thanαℓ+1 new edges. This sample space size
+does not suffice for creating a level-(ℓ + 1) matched edge yet it is too costly to update each
+of the endpoints of these edges about the up-to-date level ofui; summing over all endpoints
+of e, this again gives rise to update time ofO(r3). However, if we are equipped with the
+aforementioned data structure, we can efficiently focus on the edges where all endpoints have
+level lower thanℓ, and can thus create a level-ℓ matched edge. This is not enough, however,
+since we are merely replacing one level-ℓ matched edge by another, and this process could
+repeat over and over. Our goal would be to replace one level-ℓ matched edge byat least two
+others, so as to provide enough increase in “potential” to cover for this runtime. Since the
+total number of edges incident one in this case is slightly less thanαℓ+2, the intuition is
+that we should be able to easily achieve here a fan-out of 2, and therefore a valid charging
+argument. Alas, there is one significant caveat when working with hypergraphs, which we
+already mentioned above – dependencies. It is possible that the first level-ℓ matched edge that
+we randomly sampled foru1 intersects all the edges incident one, which will result in fan-out
+1. To overcome this final obstacle, we take our hyperedge-centric view to the next level by
+employing a new sampling method different than [5, 25] altogether. In particular, in this
+case, our sample space is not necessarily restricted to hyperedges incident on a single vertex,
+but could be an arbitrary hyperedge set as a function of the deleted hyperedge; however,
+importantly, to achieve alocalsampling method, we will make sure that the entire sample
+space is incident to the endpoints of a single edge. This new sampling method (see Procedure
+insert-hyperedge in Section 5 of the full version [4]) entails a few technical complications
+primarily to ensure that we still get enough “potential” from the adversary, but it ultimately
+enables us to achieve the desired update time bound ofO(r2).
+The role of randomness in our algorithm.Our algorithm relies crucially on randomization
+and on the oblivious adversary assumption, and the probabilistic analysis employed in this
+work is highly nontrivial; in particular, the usage of randomization for reducing the update
+time bound fromO(r3) to O(r2) relies on several new insights. We note that if the entire
+update sequence is known in advance and is stored in a data structure that allows for fast
+access, which is sometimes referred to as the “(dynamic) offline setting” (cf. [16]) – then
+a straightforward variant of our algorithm worksdeterministically with O(r2) amortized
+update time. Specifically, whenever a matched edge is randomly sampled by our algorithm
+(which is always done uniformly) from a carefully chosen sample space of edges – in the
+offline setting, instead of randomly sampling the matched edge, one can choose the matched
+edge deterministically to be the one that will be deleted last among all edges in the sample
+space. It is not difficult to verify that this simple tweak translates our probabilisticO(r2)
+amortized update time bound into a deterministicO(r2) time bound, while avoiding the
+entire probabilistic analysis. The probabilistic ingredients of the analysis are omitted due to
+space constraints; they appear in Sections 7 and 8 of the full version [4].
+2 Preliminaries and Organization
+Hypergraph Notation. For a hypergraphG = (V,E ), V denotes the set of vertices andE
+denotes the set of hyperedges. We usev∈e to mean thatv is one of the vertices incident
+on hyperedgee. Rank r of a hypergraph is the maximum number of vertices incident on
+any edge, i.e.,r := max{|e|| e∈E}. A matchingM in G is a collection of vertex-disjoint
+hyperedges ofM. A matchingM is calledmaximal if no other edge ofG can be added toM
+without violating its matching constraint. A vertex coverU in G is a collection of vertices so
+that every hyperedge inE has at least one endpoint inU. We use the next standard fact.
+ESA 2021
+=== PDF PAGE 8 ===
+8:8 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+▶ Fact 1. LetG be any hypergraph with rankr. SupposeM is a maximal matching inG
+and U denotes all vertices incident onM. ThenU is anr-approximate vertex cover ofG.
+Hypergraph Formulation of Set Cover. Consider a familyS ={S1,...,S m} of sets over a
+universe [n]. We can representS by a hypergraphG onm vertices corresponding to sets ofS
+and n hyperedges corresponding to elements of[n]: Any elementi∈ [n] is now a hyperedge
+between vertices corresponding to sets inS that containi. It is easy to see that there is a
+one-to-one correspondence between set covers ofS and vertex covers ofG and that the rank
+r of G is the same as the maximum frequency parameterf in the set cover instance. With
+this transformation, by Fact 1, obtaining anf-approximation to this instance of set cover
+reduces to obtaining a maximal matching ofG. This is the direction we take in this paper
+for designing fully dynamic algorithms for set cover by designing a fully dynamic algorithm
+for hypergraph maximal matching.
+Organization. Due to space constraints, in this extended abstract we focus on theO(r3)
+update time algorithm and its analysis, where we provide only part of the analysis. The
+O(r2) update time algorithm and its analysis are inherently more involved and are entirely
+omitted. All the missing details appear in the full version [4].
+3 An O(r3)-Update Time Algorithm
+Throughout, we useM to denote the maximal matching of the underlying hypergraph
+G = (V,E ) maintained by the algorithm. We use the following parameters in our algorithm:
+α := (4·r), L :=⌈logα|N|⌉ (1)
+whereN approximates the dynamic number of edges|E| plus the fixed number of vertices|V|
+from above, so thatlogα|N| = Θ(logα(|V| +|E|)). Every Ω(N) steps we update the value of
+N, and as a result rebuild all the data structures; this adds a runtime ofO(|V|+|E|) =O(N)
+every Ω(N) update steps, hence a negligible overhead to the amortized cost of the algorithm.
+We may henceforth ignore this technical subtlety and treatN as a fixed value in what follows.
+3.1 A Leveling Scheme and Hyperedge Ownerships
+We use a leveling scheme for the input hypergraph that partitions hyperedges and vertices.
+This is done by assigning alevel ℓ(e) to each hyperedgee∈E and alevel ℓ(v) to each vertex
+v∈V.
+▶ Invariant 2. Our leveling scheme satisfies the following properties:
+1. For any hyperedgee∈ E, 0≤ ℓ(e)≤ L and for any vertexv∈ V,−1≤ ℓ(v)≤ L;
+moreover,ℓ(v) =−1 iff v is unmatched by M.
+2. For any matched hyperedgee∈M and any incident vertexv∈e, ℓ(v) =ℓ(e).
+3. For any unmatched hyperedgee /∈M, ℓ(e) = maxv∈eℓ(v).
+Our leveling scheme needs only to specifyℓ(e) for eache∈ M; the rest are fixed determ-
+inistically by Invariant 2. Moreover, this invariant ensures that the matchingM obtained
+by the algorithm is maximal as all unmatched vertices are at level−1 while the level of
+any hyperedge is at least0 and at the same time equal to the maximum level of any of its
+incident vertices. Based on the leveling scheme, we assign each hyperedgee to exactly one of
+its incident verticesv∈e with ℓ(v) =ℓ(e) to own (the ties between multiple vertices at the
+same level are broken by the algorithm). We useO(v) to denote the set of edges owned byv.
+This definition, combined with Invariant 2, implies the following invariant.
+=== PDF PAGE 9 ===
+S. Assadi and S. Solomon 8:9
+▶ Invariant 3. (i) For any vertexv∈ V, any owned hyperedgee∈O (v), and any other
+incident vertexu∈e, ℓ(u)≤ℓ(v). (ii) For any vertexv∈V, any incident hyperedgee∈v
+has ℓ(e)≥ℓ(v).
+3.2 Temporarily Deleted Hyperedges
+To obtain the desired update time ofO(r3), we would need to allow some hyperedges of the
+hypergraph to be consideredtemporarily deletedand no longer participate in any of the other
+data structures; moreover, whenever we no longer consider them deleted, we simply treat
+them as a hyperedge insertion to our hypergraph and handle them similarly (which will take
+O(r) time per each hyperedge exactly as in the previous algorithm). The role of these deleted
+hyperedges becomes apparent only in the probabilistic analysis that is omitted due to space
+constraints; see Section 7 in the full version [4] for this analysis. However, it is the goal of
+the algorithm itself (rather than the analysis) to cope efficiently with the required deletions.
+We shall note that these deletions constitute one of several differences of our algorithm with
+that of [25]. The next invariant allows us to maintain the maximality of our matching.
+▶ Invariant 4. Any temporarily deletedhyperedge is incident on somematched hyperedge.
+To maintain Invariant 4, each matched hyperedgee∈M is responsiblefor a set of deleted
+edges denoted byD(e) and stored in a linked-list data structure. This set will befinalized at
+the timee joins the matchingM and will remain unchanged throughout the algorithm untile
+is removed fromM; at that point, we simply bring back all hyperedges inD(e) to the graph
+as new hyperedge insertions. Invariant 4 is crucial for the correctness of our algorithm.
+We note that besides this data structureD(e), these deleted hyperedgesdo not appear
+in any other data structure of the algorithm and do not (necessarily) satisfy any of the
+invariants in the algorithm – they are simply treated as if they do not belong to the hypergraph.
+Invariant 4 ensures that even though we are ignoring temporarily deleted hyperedges in the
+algorithm, the resulting maximal matching on the hypergraph of undeleted hyperedges is
+still a maximal matching for the entire hypergraph. As such, throughout the rest of the
+paper, with a slight abuse of notation, whenever we talk about hyperedges ofG, we refer to
+the hyperedges that are not temporarily deleted (unless explicitly stated otherwise).
+3.3 Data Structures
+We maintain the following information for each vertexv∈V (again, to emphasize, we ignore
+the temporarily deleted hyperedges in all the following data structures):
+ℓ(v): the level ofv in the leveling scheme;
+M(v): the hyperedge inM incident onv (if v is unmatchedM(v) =⊥);
+O(v): the set of hyperedgese owned byv – we defineov :=|O(v)|;
+N (v): the set of hyperedgese incident onv;
+A(v,ℓ ) for any integerℓ≥ℓ(v): the set of hyperedgese∈N (v) that arenot owned byv
+and have levelℓ(e) =ℓ – we defineav,ℓ :=|A(v,ℓ )|.
+We also maintain the following information for each hyperedgee∈E:
+ℓ(e): the level ofe in the leveling scheme;
+O(e): the single vertexv∈e that ownse, i.e.,e∈O (v);
+M(e): a Boolean variable to indicate whether or note is matched.
+We also maintain back-and-forth pointers between these different data structures that refer
+to the same hyperedge or vertex in a straightforward way.
+ESA 2021
+=== PDF PAGE 10 ===
+8:10 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+Next, we introduce the main procedures used for updating these data structures. In these
+procedures, if there is room for confusion, we use superscript∗old to denote a parameter or
+data structure∗ before the update and∗new to denote the value of∗ after the update.
+Procedure set-owner(e,v ). Given a hyperedgee and vertex v∈ e where ℓ(v) =
+maxu∈eℓ(u), sets owner ofe to bev, i.e.,O(e) =v.
+To implementset-owner(e,v ), we first setOnew(e) =v and ℓnew(e) =ℓ(v), adde toO(v),
+and removee fromO(Oold(e)). Ifℓnew(e) =ℓold(e), there is nothing else to do. Otherwise,
+for anyw̸=v∈e, we removee fromA(w,ℓ old(e)) and instead inserte inA(w,ℓ new(e)).
+▷ Claim 5 (straightforward proof). set-owner(e,v ) takesO(r) time.
+Procedure set-level(v,ℓ ). Given a vertexv∈ V and integerℓ∈{− 1, 0,...,L },
+updates the level ofv to ℓ, i.e., setsℓ(v) =ℓ.
+The implementation ofset-level(v,ℓ ) is as follows. First, we determine the ownership of
+all hyperedgese∈O old(v) that were previously owned byv. We go over each hyperedge
+e ∈ Oold(v) one by one, find u := arg maxw∈eℓ(w) (where we use ℓnew(v) = ℓ for the
+computations here), and use the procedureset-owner(e,u ) to update the owner ofe to u.
+If ℓold(v)>ℓ , nothing is left to do as no new hyperedge needs to be owned byv now that
+level ofv has decreased (Invariant 3). Ifℓold(v)<ℓ , we should makev the new owner of all
+hyperedges e∈N (v) with level betweenℓold(v) to ℓ− 1. This is done by traversing the lists
+maintained inA(v,ℓ old(v)),··· ,A(v,ℓ− 1), and runningset-owner(e,v ) for each edgee in
+these lists.
+Remark. It will be the responsibility of the procedure callingset-level to make sure that
+the invariants (and particularly Invariant 2) continue to hold.
+▷ Claim 6. set-level(v,ℓ ) takesO
+(
+r· (oold
+v +onew
+v ) +ℓ + 1
+)
+time.
+Proof. The algorithm iterates over all hyperedges inOold(v) and use set-owner that takes
+O(r) time by Claim 5 for each one. Whenℓold(v)>ℓ , this is all that is done by the algorithm
+and the bound on runtime follows. Otherwise, the algorithm also needs to iterate over the
+listsA(v,ℓ old(v)),··· ,A(v,ℓ− 1) one by one which takesO(ℓ) time and runset-owner for
+each of them that takesO(r·onew
+v ) time in total. This gives the bound on runtime. ◁
+3.4 The Update Algorithm
+There are multiple cases to handle by the update algorithm depending on whether the
+updated hyperedge is an insertion or deletion, and whether or not it belongs to the maximal
+matchingM. But the only interesting case is when a hyperedge inM is deleted and that is
+where we start with.
+3.4.1 Case 1: a hyperedge e∈M is deleted
+There are two things we should take care of upon deletion of a hyperedgee from M;
+bringing back the temporarily deleted hyperedges inD(e) to maintain Invariant 4, and more
+importantly, updating the matchingM to ensure its maximality. All the interesting part of
+the algorithm happen in the second step, but before we get to that, let us quickly mention
+how the first part is done.
+=== PDF PAGE 11 ===
+S. Assadi and S. Solomon 8:11
+Maintaining Invariant 4
+Throughout the course of handling a single hyperedge update, we may need to delete multiple
+hyperedgese1,e 2,... fromM, starting from the originally deleted hyperedge by the adversary.
+Each of these hyperedgeei∈M that are now removed fromM is responsible for temporarily
+deleted hyperedgesD(ei).
+We will maintain a queue of all hyperedges inD(e1),D(e2),... during the course of this
+update. At thevery endof the update, once all other changes are finalized, we will insert
+the hyperedges in this queue one by one to the hypergraph as if they were inserted by the
+adversary (using the procedure of Section 3.4.3). This allows us to maintain Invariant 4.
+We note that throughout the update we may also temporarily delete some new hyperedges.
+We’ll show that in that case, all these hyperedges are also incident on some matched hyperedge
+which is responsible for them and thus Invariant 4 holds for these hyperedges as well.
+Maintaining maximality ofM
+Let us now begin the main part of the update algorithm. Supposee = (v1,...,v r) is deleted
+from M. This makes the verticesv1,...,v r temporarily free. We will handle each of these
+vertices using the procedurehandle-free which is the key ingredient of the update algorithm
+(we will simply runhandle-free(v1),..., handle-free(vr)).
+Procedure handle-free(v). Handles a given vertexv∈V which isunmatched currently
+in the algorithm (its matched hyperedge may have been deleted via an update or by
+the algorithm in this time step, orv may simply be unmatched at this point of the
+algorithm)a.
+a To simplify the exposition, we may some time callhandle-free(v) for a vertexv that is now
+matched again (while handling other vertices). In that case, this procedure simply aborts.
+The execution of Procedurehandle-free(v) depends on the number of owned hyperedges ofv,
+i.e.,ov (both procedures used within this one are described below):(i) ifov <α ℓ(v)+1, we will
+run deterministic-settle(v); and otherwise(ii) ifov≥αℓ(v)+1, we runrandom-settle(v)
+instead. We now describe each procedure.
+Procedure deterministic-settle(v). Handles a given vertexv ∈ V with ov <
+αℓ(v)+1.
+In deterministic-settle(v), we iterate over all hyperedgese∈O (v) owned byv and check
+whether all endpoints ofe are now unmatched; if so, we adde toM, and runset-level(v, 0)
+and set-owner(e,v ). Moreover, for any vertexu̸=v∈e, we further runset-level(u, 0)
+so all vertices incident one are now at level 0. If no such hyperedge is found, we run
+set-level(v,−1).
+▷ Claim 7. deterministic-settle(v) takesO(r·oold
+v ) =O(r·αℓold(v)+1) time and main-
+tains Invariants 2 and 3 for vertexv and hyperedges incident onv.
+Proof. Checking if there is any hyperedge that can be added toM takes O(r·oold
+v ) time.
+Moreover, running set-level(v, 0) or set-level(v,−1) takeO(r·oold
+v ) time by Claim 6 as
+onew
+v ≤oold
+v considering level ofv has not increased. If the algorithm finds a hyperedgee to
+add toM, we runset-level(u, 0) for u̸=v∈e as well which takesO(1) time for eachu
+by Claim 6 asℓold(u) =−1 (u was unmatched and by Invariant 2) and thusoold
+u =onew
+u = 0.
+As there are at mostr− 1 choices foru, this step takesO(r) =O(r·αℓold(v)+1) time (we are
+not being tight here). We also need to runset-owner(e,v ) in this case which takes another
+O(r) time by Claim 5. Sincedeterministic-settle(v) is only called whenoold
+v <α ℓold(v)+1,
+the desired time bound follows.
+ESA 2021
+=== PDF PAGE 12 ===
+8:12 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+As for maintaining Invariant 2, consider the hyperedgee chosen by the algorithm to be
+added toM. We set the level of all vertices incident one to be 0 and makingv the owner
+of e, hence satisfying Invariant 2. On the other hand, if we cannot find such a hyperedge
+e incident onv, we know that all hyperedges incident onv are already at level at least0
+by Invariant 2 (even after removingv) and hence settingℓnew(v) =−1 keeps Invariant 2.
+Invariant 3 also holds by maintaining Invariant 2 and the fact that we choose correct owners
+in the algorithm. ◁
+Before defining random-settle, we need the following definition. For any vertexv∈V
+and integerℓ>ℓ (v), we define:
+~ov,ℓ: the number of edgesv will ownassuming we increase its level fromℓ(v) to ℓ.
+The following claim is a straightforward corollary of procedureset-level.
+▷ Claim 8. For anyv∈V and ℓ>ℓ (v),~ov,ℓ =
+(∑ℓ−1
+ℓ′=ℓ(v)av,ℓ′
+)
++ov. In particular,~ov,ℓ can
+be obtained from~ov,ℓ−1 in O(1) time.
+We can now describerandom-settle (this is the main procedure of our update algorithm).
+Procedure random-settle(v). Handles a given vertexv∈V with ov≥αℓ(v)+1.
+In random-settle(v), we first compute the levelℓnew(v) as minimum ℓ>ℓ (v) with~ov,ℓ <
+αℓ+1 and run set-level(v,ℓ new(v)). Then, we sample a hyperedgee uniformly at random
+fromOnew(v). The next step of the algorithm now depends on this particular hyperedgee.
+Case (a): for all u∈e, ~ou,ℓnew(v) <α ℓnew(v)+1. In this case, we add the hyperedge
+e to M and run set-level(u,ℓ new(v)) for all u ∈ e to maintain Invariant 2. This
+potentially can makeM not a matching since some matched hyperedgese1,...,e k for
+k<r incident one might be inM. We will thus delete these hyperedges fromM one by
+one andrecursively run the procedure of Section 3.4.1 for each one, treating itas if this
+hyperedge was deleted by the adversary (although we donot remove the hyperedge from
+the hypergraph).
+Case (b): there exists u ∈ e, s.t. ~ou,ℓnew(v) ≥ αℓnew(v)+1. We run
+deterministic-settle(v) to handlev and “switch” the focus tou instead. We then call
+set-level(u,ℓ new(v)). Ifu is matched inM, say by hyperedgeeu, we removeeu from
+M, and thenrecursively run the procedure of Section 3.4.1 for hyperedgeeu – we only
+note that when processingeu, we start by runninghandle-free(u) first before all other
+vertices incident oneu; this is only done for making the analysis more clear and is not
+needed. Ifu is not matched inM, we will simply runhandle-free(u).
+▷ Claim 9. The first step of random-settle(v) before either case (changing level ofv
+and picking hyperedgee) takesO(r·αℓnew(v)+1) time. Additionally, case (a) takes O(r2·
+αℓnew(v)+1) time and case (b) takes O(r·onew
+u ) time ignoring the recursive calls. Finally,
+random-settle(v) maintains Invariants 2 and 3.
+Proof. Finding ℓnew(v) takes O(ℓnew(v)) time by Claim 8 andset-level(v,ℓ new(v)) takes
+O(r·onew
+v +ℓnew(v)) =O(r·αℓnew(v)+1) time by Claim 6 as level ofv is increased (and so is
+number of its owned edges) and sinceonew
+v <α ℓnew(v)+1 by design. This proves the first part.
+The second part for case(a) also follows because for anyu∈ e, set-level(u,ℓ new(v))
+takesO(r·onew
+u +ℓnew(u)) =O(r·~ou,ℓnew(v) +ℓnew(v)) by Claim 6 as level ofu is increased.
+This isO(r·αℓnew(v)+1) by the condition~ou,ℓnew(v) <α ℓnew(v)+1 in case (a). Multiplying this
+with at mostr verticesu∈e gives the desired bound.
+=== PDF PAGE 13 ===
+S. Assadi and S. Solomon 8:13
+The second part for case(b) holds because v has ov≤ αℓnew(v)+1 by the definition of
+ℓnew(v) and thusdeterministic-settle(v) takesO(r·αℓnew(v)+1) time by Claim 7. Moreover,
+running set-level(u,ℓ new(v)) takesO(r·onew
+u ) by Claim 6 which is at leastO(r·αℓnew(v)+1)
+by the lower bound on~ou,ℓnew(v) in this case.
+Finally, Invariants 2 and 3 also hold as explained in the description of the procedure.◁
+The following observation plays a key rule in the recursive analysis of our algorithm.
+▶Observation 10.In random-settle(v): (i) the hyperedgee is sampled uniformly at random
+from at leastαℓnew(v) edges. Moreover, (ii) any hyperedgee1,...,e k or eu deleted fromM
+during this procedure is at level at mostℓnew(v)− 1.
+Part (i) of the observation follows from the definition ofℓnew(v). For part (ii), note that
+any deleted edgee′ in the process is incident one with ℓold(e) = ℓold(v) < ℓnew(v). Let
+u be any vertex incident on bothe′ and e. Firstly, ℓ(u)≤ ℓold(v) as e was owned byv
+and notu, and secondlyℓ(e′) = ℓ(u) as e′ is a matched hyperedge (see Invariant 2); thus
+ℓ(e′)≤ℓ(e)<ℓ new(v) as well.
+Temporarily deleting new hyperedges
+An astute reader may have noticed that we have not yet temporarily deleted any hyperedge in
+the update algorithm. The only place that this will be done is in case(a) of random-settle.
+In this case, when we decide to inserte toM, we will temporarily delete all other hyperedges
+inOnew(v) from whiche was sampled from, and makee responsible for them by adding them
+toD(e). The deletions of these hyperedges is done by the procedure of Section 3.4.2 (as they
+do not belong toM). As the cost of each such hyperedge deletion isO(r) and their total
+number isO(αℓnew(v)+1), this does not change the asymptotic bounds of Claim 9. Finally,
+since these edges are incident one which now belongs toM, Invariant 4 will be maintained
+by this process. The following observation is now immediate.
+▶ Observation 11. Any hyperedgee∈M is responsible forO(αℓ(e)+1) hyperedges inD(e).
+3.4.2 Case 2: a hyperedge e /∈M is deleted
+We only need to removee from the corresponding data structures which can be done inO(r)
+time for the (at most)r endpoints ofe.
+3.4.3 Case 3: a hyperedge e is inserted
+We need to find v = arg maxu∈eℓ(u) and run set-owner(e,v ) which takes O(r) time.
+Moreover, if all vertices incident one are unmatched, we should additionally adde to M
+and run set-level(u, 0) for allu∈e which takesO(r) time per vertex by Claim 6.
+This concludes the description of our algorithm for update timeO(r3).
+4 Part of the Analysis of theO(r3)-Update Time Algorithm
+A key definition in analysis is the notion of anepoch borrowed from the prior work in [5, 25].
+▶ Definition 12 (Epoch). For any timet and any hyperedgee in the matchingM at timet,
+epochof e and t, denoted byepoch(e,t ), is the pair(e,{t′}) where{t′} denotes the maximal
+continuous time period containingt during whiche was always present inM (not even deleted
+temporarily during one step and inserted back at the same time step).
+ESA 2021
+=== PDF PAGE 14 ===
+8:14 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+We further definelevel of epoch(e,t ) as the levelℓ(e) of e during the time period of the epoch;
+we note that our update algorithm never changes level of a hyperedge inM without removing
+it fromM first and thus level of an epoch is well-defined.
+The update algorithm in Section 3.4 takesO(r) time deterministically for any update step
+that doesnot change the matchingM. However, an update at a time stept that changesM
+may force the algorithm a large computation time and hence we use amortization to charge
+the cost of processing such an update at timet to the epochs that are created and removed
+at timet. In particular, for any time stept, define:
+epochscreate(t): the set of all epoch(e,t ) that are created at time t; respectively,
+epochsterm(t) is defined for epochsterminated at timet;
+Ccreate(epoch(e,t )): the computation cost at timet for creationof epoch(e,t ); respectively,
+Cterm(epoch(e,t )) is defined for the cost oftermination of epoch(e,t ).
+Then, the total cost of update at timet is:
+C(t) =O(r) +
+∑
+epoch(e,t)∈
+epochscreate(t)
+Ccreate(epoch(e,t )) +
+∑
+epoch(e,t)∈
+epochsterm(t)
+Cterm(epoch(e,t )). (2)
+▶ Lemma 13. The total computation costC(t) of an update at timet in Equation (2) can
+be charged to the epochs in the RHS so that any level-ℓ epoch is charged withO(αℓ+3) units
+of cost.
+Proof. We prove this lemma in a sequence of claims. In the following, whenever we say “some
+computation cost can be charged toCcreate(epoch(e,t )) orCterm(epoch(e,t ))” we mean that
+the cost of computation isO(αℓ+3) and there is a level-ℓ epoch epoch(e,t ) at timet that is
+either created or terminated, respectively, and that this cost is charged toCcreate(epoch(e,t ))
+or Cterm(epoch(e,t )). We emphasize that each epoch during this process is only charged a
+constant number of times. This then immediately satisfies the bounds in Lemma 13.
+▷ Claim 14. Cost of a hyperedge-insertion update e at time t can be charged to
+Ccreate(epoch(e,t )).
+Proof. As in Section 3.4.3, this update takesO(r) time and creates a level-0 epoch(e,t ). ◁
+From now on, we consider the main case of a hyperedge-deletion updatee from M
+at timet using the procedure in Section 3.4.1. In this case, we removee from M which
+results in epoch(e,t ) to be terminated (and henceepoch(e,t )∈ epochsterm(t) in RHS of
+C(t) in Equation (2)). This step is then followed by runninghandle-free(v) for allv∈
+e. Recall that handle-free(v) can be handled either by deterministic-settle(v) or
+random-settle(v) (depending on value ofov).
+▷ Claim 15. Let e be a hyperedge inM deleted at timet (either by the adversary or the
+algorithm in a recursive call). Cost ofhandle-free(v) for allv∈ e that are handled by
+deterministic-settle(v) can be charged toCterm(epoch(e,t )).
+Proof. By Claim 7, for eachv∈e that is handled bydeterministic-settle(v), the runtime
+of handle-free(v) is O(r·αℓ(e)+1). As there are at mostr such vertices, their total cost is
+O(r2·αℓ(e)+1) =O(αℓ(e)+3) by the choice ofα in Equation (1). Hence the total cost of all
+these vertices that are charged toCterm(epoch(e,t )) is O(αℓ(e)+3). ◁
+We now switch to analyzingrandom-settle(v) for a fixedv∈e. The easier part, when
+we can processrandom-settle(v) by case (a), is handled via the next claim.
+=== PDF PAGE 15 ===
+S. Assadi and S. Solomon 8:15
+▷ Claim 16. Cost of case(a) of random-settle(v) at timet ignoring the recursive callscan
+be charged toCcreate(epoch(ev,t )), whereev is the hyperedge inserted toM in this case.
+Proof. In case(a) of random-settle(v), we create a new edgeev inM at levelℓ(ev) =ℓnew(v).
+By Claim 9, ignoring the recursive calls, this case takesO(r2·αℓ(ev)+1) =O(αℓ(ev)+3) time.
+We can thus charge the cost ofrandom-settle(v) to Ccreate(epoch(ev,t )). ◁
+We now analyze case(b) of random-settle(v). In this case, instead of handlingv, we in
+fact recursively handle the vertexu (with~ou,ℓnew(v)≥αℓnew(v)+1) using handle-free(u) and
+only after that will come back to take care ofv if needed. Moreover, since we first set level
+of u to ℓnew(v), we will haveonew
+u ≥αℓnew(u)+1. This means handle-free(u) will be handled
+using random-settle(u) recursively. It is again possible thatrandom-settle(u) hits case
+(b) and so on and so forth. However, note that when going fromv to u, we obtain that
+ℓnew(v)<ℓ new(u) by Observation 10 (hereℓnew(u) refers toℓ(u) =ℓnew(v) at the beginning
+of random-settle(u)) and hence whenever case(b) happens, the vertex we move on to will
+have a strictly larger level. As such, this chain of recursive calls torandom-settle will
+terminate eventually in some case(a) of random-settle.
+We’ll denote the vertices in the chain of calls torandom-settle in case (b) for v by
+(v =)w0,w 1,w 2,...,w k for somek≤L (number of levels); in particular,w1 is the vertexu
+in case (b) of random-settle(v), w2 is the vertexu in case (b) of random-settle(w1), etc.
+The computation cost of random-settle(v) in case (b) then involves two parts: (i)
+pre-processing before calling eachrandom-settle(wi) (which is bounded in Claim 9),(ii)
+calling random-settle(wi) itself, and (iii) removing hyperedgesewi from M (for each one
+that exist) and recursively handling them using the procedure of Section 3.4.1.
+Among these costs, the cost of handlingewi for i∈ [k] is handled separately by recursion
+(charged either to the termination ofepoch(ewi,t ) or creation of new epochs). We thus need
+to handle the costs in parts(i) and (ii) in the following claim, whose proof is omitted.
+▷ Claim 17. Cost of case (b) of random-settle(v) at time t with chain of ver-
+tices w0,w 1,...,w k ignoring the recursive calls(i.e., part (iii) of costs above) can be
+charged toCcreate(epoch(e∗,t )), where e∗ is the hyperedge inserted toM in case (a) of
+random-settle(wk). (Note that by definition,random-settle(wk) finishes in case(a).)
+Finally, we also have to handle the cost associated with maintaining Invariant 4, namely,
+“bringing back” temporarily deleted hyperedges at the very end of the update step (the cost
+of temporarily deleting new hyperedges is accounted for in Claim 9 already).
+▷ Claim 18. Cost of inserting back the temporarily deleted hyperedges inD(e) for any
+hyperedge e∈M can be charged toCterm(epoch(e,t )).
+Proof. Any hyperedgee∈M is responsible forO(αℓ(e)+1) hyperedges inD(e) by Observa-
+tion 11. As bringing back these hyperedges requiresO(r·αℓ(e)+1) time in total, this charge
+can be charged to the termination ofepoch(e,t ). ◁
+We thus showed that any cost inC(t) can be charged by a factor ofO(αℓ+3) to some
+level-ℓ epoch in RHS of Equation (2) without charging any epoch more than a constant
+number of times, thus finalizing the proof of Lemma 13. ◀
+In Lemma 13, we charge at mostO(αℓ+3) to the creation and/or termination of a level-ℓ
+epoch. It can be shown that, without loss of generality, we may assume that every epoch
+created will also be terminated, hence we can re-distribute the charges to creation of each
+level-ℓ epoch to the termination of the same epoch. We now have an equivalent charging
+ESA 2021
+=== PDF PAGE 16 ===
+8:16 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+scheme in whichonly terminationof each level-ℓ epoch is charged withO(αℓ+3) computation
+time (and not the creations). Recall that an epoch is terminated when the corresponding
+hyperedge e is deleted from the maximal matchingM. There are two types of hyperedge
+deletions fromM in the algorithm: those that are the result of the adversary deleting a
+hyperedge from the graph, and those that are the result of the update algorithm to remove
+a matched hyperedge in favor of another (so the original hyperedge is still part of the
+hypergraph). Based on this, we differentiate between epochs as follows:
+Natural epoch: Ending with the adversary deleting the hyperedgee from G.
+Induced epoch: Ending with the update algorithm removing the hyperedgee from M.
+With the following lemma, we are going to re-distribute the charge assigned to all induced
+epochs between the natural epochs. This then will allow us to focus solely on natural epochs.
+▶ Lemma 19 (proof omitted). The total cost charged to all induced epochs can be charged
+to natural epochs so that any level-ℓ natural epoch is charged with the costs of at mostr− 1
+induced epochs atlower levels.
+Next, we move from natural and induced epochs to the corresponding notions inlevels:
+A levelℓ is called aninduced level (resp., natural level) if the number of induced level-ℓ
+epochs is greater than (resp., at most) the number of natural level-ℓ epochs. We will charge
+the computation costs incurred by any induced level to the computation costs at higher
+levels, so that in the end, the entire cost of the algorithm will be charged to natural levels.
+Specifically, in any induced levelℓ, we define a one-to-one mapping from the natural to the
+induced epochs. For each induced epoch, at most one natural epoch (at the same level) is
+mapped to it; any natural epoch that is mapped to an induced epoch is calledsemi-natural.
+For any induced levelℓ, all naturalℓ-level epochs are semi-natural by definition. For any
+natural level, all natural epochs terminated at that level remain as before; these epochs are
+called fully-natural. By Lemma 19, for any epoch, at mostr− 1 induced epochs at lower
+levels are charged to it. We define therecursive cost of an epoch as the sum of its actual
+cost and the recursive costs of the at mostr− 1 induced epochs charged to it as well as the
+(at most)r− 1 semi-natural epochs mapped to them; the recursive cost of a level-0 epoch is
+defined as its actual cost. We are now ready to state the following lemma (proof omitted).
+▶ Lemma 20. For anyℓ≥ 0, the recursive cost of any level-ℓ epoch is bounded byO(αℓ+3).
+The sum of recursive costs over all fully-natural epochs is equal to the sum of actual
+costs over all epochs (fully-natural, semi-natural and induced) that have beenterminated
+throughout the update sequence, which also bounds the total runtime of the algorithm.
+For the omitted proofs in the above statements, we refer the reader to Section 4 in the
+full version [4]. The final step of the analysis is to use the randomization in the algorithm
+(and obliviousness of the adversary) to prove a probabilistic upper bound on the amortized
+cost of the algorithm; this part is handled in detail in Section 7 of the full version [4].
+This allows us to conclude the following theorem.
+▶ Theorem 21. For any integerr> 1, starting from an empty rank-r hypergraph on a fixed
+set of vertices, a maximal matching can be maintained over any sequence oft hyperedge
+insertions and deletions inO(t·r3) time in expectation and with high probability.
+References
+1 Amir Abboud, Raghavendra Addanki, Fabrizio Grandoni, Debmalya Panigrahi, and Barna
+Saha. Dynamic set cover: improved algorithms and lower bounds. InProceedings of the 51st
+Annual ACM SIGACT Symposium on Theory of Computing , pages 114–125, 2019.
+=== PDF PAGE 17 ===
+S. Assadi and S. Solomon 8:17
+2 Shiri Antaki, Quanquan C. Liu, and Shay Solomon. Dynamic distributed MIS with improved
+bounds. CoRR, abs/2010.16177, 2020. arXiv:2010.16177.
+3 Sepehr Assadi, Krzysztof Onak, Baruch Schieber, and Shay Solomon. Fully dynamic maximal
+independent set with sublinear update time. InProceedings of the 50th Annual ACM SIGACT
+Symposium on Theory of Computing, STOC 2018, Los Angeles, CA, USA, June 25-29, 2018 ,
+pages 815–826, 2018.
+4 Sepehr Assadi and Shay Solomon. Fully dynamic set cover via hypergraph maximal matching:
+An optimal approximation through a local approach.arXiv preprint arXiv:2105.06889 , 2021.
+5 S. Baswana, M. Gupta, and S. Sen. Fully dynamic maximal matching inO(logn) update
+time. In Proceedings of the 52nd IEEE Annual Symposium on Foundations of Computer
+Science, FOCS 2011, Palm Springs, CA, October 23-25, 2011 , pages 383–392, 2011 (see also
+SICOMP’15 version, and subsequent erratum).
+6 S. Bhattacharya, M. Henzinger, and G. F. Italiano. Deterministic fully dynamic data structures
+for vertex cover and matching. InProceedings of the 26th Annual ACM-SIAM Symposium on
+Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015 , pages 785–804,
+2015.
+7 S. Bhattacharya, M. Henzinger, and D. Nanongkai. New deterministic approximation al-
+gorithms for fully dynamic matching. InSTOC, 2016.
+8 S. Bhattacharya, M. Henzinger, and D. Nanongkai. Fully dynamic maximum matching and
+vertex cover inO(log3n) worst case update time. InProceedings of the 28th Annual ACM-
+SIAM Symposium on Discrete Algorithms, SODA 2017, Barcelona, Spain, January 16-19,
+2017, pages 470–489, 2017.
+9 Sayan Bhattacharya, Deeparnab Chakrabarty, and Monika Henzinger. Deterministic fully
+dynamic approximate vertex cover and fractional matching in O(1) amortized update time. In
+Proceedings of the 19th International Conference on Integer Programming and Combinatorial
+Optimization, IPCO 2017, Waterloo, ON, Canada, June 26-28, 2017 , pages 86–98, 2017.
+10 Sayan Bhattacharya, Monika Henzinger, and Giuseppe F. Italiano. Deterministic fully dynamic
+data structures for vertex cover and matching. InProceedings of the Twenty-Sixth Annual
+ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, January 4-6, 2015 , pages
+785–804, 2015.
+11 Sayan Bhattacharya, Monika Henzinger, and Danupon Nanongkai. A new deterministic
+algorithm for dynamic set cover. In2019 IEEE 60th Annual Symposium on Foundations of
+Computer Science (FOCS) , pages 406–423. IEEE, 2019.
+12 Sayan Bhattacharya, Monika Henzinger, Danupon Nanongkai, and Xiaowei Wu. An improved
+algorithm for dynamic set cover.CoRR, abs/2002.11171, 2020.
+13 Sayan Bhattacharya and Janardhan Kulkarni. Deterministically maintaining a (2 + ϵ)-
+approximate minimum vertex cover ino(1/ϵ2) amortized update time. InSODA, 2019.
+14 Matthias Bonne and Keren Censor-Hillel. Distributed detection of cliques in dynamic networks.
+In Christel Baier, Ioannis Chatzigiannakis, Paola Flocchini, and Stefano Leonardi, editors,
+Proc. 46th ICALP, volume 132 ofLIPIcs, pages 132:1–132:15, 2019.
+15 Keren Censor-Hillel, Elad Haramaty, and Zohar S. Karnin. Optimal dynamic distributed MIS.
+In Proceedings of the 2016 ACM Symposium on Principles of Distributed Computing, PODC
+2016, Chicago, IL, USA, July 25-28, 2016 , pages 217–226, 2016.
+16 Moses Charikar and Shay Solomon. Fully dynamic almost-maximal matching: Breaking
+the polynomial worst-case time barrier. In Ioannis Chatzigiannakis, Christos Kaklamanis,
+Dániel Marx, and Donald Sannella, editors,Proc. 45th ICALP, volume 107 ofLIPIcs, pages
+33:1–33:14. Schloss Dagstuhl - Leibniz-Zentrum für Informatik, 2018.
+17 Irit Dinur and David Steurer. Analytical approach to parallel repetition. InProceedings of the
+forty-sixth annual ACM symposium on Theory of computing , pages 624–633, 2014.
+18 Anupam Gupta, Ravishankar Krishnaswamy, Amit Kumar, and Debmalya Panigrahi. Online
+and dynamic algorithms for set cover. InProceedings of the 49th Annual ACM SIGACT
+ESA 2021
+=== PDF PAGE 18 ===
+8:18 Fully Dynamic Set Cover via Hypergraph Maximal Matching
+Symposium on Theory of Computing, STOC 2017, Montreal, QC, Canada, June 19-23, 2017 ,
+pages 537–550, 2017.
+19 Haim Kaplan and Shay Solomon. Dynamic representations of sparse distributed networks: A
+locality-sensitive approach. In Christian Scheideler and Jeremy T. Fineman, editors,Proc. of
+30th SPAA 2018 , pages 33–42, 2018.
+20 Subhash Khot and Oded Regev. Vertex cover might be hard to approximate to within 2-epsilon.
+J. Comput. Syst. Sci. , 74(3):335–349, 2008.
+21 Ofer Neiman and Shay Solomon. Simple deterministic algorithms for fully dynamic maximal
+matching. In Proceedings of the 45th Annual ACM SIGACT Symposium on Theory of
+Computing, STOC 2013, Palo Alto, CA, USA, June 1-4, 2013 , pages 745–754, 2013.
+22 Merav Parter, David Peleg, and Shay Solomon. Local-on-average distributed tasks. In
+Proceedings of the 27th Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2016,
+Arlington, V A, USA, January 10-12, 2016 , pages 220–239, 2016.
+23 D. Peleg. Distributed Computing: A Locality-Sensitive Approach . SIAM, 2000.
+24 D. Peleg and S. Solomon. Dynamic (1 + ϵ)-approximate matchings: A density-sensitive
+approach. In Proceedings of the 27th Annual ACM-SIAM Symposium on Discrete Algorithms,
+SODA 2016, Arlington, V A, USA, January 10-12, 2016 , 2016.
+25 S. Solomon. Fully dynamic maximal matching in constant update time. InProceedings of
+the 57th IEEE Annual Symposium on Foundations of Computer Science, FOCS 2016, New
+Brunswick, NJ, USA, October 9-11, 2016 , pages 325–334, 2016.
+26 David P Williamson and David B Shmoys.The design of approximation algorithms . Cambridge
+university press, 2011.

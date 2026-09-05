@@ -1,0 +1,164 @@
+{
+  "affinity_available": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95
+  ],
+  "affinity_used": [
+    0
+  ],
+  "argv": [
+    "/tmp/issue4-clean-measure/experiments/target_selection/run.py",
+    "--binary",
+    "/tmp/issue4-clean-release/validator",
+    "--output",
+    "/home/wasanemon/project/exact_abort_selection/experiments/target_selection/results/smoke",
+    "--smoke"
+  ],
+  "binary_sha256": "468d24227a6f77d1a9e273ce847e01c4beea302c2424b5403332d0976088bd7d",
+  "captured_utc": "2026-09-05T09:28:36.125584+00:00",
+  "commands": {
+    "compiler": {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "output": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "returncode": 0
+    },
+    "cpu": {
+      "command": [
+        "lscpu"
+      ],
+      "output": "\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3:                          x86_64\nCPU \u64cd\u4f5c\u30e2\u30fc\u30c9:                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 57 bits virtual\n\u30d0\u30a4\u30c8\u9806\u5e8f:                              Little Endian\nCPU:                                     96\n\u30aa\u30f3\u30e9\u30a4\u30f3\u306b\u306a\u3063\u3066\u3044\u308b CPU \u306e\u30ea\u30b9\u30c8:     0-95\n\u30d9\u30f3\u30c0\u30fc ID:                             GenuineIntel\n\u30e2\u30c7\u30eb\u540d:                                Intel(R) Xeon(R) Gold 5418N\nCPU \u30d5\u30a1\u30df\u30ea\u30fc:                          6\n\u30e2\u30c7\u30eb:                                  143\n\u30b3\u30a2\u3042\u305f\u308a\u306e\u30b9\u30ec\u30c3\u30c9\u6570:                  2\n\u30bd\u30b1\u30c3\u30c8\u3042\u305f\u308a\u306e\u30b3\u30a2\u6570:                  24\n\u30bd\u30b1\u30c3\u30c8\u6570:                              2\n\u30b9\u30c6\u30c3\u30d4\u30f3\u30b0:                            8\nBogoMIPS:                                3600.00\n\u30d5\u30e9\u30b0:                                  fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 invpcid_single cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities ibpb_exit_to_user\n\u4eee\u60f3\u5316:                                  VT-x\nL1d \u30ad\u30e3\u30c3\u30b7\u30e5:                          2.3 MiB (48 instances)\nL1i \u30ad\u30e3\u30c3\u30b7\u30e5:                          1.5 MiB (48 instances)\nL2 \u30ad\u30e3\u30c3\u30b7\u30e5:                           96 MiB (48 instances)\nL3 \u30ad\u30e3\u30c3\u30b7\u30e5:                           90 MiB (2 instances)\nNUMA \u30ce\u30fc\u30c9\u6570:                           2\nNUMA \u30ce\u30fc\u30c9 0 CPU:                       0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94\nNUMA \u30ce\u30fc\u30c9 1 CPU:                       1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+      "returncode": 0
+    },
+    "git_head": {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "output": "4997e9193a38b1ce04b1766e00cc56bd4f7c29e9\n",
+      "returncode": 0
+    },
+    "git_status": {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "output": "",
+      "returncode": 0
+    },
+    "ram": {
+      "command": [
+        "cat",
+        "/proc/meminfo"
+      ],
+      "output": "MemTotal:       259012560 kB\nMemFree:        149426092 kB\nMemAvailable:   242353008 kB\nBuffers:         3383372 kB\nCached:         85818764 kB\nSwapCached:        23796 kB\nActive:         20610756 kB\nInactive:       80928892 kB\nActive(anon):      34544 kB\nInactive(anon): 12314432 kB\nActive(file):   20576212 kB\nInactive(file): 68614460 kB\nUnevictable:       33624 kB\nMlocked:           27996 kB\nSwapTotal:       4194300 kB\nSwapFree:        4054728 kB\nDirty:              1356 kB\nWriteback:             0 kB\nAnonPages:      12349960 kB\nMapped:          1450464 kB\nShmem:             19548 kB\nKReclaimable:    5564880 kB\nSlab:            6680912 kB\nSReclaimable:    5564880 kB\nSUnreclaim:      1116032 kB\nKernelStack:       67232 kB\nPageTables:        75476 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    133700580 kB\nCommitted_AS:   25923496 kB\nVmallocTotal:   13743895347199 kB\nVmallocUsed:      414928 kB\nVmallocChunk:          0 kB\nPercpu:           293760 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:    292864 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:     3639256 kB\nDirectMap2M:    85909504 kB\nDirectMap1G:    180355072 kB\n",
+      "returncode": 0
+    }
+  },
+  "platform": "Linux-5.15.0-186-generic-x86_64-with-glibc2.35",
+  "python": "3.10.12 (main, Jun 22 2026, 18:55:27) [GCC 11.4.0]",
+  "source_sha256": {
+    "eas/Oracle.cpp": "cfdfee7a971d2e93bc74eab4b8f4a66cacdbc8667b6e8014cfb0a837568acee1",
+    "eas/Selector.cpp": "f209e63b53388978bd0a99481532036255f2adeeb7195c5311b851c82fe9c9af",
+    "eas/Selector.h": "6635c8c6b1bf5d8daca7426b76a09bc164626cd38f70d190854f7c838bd646fe",
+    "experiments/target_selection/validator.cpp": "f3e180ad0792a53ac0b208b033569fe7cf1331b3810b5c0f5427469ca2c59efa"
+  }
+}

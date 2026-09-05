@@ -1,0 +1,2153 @@
+
+
+
+Lantern: Finding Committable Transactions via Back-Propagation on DAGs
+
+
+
+ 
+
+
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+    // Pre-apply spinout-banner dismissal here, before the banner paints, so it
+    // never flashes in only to be hidden later by the deferred arxiv-header.js.
+    // Key matches arxiv-header.js: "arxiv-banner-dismissed:" + data-banner-name.
+    if (localStorage.getItem('arxiv-banner-dismissed:spinout-nonprofit')) {
+      document.documentElement.setAttribute("data-banner-dismissed", "");
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+
+
+
+
+
+
+
+  /* Banner pre-dismissal (set above before paint -> no flash-then-hide) and
+     reading-mode chrome hiding. */
+  html[data-banner-dismissed] .ds-announcement { display: none; }
+  html[data-reading-mode="enabled"] .ds-announcement,
+  html[data-reading-mode="enabled"] .ds-site-footer { display: none; }
+  /* Keep the announcement text dark on the Open-Blue band in both colour themes
+     (otherwise it inherits the paper's warm-wash text in dark mode and washes out). */
+  .ds-announcement-text { color: var(--arxiv-ink, #1c1a17); }
+
+
+
+
+
+  
+    
+      
+Report GitHub Issue
+      ×
+    
+
+    
+      Title:
+      
+
+      
+Content selection saved. Describe the issue below:
+
+      Description:
+      
+    
+
+    
+      Submit without GitHub
+      Submit in GitHub
+    
+  
+
+    
+    arXiv is now an independent nonprofit!
+    Learn more
+    ×
+  
+
+
+  
+    
+      Back to arXiv
+    
+  
+  
+  
+    Why HTML?
+    
+      
+        
+      
+      Report Issue
+    
+    
+      
+        
+        
+      
+      Back to Abstract
+    
+    
+    
+      
+        
+      
+      Download PDF
+    
+    
+      
+        
+        
+      
+    
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+          
+          
+        
+      
+      
+        
+          
+          
+        
+      
+      
+        
+          
+          
+        
+      
+    
+  
+
+
+
+
+Abstract
+
+I Introduction
+
+II Background
+
+
+II-A Deterministic Concurrency Control
+
+II-B Directed Graph
+
+
+III Lantern Design
+
+
+III-A Design Overview
+
+III-B Transaction Selection and Parallel Execution
+
+
+III-B1 Selection Phase
+
+III-B2 Execution Phase
+
+
+III-C DAG Construction
+
+III-D Transaction Commitment
+
+III-E Back-Propagation Mechanism
+
+III-F Liveness of Back-Propagation
+
+III-G Conflict‑Free Batch Selection Mechanism
+
+III-H Proof of Serializability
+
+
+IV Evaluation
+
+
+IV-A Experimental Setup
+
+IV-B Correctness Validation
+
+IV-C Overall Performance
+
+IV-D Scalability
+
+IV-E Latency Breakdown
+
+IV-F Impact of Batch Size B𝑠𝑖𝑧𝑒B_{\mathit{size}}
+
+
+V Conclusion
+
+References
+
+
+
+
+  
+    License: arXiv.org perpetual non-exclusive license
+  
+  
+arXiv:2609.03315v1 [cs.DC] 03 Sep 2026
+
+
+
+Lantern: Finding Committable Transactions via Back-Propagation on DAGs
+
+Thanks: This work was funded by the Beijing Advanced Innovation Center for Future Blockchain and Privacy Computing.
+
+
+Denglong Li1,
+Gerui Wang2,
+Tian Guan1,
+Mingchao Wan2
+
+Affiliation: 1Tsinghua University,
+2Beijing Academy of Blockchain and Edge Computing
+
+Affiliation: 
+
+Affiliation: 
+li-dl24@mails.tsinghua.edu.cn, wanggerui@baec.org.cn, guantian@sz.tsinghua.edu.cn,
+chainmaker@baec.org.cn
+
+
+
+
+Abstract
+    
+
+Existing concurrency control protocols either introduce nondeterminism, resulting in a serial execution-replay dependency between primary and replica nodes, or rely on impractical prior knowledge of transaction read-write sets.
+In this paper, we present Lantern, a deterministic concurrency control protocol tailored for high-performance transaction processing systems operating without prior knowledge.
+The key insight of Lantern is that all zero-out-degree transaction vertices in the local dependency graph can be safely committed in ascending order using an overwrite-permissive strategy.
+We further introduce a novel Back-Propagation mechanism that iteratively propagates dependency states from sink to source vertices to identify additional committable transactions.
+We also propose Conflict-Free Batch Selection (CFBS) for read-modify-write intensive scenarios.
+We integrate Lantern into the open-source blockchain platform ChainMaker.
+Extensive evaluations on YCSB and SmallBank benchmarks demonstrate that Lantern achieves up to a 4.2x throughput speedup over Aria and improves the throughput of ChainMaker’s execution layer by at least 2.2x.
+  
+
+
+
+Index Terms: deterministic concurrency control, parallel algorithm.
+
+
+
+
+
+I Introduction
+
+
+
+As blockchain adoption continues to expand, improving transaction throughput has become a critical challenge. Recent advances in Byzantine Fault Tolerant (BFT) consensus protocols [1, 2, 3] have substantially increased consensus-layer performance.
+As a result, transaction execution is emerging as a major performance bottleneck.
+Traditional blockchain systems such as Bitcoin [4] and Ethereum [5] execute transactions sequentially, which severely limits the utilization of modern multi-core processors.
+Consequently, parallel transaction execution has become a natural approach to enhancing throughput.
+
+
+
+However, many concurrency control protocols are nondeterministic [6, 7, 8]. Although they can effectively exploit intra-node parallelism, participating nodes cannot execute transactions simultaneously and independently, as the execution outcomes may diverge across different nodes. To eliminate such inconsistencies, nondeterministic protocols typically operate under a two-stage execution architecture [9, 10, 11, 12] to ensure that all participating nodes produce identical serializable results.
+As illustrated in Fig. 1, the primary node first utilizes a nondeterministic protocol to execute transactions in parallel. Once execution completes, the primary node generates scheduling metadata that captures the exact dependencies between transactions and disseminates it to replica nodes during one of the communication rounds of the BFT protocol. Subsequently, replica nodes use this metadata to guide their replay, thereby producing the exact same serializable outcome as the primary node.
+
+
+
+Obviously, this workflow introduces a strict serial dependency between the primary node and replica nodes, which limits inter-node parallelism and reduces overall execution-layer throughput. Specifically, we identify three key properties when adopting nondeterministic protocol under the two-stage execution architecture:
+
+
+
+(i) Cumulative Latency, where the overall execution latency is cumulative, equaling the sum of the execution stage and the replay stage;
+(ii) Efficient Replay, since transaction conflicts are already resolved during the execution stage, the replay stage is completely decoupled from conflict resolution and only needs to replay transactions based on the metadata, yielding a significantly higher throughput; and
+(iii) Metadata Dependency, meaning the replay stage is strictly contingent upon the scheduling metadata generated during the execution stage and cannot function independently.
+
+
+
+ChainMaker [8] adopts a nondeterministic protocol based on optimistic concurrency control (OCC) [13], relying on the aforementioned two-stage execution architecture to guarantee state consistency across nodes.
+As China’s most prominent consortium blockchain platform—securing the top domestic market share for three consecutive years since its launch in 2021 [14]—ChainMaker serves as a representative baseline for our study.
+
+
+
+In contrast, deterministic concurrency control protocols [15, 16, 17, 18, 19] allow all participating nodes to execute transactions simultaneously in a single execution stage while deterministically reaching identical serializable results. Such deterministic protocols are well-suited for the Order-Execute (OE) architecture [20, 21, 22]. As illustrated in Fig. 2, in the order stage, all nodes leverage a BFT protocol to establish a globally ordered transaction sequence. In the subsequent execution stage, all nodes take this identical transaction sequence as input and employ a deterministic protocol to output an identical serializable outcome. Compared with the two-stage execution architecture, the OE architecture eliminates the strict serial dependency between the primary node and replica nodes, thereby completely avoiding the issue of Cumulative Latency.
+
+
+
+Furthermore, deterministic protocols can be categorized into static-analysis-based protocols [15, 23, 16, 24] and runtime protocols [17, 18, 20]. The former rely on a priori knowledge of transaction read-write sets to determine a schedule in advance. However, this assumption is often impractical in blockchain environments. Since smart contracts are typically quasi-Turing-complete [25], their read and write sets generally cannot be accurately determined prior to execution. Therefore, runtime protocols that do not require prior knowledge are imperative for blockchain systems.
+
+
+Fig. 1: Two-Stage Execution Architecture
+
+
+
+In this paper, we propose Lantern, a deterministic concurrency control protocol tailored for high-performance transaction processing systems that eliminates the need for prior knowledge of transaction read-write sets.
+By employing a batch-based graph construction scheme, Lantern strictly confines transaction dependencies within individual batches.
+Within each batch, all zero-out-degree vertices in the dependency graph are identified as committable transactions, which are committed in ascending order by leveraging the overwrite behavior inherent in serial execution.
+At its core, Lantern further introduces a deterministic Back-Propagation mechanism that iteratively propagates dependency states from sink to source vertices to improve the transaction commit rate, for which we provide a rigorous theoretical proof of liveness.
+In addition, Lantern integrates a Conflict-Free Batch Selection (CFBS) mechanism to mitigate star-like dependency graphs under hot-account read-modify-write scenarios.
+
+
+
+Beyond blockchain systems, Lantern is highly extensible to general database systems. In deterministic databases [26], a sequencing layer typically establishes a total order over incoming transactions, utilizing a replicated log backed by crash fault-tolerant (CFT) protocols to guarantee fault tolerance. Once this globally agreed-upon transaction sequence is established, each node can independently and concurrently leverage Lantern to achieve highly efficient execution, producing an identical, serializable outcome.
+More broadly, Lantern can be seamlessly integrated into any system that provides a globally ordered transaction stream.
+
+
+Fig. 2: Order-Execute (OE) architecture
+
+
+
+As a state-of-the-art protocol, Aria [17] was originally proposed for deterministic OLTP databases.
+Because Aria is deterministic and requires no prior read-write knowledge, it can also be seamlessly applied to blockchain systems.
+While both Lantern and Aria fall into the same category of deterministic protocols that operate without prior knowledge, Lantern achieves significantly higher throughput.
+Furthermore, Lantern establishes its serializability [27, 28] through a constructive proof, which enables empirical validation of both its serializability and determinism. In contrast, Aria relies on an existence proof for its serializability, making it impossible to directly validate this property through experimental evaluation.
+
+
+
+Block-STM [18] also addresses parallel execution. However, Block-STM is highly VM-assisted and can only achieve its peak performance when paired with their customized Aptos VM. For instance, it requires the underlying virtual machine to suspend execution upon encountering a read conflict and resume it once the conflict is resolved. This suspension-and-resumption capability is currently supported only by the Aptos VM and is absent from most mainstream execution engines, including Wasmer, EVM, Docker-Go, and Diem VM, etc.
+Consequently, Block-STM exhibits poor portability, making it exceptionally difficult to port to other blockchain platforms.
+In contrast, our proposed Lantern is entirely VM-agnostic. Because Lantern performs transaction scheduling solely based on read-write sets, it remains completely oblivious to the underlying execution environments, thereby serving as a highly generic protocol.
+Furthermore, Lantern uniquely enables multiple heterogeneous VM engines to coexist within a single blockchain system while using Lantern as their unified concurrency control protocol.
+
+
+
+Another well-known work is Hyperledger Fabric [29], which adopts the Execute-Order-Validate (EOV) architecture with multiple participating roles.
+Specifically, clients first send transaction proposals to endorsing peers. These endorsing peers execute the transactions in parallel and generate corresponding read-write sets.
+The read-write sets are then returned to the client, which assembles them into formal transactions and forwards them to the trusted ordering service. The ordering service establishes a total order for the transactions based on their arrival, packages them into blocks, and disseminates these blocks to all peers.
+Upon receiving a block, each peer validates the transactions to detect conflicts before updating the world state with the valid ones.
+To optimize this EOV architecture, several variants have been proposed, such as Fabric++ [30], Fabric# [31], and XOX Fabric [32].
+In contrast to these system-level optimizations tailored for Fabric’s EOV architecture, Lantern is an independent protocol that can be seamlessly integrated into any system providing a globally agreed transaction sequence, where all nodes leverage Lantern to execute transactions independently and concurrently without inter-node coordination.
+
+
+
+We have fully integrated Lantern into the open-source blockchain platform ChainMaker [8].
+Comprehensive evaluations on both YCSB and SmallBank benchmarks demonstrate that Lantern outperforms Aria [17] by up to 4.2×4.2\times in throughput.
+Furthermore, by eliminating the serial execution-replay dependency between primary and replica nodes, Lantern boosts ChainMaker’s execution layer throughput by at least 2.2×2.2\times.
+
+
+
+
+
+II Background
+
+
+
+This section first establishes the formal definitions of deterministic concurrency control (DCC), followed by the directed graph preliminaries essential to Lantern.
+
+
+
+
+II-A Deterministic Concurrency Control
+
+
+
+In distributed systems, DCC empowers all nodes to execute transactions concurrently and independently while guaranteeing identical execution results across the network.
+Unlike traditional nondeterministic protocols that only ensure serializability [27, 28], DCC xguarantees both serializability and determinism.
+Let SS denote the initial world state, and let T=⟨𝑇𝑋1,𝑇𝑋2,…,𝑇𝑋n⟩T=\langle\mathit{TX}_{1},\mathit{TX}_{2},\dots,\mathit{TX}_{n}\rangle be a transaction sequence with a predefined order.
+The concepts of serializability and determinism are formally defined as follows:
+
+
+
+Definition 1 (Serializability).
+
+
+A concurrent execution of TT is serializable if it is equivalent to a serial execution under some permutation π⁡(T)\pi(T) of TT. The permutation π⁡(T)\pi(T) is called the serializable order.
+
+
+
+
+Definition 2 (Determinism).
+
+
+A concurrent control protocol is deterministic if multiple independent executions of TT on SS always produce the identical serializable order π⁡(T)\pi(T).
+
+
+
+
+In Definition 1, “equivalent” means that, for every transaction, the concurrent execution and the corresponding serial execution produce identical read/write sets, thereby leading to the same final world state.
+
+
+
+
+
+II-B Directed Graph
+
+
+
+Lantern models transaction dependencies using a directed graph.
+Formally, a directed graph is represented as
+
+
+
+
+G=(V,E)G=(V,E)
+
+
+
+where VV and EE denote the sets of vertices and directed edges, respectively.
+For a vertex v∈Vv\in V, its in-degree is the number of incoming edges pointing to vv, whereas its out-degree is the number of outgoing edges originating from vv.
+A vertex with an in-degree of zero is referred to as a source vertex, while a vertex with an out-degree of zero is called a sink vertex.
+These boundary vertices play a pivotal role in the Back-Propagation mechanism of Lantern, where the dependency state is propagated from sink vertices toward source vertices.
+
+
+
+A directed cycle exists if a directed path originates from a vertex and eventually returns to it.
+A directed graph containing no cycles is termed a directed acyclic graph (DAG).
+The problem of removing the minimum number of vertices to eliminate all cycles from a directed graph, thereby transforming it into a DAG, is known as the Feedback Vertex Set (FVS) problem [33], which is NP-hard.
+
+
+
+
+
+
+III Lantern Design
+
+
+
+This section begins with an overview of the Lantern, followed by a detailed breakdown of its pipeline in Sections III-B through III-D.
+Following that, Section III-E introduces a crucial performance optimization called the back-propagation mechanism, whose liveness is rigorously proven in Section III-F.
+In Section III-G, we introduce a conflict‑free batch‑selection mechanism for RMW‑intensive scenarios.
+Finally, we provide a proof of Lantern’s serializability in Section III-H.
+
+
+
+
+III-A Design Overview
+
+
+
+In blockchain systems, a block comprises a substantial number of transactions awaiting processing.
+As illustrated in Fig. 3, Lantern initially selects a fixed number of transactions with the smallest indices from the pending sequence to initiate a processing round.
+Within each round, Lantern constructs a local dependency graph for these selected transactions and applies a back-propagation mechanism to identify a deterministic, committable set of transactions.
+The remaining, aborted transactions are then sorted in ascending order of their indices and reinserted at the head of the pending sequence.
+Lantern subsequently retrieves transactions from this updated sequence to start the next round.
+This process loops continuously until the pending transaction sequence is exhausted, marking the completion of the block processing.
+The following subsections describe each core component of Lantern in detail.
+
+
+Fig. 3: High-Level Transaction Processing of Lantern
+
+
+
+
+
+III-B Transaction Selection and Parallel Execution
+
+
+
+Before executing transactions with Lantern, all nodes in the network reach consensus on a globally ordered transaction sequence.
+Each node then takes this identical sequence as input and executes transactions independently.
+To build a dependency graph that captures transaction dependencies, Lantern first executes transactions to extract their respective read and write sets. The detailed process is as follows:
+
+
+
+
+III-B1 Selection Phase
+
+
+
+Let B𝑠𝑖𝑧𝑒B_{\mathit{size}} denote the number of transactions processed in each execution round. To maintain determinism, every node is configured with an identical batch size B𝑠𝑖𝑧𝑒B_{\mathit{size}} and adheres to a deterministic selection rule: the B𝑠𝑖𝑧𝑒B_{\mathit{size}} transactions with the lowest indices are popped from the pending transaction queue to form the current batch. Consequently, all nodes are guaranteed to select an identical transaction set for execution.
+
+
+
+
+
+III-B2 Execution Phase
+
+
+
+Following selection, each node executes all selected transactions concurrently against its current world state. During this speculative execution, write operations are strictly buffered rather than directly committed, ensuring that the underlying world state remains invariant. Upon completing the execution of a transaction 𝑇𝑋i\mathit{TX}_{i}, the node captures and caches its corresponding read set 𝑅𝑒𝑎𝑑𝑆𝑒𝑡⁡(𝑇𝑋i)\mathit{ReadSet(TX_{i})} and write set 𝑊𝑟𝑖𝑡𝑒𝑆𝑒𝑡⁡(𝑇𝑋i)\mathit{WriteSet(TX_{i})}. Because all nodes start from an identical world state that remains unmutated throughout this phase, the generated read-write sets for each transaction are guaranteed to be deterministic and identical across the entire network.
+
+
+
+
+
+
+III-C DAG Construction
+
+
+
+Following the parallel execution of the selected transactions, data conflicts may arise that threaten execution serializability. Lantern focuses exclusively on Read-After-Write (RAW) conflicts, which are formalized as follows:
+
+
+
+Definition 3 (RAW Conflict).
+
+
+A transaction 𝑇𝑋i\mathit{TX}_{i} has a RAW conflict with a preceding transaction 𝑇𝑋j\mathit{TX}_{j} (j<ij<i) if 𝑇𝑋i\mathit{TX}_{i} reads a data item that is written by 𝑇𝑋j\mathit{TX}_{j}.
+
+
+
+
+Specifically, for each executed transaction, we only consider whether its read set conflicts with the write sets of preceding transactions (i.e., those with lower indices). Conversely, write operations by subsequent transactions (with higher indices) do not affect the correctness of the current transaction’s reads.
+Consequently, if a subset of transactions within the current batch is deemed committable, there exists only one permutation that can serve as their serializable execution order, i.e., the ascending order.
+
+
+
+To systematically capture RAW conflicts among transactions in the current batch, Lantern constructs a dependency graph according to Rule 1:
+
+
+
+Rule 1 (Graph Construction).
+
+
+Each executed transaction in the batch corresponds to a vertex in the dependency graph. A directed edge (𝑇𝑋i→𝑇𝑋j\mathit{TX}_{i}\rightarrow\mathit{TX}_{j}) is added from 𝑇𝑋i\mathit{TX}_{i} to 𝑇𝑋j\mathit{TX}_{j} if and only if 𝑇𝑋i\mathit{TX}_{i} has a RAW conflict with a preceding transaction 𝑇𝑋j\mathit{TX}_{j} (j<ij<i).
+Self-loops are inherently excluded since a transaction cannot form an edge to itself (j≠ij\neq i).
+
+
+
+
+Consequently, for every directed edge (𝑇𝑋i→𝑇𝑋j\mathit{TX}_{i}\rightarrow\mathit{TX}_{j}) in the dependency graph, the start vertex always has a larger index than the end vertex (i>ji>j). By construction, this strict topological ordering precludes any backward edges (i.e., from lower-indexed to higher-indexed transactions), guaranteeing that the generated dependency graph is inherently acyclic. In the remainder of this paper, we refer to this graph as a Directed Acyclic Graph (DAG).
+
+
+
+To construct the DAG efficiently, Algorithm 1 presents a parallel graph construction scheme utilizing the read sets 𝑅𝑒𝑎𝑑𝑆𝑒𝑡⁡(𝑇𝑋i)\mathit{ReadSet}(\mathit{TX}_{i}) and write sets 𝑊𝑟𝑖𝑡𝑒𝑆𝑒𝑡⁡(𝑇𝑋i)\mathit{WriteSet}(\mathit{TX}_{i}) cached during the Execution Phase.
+Because conflict detection for each transaction 𝑇𝑋i\mathit{TX}_{i} depends solely on preceding transactions 𝑇𝑋j\mathit{TX}_{j} (j<ij<i), all transactions can evaluate their RAW dependencies fully in parallel (Line 3).
+To avoid lock contention during graph building, each worker thread maintains a thread-local outgoing edge set EiE_{i} dedicated to 𝑇𝑋i\mathit{TX}_{i} (Line 4). For each preceding transaction 𝑇𝑋j\mathit{TX}_{j}, thread ii scans jj’s write set; upon detecting the first write-read overlap with 𝑅𝑒𝑎𝑑𝑆𝑒𝑡⁡(𝑇𝑋i)\mathit{ReadSet}(\mathit{TX}_{i}), the directed edge (i,j)(i,j) is inserted into EiE_{i}, and the inner loop immediately breaks to bypass redundant key checks for 𝑇𝑋j\mathit{TX}_{j} (Lines 5–9).
+Because thread ii exclusively mutates its local outgoing edge set EiE_{i}, edge generation across threads is inherently collision-free and lockless.
+Finally, all thread-local edge sets are merged into E=⋃i=0n−1EiE=\bigcup_{i=0}^{n-1}E_{i} (Line 12) to yield the complete dependency graph 𝐷𝐴𝐺=(V,E)\mathit{DAG}=(V,E).
+
+
+Algorithm 1 Dependency Graph Construction
+
+Input : executed transaction sequence 𝒯=(𝑇𝑋0,𝑇𝑋1,…,𝑇𝑋n−1)\mathcal{T}=(\mathit{TX}_{0},\mathit{TX}_{1},\ldots,\mathit{TX}_{n-1})
+
+Output : dependency graph 𝐷𝐴𝐺=(V,E)\mathit{DAG}=(V,E)
+
+
+              1
+            V←{0,1,…,n−1}V\leftarrow\{0,1,\ldots,n-1\};
+
+
+              2
+            E←∅E\leftarrow\emptyset;
+
+
+              3
+            foreach i∈{0,1,…,n−1}i\in\{0,1,\ldots,n-1\} in parallel do
+
+   
+              4
+            Ei←∅E_{i}\leftarrow\emptyset;  // thread-local edge set for 𝑇𝑋i\mathit{TX}_{i}
+
+   
+              5
+            for j←0j\leftarrow 0 to i−1i-1 do
+
+      
+              6
+            foreach w∈𝑊𝑟𝑖𝑡𝑒𝑆𝑒𝑡⁡(𝑇𝑋j)w\in\mathit{WriteSet}(\mathit{TX}_{j}) do
+
+         
+              7
+            if w∈𝑅𝑒𝑎𝑑𝑆𝑒𝑡⁡(𝑇𝑋i)w\in\mathit{ReadSet}(\mathit{TX}_{i}) then
+
+            
+              8
+            Ei←Ei∪{(i,j)}E_{i}\leftarrow E_{i}\cup\{(i,j)\};
+
+            
+              9
+            break;  // one conflict is sufficient
+
+
+              10
+            E←⋃i=0n−1EiE\leftarrow\bigcup_{i=0}^{n-1}E_{i};
+
+
+              11
+            return 𝐷𝐴𝐺=(V,E)\mathit{DAG}=(V,E);
+
+
+
+
+
+
+
+The constructed DAG strictly guarantees determinism and consistency across all network nodes. This inherently holds because transaction indices are globally identical, and speculative execution yields strictly identical read and write sets for each transaction.
+
+
+
+
+
+III-D Transaction Commitment
+
+
+Fig. 4: Only the ascending order of zero-out-degree transactions forms a serializable execution order for the current round.
+
+
+
+Following Section III-C, we obtain a DAG that precisely captures the RAW conflicts among transactions. Crucially, any transaction corresponding to a vertex with zero out-degree—including both sink vertices and isolated vertices—is guaranteed not to read any data item modified by its preceding transactions. Consequently, its read operations are completely independent of writes from its preceding transactions, drawing data exclusively from the current world state. Therefore, all vertices with zero out-degree can be safely committed in the current round.
+
+
+
+The first challenge lies in determining which serial execution order is equivalent to the concurrent execution of these zero-out-degree transactions. As illustrated in Fig. 4, three committable transactions yield six possible permutations. Because Lantern exclusively tracks each transaction’s RAW conflicts against its preceding transactions, only the ascending order (Permutation 1 in Fig. 4) guarantees a valid serializable execution order.
+This holds because under the ascending order, every transaction 𝑇𝑋i\mathit{TX}_{i} is preceded solely by transactions 𝑇𝑋j\mathit{TX}_{j} with smaller indices (j<ij<i). Since 𝑇𝑋i\mathit{TX}_{i} possesses a zero out-degree in the DAG, it is explicitly guaranteed to have no RAW dependencies on any preceding transaction 𝑇𝑋j\mathit{TX}_{j}. Consequently, executing them serially in ascending order yields the exact same read values as their parallel speculative execution against the initial world state.
+Conversely, all other permutations are invalid. Consider Permutation 2 ⟨𝑇𝑋0,𝑇𝑋3,𝑇𝑋2⟩\langle\mathit{TX}_{0},\mathit{TX}_{3},\mathit{TX}_{2}\rangle, where 𝑇𝑋3\mathit{TX}_{3} precedes 𝑇𝑋2\mathit{TX}_{2}. In a true serial execution under this order, 𝑇𝑋2\mathit{TX}_{2}’s reads must observe any updates previously committed by 𝑇𝑋3\mathit{TX}_{3}. However, during the speculative Execution Phase, 𝑇𝑋2\mathit{TX}_{2} executed against the initial, invariant world state—which omits 𝑇𝑋3\mathit{TX}_{3}’s writes. This introduces a potential 𝑇𝑋2→𝑇𝑋3\mathit{TX}_{2}\rightarrow\mathit{TX}_{3} dependency. Because our DAG construction intentionally omits such backward edges to preclude cycles, we cannot verify whether such a potential write-then-read conflict exists between 𝑇𝑋3\mathit{TX}_{3} and 𝑇𝑋2\mathit{TX}_{2}, which would invalidate Permutation 2. The same reasoning applies to the remaining four permutations, as each places at least one higher-indexed transaction before a lower-indexed one.
+
+
+
+The second challenge lies in ensuring true equivalence to serial execution in ascending order. Regarding read operations, Lantern guarantees that no committable transaction reads any data item modified by its preceding transactions, thereby eliminating dirty reads. However, regarding write operations, write-write (WW) conflicts may still occur when multiple transactions update the same data key. To maintain full equivalence to ascending serial execution, Lantern must preserve the overwrite semantics inherent to serial processing—specifically, when multiple transactions write to the same key, the transaction appearing later in the sequence must overwrite the values written by earlier ones. Therefore, the commit rule is specified as follows:
+
+
+
+Rule 2 (Commit).
+
+
+For all committable transactions, sort them in ascending order of their indices and apply their write sets to the world state. If multiple transactions write to the same key, preserve only the value written by the transaction with the highest index.
+
+
+
+
+Algorithm 2 details our commitment procedure. By applying the write set of each transaction to the world state serially, this process naturally satisfies the required overwrite semantics. Since this state update phase is lightweight, we intentionally forgo parallelization techniques—such as Compare-and-Swap (CAS)—to eliminate unnecessary concurrency overhead.
+
+
+
+This commitment phase strictly guarantees network-wide determinism across iterative rounds. This holds because all nodes construct an identical DAG (Section III-C) and deterministically derive the exact same set of zero-out-degree transactions for commitment. With globally uniform write sets, the resulting world state remains perfectly consistent across all nodes, serving as the deterministic initial state for the next round.
+Concurrently, uncommitted transactions (represented by gray vertices in Fig. 4) are sorted in ascending order of their indices and reinserted at the head of the pending queue, yielding an updated sequence that is likewise identical across all nodes.
+By ensuring that every round begins with an identical world state and pending transaction sequence, Lantern guarantees deterministic transaction processing across the entire network.
+
+
+Algorithm 2 Transaction Commitment
+
+Input : D​A​G=(V,E)DAG=(V,E); transaction set 𝒯\mathcal{T}
+
+Output : Updated world state
+
+
+              1
+            S←{v∈V∣outDegree⁡(v)=0}S\leftarrow\{v\in V\mid\mathrm{outDegree}(v)=0\};
+
+
+              2
+            sort SS in ascending transaction-index order;
+
+
+              3
+            foreach i∈Si\in S do
+
+   
+              4
+            foreach w∈𝑊𝑟𝑖𝑡𝑒𝑆𝑒𝑡⁡(𝑇𝑋i)w\in\mathit{WriteSet(TX_{i})} do
+
+      
+              5
+            apply ww to the world state;
+
+
+              6
+            return updated world state;
+
+
+
+
+
+
+
+
+
+III-E Back-Propagation Mechanism
+
+
+
+Sections III-B through III-D detail the baseline execution pipeline of Lantern. However, restricting commitments strictly to zero-out-degree vertices is inherently conservative, prematurely aborting conflict-free transactions that reside deeper in the dependency chain. To overcome this limitation, we introduce a novel Back-Propagation mechanism that systematically salvages additional committable transactions while strictly preserving network-wide determinism.
+
+
+
+To establish the foundation of status propagation, we first clarify the precise semantics of dependency edges.
+A directed edge 𝑇𝑋i→𝑇𝑋j\mathit{TX}_{i}\rightarrow\mathit{TX}_{j} indicates a RAW dependency of 𝑇𝑋i\mathit{TX}_{i} on 𝑇𝑋j\mathit{TX}_{j}.
+Since all transactions are executed against the same initial world state during the Execution Phase, committing 𝑇𝑋j\mathit{TX}_{j} in the current round invalidates the execution of 𝑇𝑋i\mathit{TX}_{i} due to a “dirty read”, forcing 𝑇𝑋i\mathit{TX}_{i} to abort. Conversely, for 𝑇𝑋i\mathit{TX}_{i} to safely commit, 𝑇𝑋j\mathit{TX}_{j} must be aborted to ensure that the state read by 𝑇𝑋i\mathit{TX}_{i} remains “clean”.
+
+
+
+Consider the dependency graph in Fig. 5. Under the baseline approach, only the two sink vertices (𝑇𝑋0\mathit{TX}_{0} and 𝑇𝑋2\mathit{TX}_{2}) are committed, while all remaining transactions are aborted. Specifically, because 𝑇𝑋1\mathit{TX}_{1} and 𝑇𝑋3\mathit{TX}_{3} directly depend on these two sink transactions, they must be aborted to avoid dirty reads. Crucially, once 𝑇𝑋1\mathit{TX}_{1} and 𝑇𝑋3\mathit{TX}_{3} are deterministically aborted, their write operations are discarded, effectively eliminating the dependency edges they induce on upstream transactions.
+
+
+Fig. 5: A motivating example demonstrating the potential of transaction salvage and the issue of nondeterminism.
+
+
+
+As illustrated in the upper branch of Fig. 5, if we salvage transactions along the upper path, 𝑇𝑋4\mathit{TX}_{4} and 𝑇𝑋5\mathit{TX}_{5} become eligible for commitment alongside the baseline sinks. Furthermore, committing 𝑇𝑋4\mathit{TX}_{4} forces its reader 𝑇𝑋6\mathit{TX}_{6} to abort to prevent a dirty read, which subsequently frees 𝑇𝑋7\mathit{TX}_{7} for commitment. In total, five transactions—{𝑇𝑋0,𝑇𝑋2,𝑇𝑋4,𝑇𝑋5,𝑇𝑋7}\{\mathit{TX}_{0},\mathit{TX}_{2},\mathit{TX}_{4},\mathit{TX}_{5},\mathit{TX}_{7}\}—can be safely committed. Because these salvaged transactions are guaranteed to be RAW-conflict-free against their committable predecessors, they can be safely committed in ascending order without violating serializability.
+
+
+
+However, as shown in the lower branch of Fig. 5, an alternative path emerges once 𝑇𝑋1\mathit{TX}_{1} is deterministically aborted. Specifically, the dependency edge restricting 𝑇𝑋6\mathit{TX}_{6} also disappears. If we instead mark 𝑇𝑋6\mathit{TX}_{6} as committable, 𝑇𝑋4\mathit{TX}_{4} must be aborted to ensure that 𝑇𝑋6\mathit{TX}_{6}’s read set remains uncontaminated. Concurrently, 𝑇𝑋7\mathit{TX}_{7} must also be aborted to prevent a dirty read from 𝑇𝑋6\mathit{TX}_{6}. This path yields a completely different set of committable transactions.
+
+
+
+While both branches successfully salvage more transactions than the baseline, the existence of multiple valid execution paths introduces severe nondeterminism. Thus, the core challenge lies in designing a mechanism that expands the committable set without compromising state consistency across distributed nodes. To achieve this, Lantern adopts a novel Back-Propagation mechanism inspired by error backpropagation in neural networks. Starting from the sink vertices, status markings propagate backward toward the source vertices according to four deterministic rules:
+
+
+
+Rule 3 (Back-Propagation).
+
+
+
+(i) 
+
+
+Initialization (Red): All zero-out-degree vertices in the DAG are initially marked red.
+
+
+(ii) 
+
+
+Conflict Propagation (Gray): Any unmarked vertex with a directed edge pointing to a red vertex is marked gray.
+
+
+(iii) 
+
+
+Salvage Propagation (Red): Any unmarked vertex whose successors are exclusively marked gray is marked red.
+
+
+(iv) 
+
+
+Termination: Steps (ii) and (iii) are repeated iteratively in alternating phases until no further state transitions occur.
+
+
+
+
+
+
+Specifically, (i) Initialization directly corresponds to the baseline commit scheme presented in Section III-D.
+(ii) Conflict Propagation identifies transactions that must abort because they would incur dirty reads from guaranteed committable transactions.
+(iii) In Salvage Propagation, the condition “exclusively” is paramount: if an unmarked vertex points to both a gray vertex and an unresolved unmarked vertex, its status remains ambiguous because its unmarked successor’s outcome is still unresolved. Requiring all successors to be gray guarantees that no committed predecessor will invalidate this vertex’s read set, ensuring it can safely commit.
+
+
+Algorithm 3 Back-Propagation
+
+Input : Directed acyclic graph G=(V,E)G=(V,E)
+
+Output : Committable transaction set ℛ\mathcal{R}; Uncommittable transaction set 𝒢\mathcal{G}
+
+
+              1
+            foreach v∈Vv\in V do
+
+   
+              2
+            𝑚𝑎𝑟𝑘⁡[v]←unmarked\mathit{mark}[v]\leftarrow\textit{unmarked};
+
+
+              3
+            𝑙𝑎𝑦𝑒𝑟←∅\mathit{layer}\leftarrow\emptyset;
+
+
+              4
+            foreach v∈Vv\in V do
+
+   
+              5
+            if o​u​t​D​e​g​r​e​e​(v)=0outDegree(v)=0 then
+
+      
+              6
+            𝑚𝑎𝑟𝑘⁡[v]←r​e​d\mathit{mark}[v]\leftarrow red;
+
+      
+              7
+            add vv to 𝑙𝑎𝑦𝑒𝑟\mathit{layer};
+
+
+              8
+            𝑖𝑠𝑅𝑒𝑑𝐿𝑎𝑦𝑒𝑟←t​r​u​e\mathit{isRedLayer}\leftarrow true;
+
+
+              9
+            while there exists unmarked vertices in VV do
+
+   
+              10
+            𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠←∅\mathit{candidates}\leftarrow\emptyset;
+
+   
+              11
+            foreach v∈𝑙𝑎𝑦𝑒𝑟v\in\mathit{layer} do
+
+      
+              12
+            foreach u∈r​e​v​e​r​s​e​N​e​i​g​h​b​o​r​s​(v)u\in reverseNeighbors(v) do
+
+         
+              13
+            if 𝑚𝑎𝑟𝑘⁡[u]=unmarked\mathit{mark}[u]=\textit{unmarked} then
+
+            
+              14
+            add uu to 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates};
+
+   
+              15
+            𝑛𝑒𝑥𝑡𝐿𝑎𝑦𝑒𝑟←∅\mathit{nextLayer}\leftarrow\emptyset;
+
+   
+              16
+            if 𝑖𝑠𝑅𝑒𝑑𝐿𝑎𝑦𝑒𝑟=t​r​u​e\mathit{isRedLayer}=true then
+
+      
+              17
+            foreach u∈𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠u\in\mathit{candidates} do
+
+         
+              18
+            𝑚𝑎𝑟𝑘⁡[u]←g​r​a​y\mathit{mark}[u]\leftarrow gray;
+
+         
+              19
+            add uu to 𝑛𝑒𝑥𝑡𝐿𝑎𝑦𝑒𝑟\mathit{nextLayer};
+
+   
+              20
+            else
+
+      
+              21
+            𝑟𝑒𝑑𝐶𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠←∅\mathit{redCandidates}\leftarrow\emptyset;
+
+      
+              22
+            foreach u∈𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠u\in\mathit{candidates} do
+
+         
+              23
+            𝑎𝑙𝑙𝑀𝑎𝑟𝑘𝑒𝑑←t​r​u​e\mathit{allMarked}\leftarrow true;
+
+         
+              24
+            foreach w∈n​e​i​g​h​b​o​r​s​(u)w\in neighbors(u) do
+
+            
+              25
+            if 𝑚𝑎𝑟𝑘⁡[w]=unmarked\mathit{mark}[w]=\textit{unmarked} then
+
+               
+              26
+            𝑎𝑙𝑙𝑀𝑎𝑟𝑘𝑒𝑑←f​a​l​s​e\mathit{allMarked}\leftarrow false;
+
+               
+              27
+            break;
+
+         
+              28
+            if 𝑎𝑙𝑙𝑀𝑎𝑟𝑘𝑒𝑑=t​r​u​e\mathit{allMarked}=true then
+
+            
+              29
+            add uu to 𝑟𝑒𝑑𝐶𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{redCandidates};
+
+      
+              30
+            foreach u∈𝑟𝑒𝑑𝐶𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠u\in\mathit{redCandidates} do
+
+         
+              31
+            𝑚𝑎𝑟𝑘⁡[u]←r​e​d\mathit{mark}[u]\leftarrow red;
+
+         
+              32
+            add uu to 𝑛𝑒𝑥𝑡𝐿𝑎𝑦𝑒𝑟\mathit{nextLayer};
+
+   
+              33
+            𝑙𝑎𝑦𝑒𝑟←𝑛𝑒𝑥𝑡𝐿𝑎𝑦𝑒𝑟\mathit{layer}\leftarrow\mathit{nextLayer};
+
+   
+              34
+            𝑖𝑠𝑅𝑒𝑑𝐿𝑎𝑦𝑒𝑟←¬𝑖𝑠𝑅𝑒𝑑𝐿𝑎𝑦𝑒𝑟\mathit{isRedLayer}\leftarrow\neg\mathit{isRedLayer};
+
+
+              35
+            ℛ←{v∈V∣𝑚𝑎𝑟𝑘⁡[v]=r​e​d}\mathcal{R}\leftarrow\{v\in V\mid\mathit{mark}[v]=red\};
+
+
+              36
+            𝒢←{v∈V∣𝑚𝑎𝑟𝑘⁡[v]=g​r​a​y}\mathcal{G}\leftarrow\{v\in V\mid\mathit{mark}[v]=gray\};
+
+
+              37
+            return ℛ,𝒢\mathcal{R},\mathcal{G};
+
+
+
+
+
+
+
+Algorithm 3 formalizes this iterative layer-by-layer procedure. In each iteration, Lantern first collects an unmarked candidate set 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} comprising the reverse neighbors (i.e., predecessors) of the current layer (Lines 9–14). When the current layer is red, all vertices in 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} are directly marked gray (Lines 16–19). Conversely, when the current layer is gray, if all successors of a candidate vertex are confirmed to be marked, those successors are guaranteed to be exclusively gray, allowing the candidate vertex to be safely marked red (Lines 22–29).
+This guarantee holds because candidates are derived solely from the current gray layer; thus, a candidate vertex can point only to gray or unmarked vertices, but never to a red one. Had it possessed a directed edge to a previously generated red vertex, it would have been unconditionally marked gray in the iteration immediately following that red layer’s processing, directly contradicting its current unmarked status.
+
+
+
+When candidate vertices qualify to be marked red, they are first collected into a temporary set, 𝑟𝑒𝑑𝐶𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{redCandidates} (Lines 28–29), rather than being marked immediately. The actual state transitions are performed only after all candidate vertices in the current layer have been fully evaluated (Lines 30–32). This deferred-marking strategy ensures that every decision within the same propagation layer is evaluated against a static and consistent graph state. Without this deferral, immediate state updates would allow newly marked red vertices to improperly influence the evaluation of remaining candidates in the same layer. Such premature updates would not only compromise algorithm correctness by causing erroneous transitions, but also introduce non-determinism when candidate vertices are processed in an arbitrary traversal order.
+
+
+
+Fig. 6 illustrates a step-by-step example of Back-Propagation.
+In Round 1, four zero-out-degree vertices are initially marked red.
+In Round 2, Lantern identifies the reverse neighbors of this initial layer, forming the candidate set {𝑇𝑋1,𝑇𝑋6,𝑇𝑋10}\{\mathit{TX}_{1},\mathit{TX}_{6},\mathit{TX}_{10}\}. Because the preceding layer was red, all vertices in this candidate set are unconditionally marked gray.
+In Round 3, the candidates {𝑇𝑋2,𝑇𝑋4,𝑇𝑋7,𝑇𝑋12,𝑇𝑋13}\{\mathit{TX}_{2},\mathit{TX}_{4},\mathit{TX}_{7},\mathit{TX}_{12},\mathit{TX}_{13}\} are evaluated. Since 𝑇𝑋7\mathit{TX}_{7} points to 𝑇𝑋4\mathit{TX}_{4}, which remains unmarked, 𝑇𝑋7\mathit{TX}_{7} retains its unmarked status. The remaining candidates are marked red because their successors are exclusively gray.
+In Round 4, 𝑇𝑋7\mathit{TX}_{7} is again collected into the candidate set {𝑇𝑋7,𝑇𝑋9,𝑇𝑋11}\{\mathit{TX}_{7},\mathit{TX}_{9},\mathit{TX}_{11}\}, and all candidates are unconditionally marked gray.
+Finally, in Round 5, 𝑇𝑋14\mathit{TX}_{14} is marked red, completing the propagation process.
+
+
+
+Back-Propagation strictly guarantees network-wide determinism, ensuring that every node produces an identically colored DAG. This holds because the underlying DAG topology is identical across all participating nodes. Specifically, all nodes initialize the exact same set of red vertices. Inductively, because each subsequent marking round depends solely on the deterministic state of preceding layers, both (1) gray vertices assigned under Conflict Propagation and (2) red vertices assigned under Salvage Propagation remain strictly uniform across nodes. By induction, this state consistency propagates throughout all iterations, guaranteeing an identical coloring outcome for the DAG.
+
+
+
+Once Back-Propagation completes, all transactions marked red are collected as the final committable set. These transactions are sorted in ascending order of their indices and serially applied to the world state following Rule 2, while uncommitted gray transactions are sorted in ascending order of their indices and reinserted at the head of the pending queue.
+
+
+
+The proposed Back-Propagation mechanism increases the number of committable transactions while strictly preserving determinism across all participating nodes.
+However, a critical question arises: could this iterative marking process encounter a liveness bottleneck, causing the algorithm to stall or fail to terminate?
+To establish the theoretical soundness of our design and address this concern, we formally prove the liveness of the Back-Propagation mechanism in Section III-F.
+
+
+
+
+
+(a) Round 1
+
+
+(b) Round 2
+
+
+(c) Round 3
+
+
+(d) Round 4
+
+
+(e) Round 5
+
+Fig. 6: An Example of Back-Propagation in Lantern
+
+
+
+
+
+III-F Liveness of Back-Propagation
+
+
+
+We first introduce two supporting lemmas to dissect the iterative marking mechanism before proving the main theorem.
+
+
+
+Lemma 1.
+
+
+In any iteration of the Back-Propagation process, as long as the set of unmarked vertices in the DAG is non-empty, the generated 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} set is guaranteed to be non-empty.
+
+
+
+
+Proof.
+
+
+During initialization, all global sink vertices and isolated vertices in DAG are marked red, meaning any remaining unmarked vertices must have outgoing edges.
+Let 𝐔\mathbf{U} be the non-empty set of unmarked vertices, and let 𝐋𝐤\mathbf{L_{k}} be the current 𝑙𝑎𝑦𝑒𝑟\mathit{layer} serving as the active frontier. Since DAG is a acyclic, the subgraph G′​[𝐔]G^{\prime}[\mathbf{U}] induced by 𝐔\mathbf{U} must also be a DAG, which guarantees the existence of at least one local sink vertex u∈𝐔u\in\mathbf{U}. By definition, uu has no outgoing edges targeting any other vertex within G′​[𝐔]G^{\prime}[\mathbf{U}].
+However, since uu is a unmarked vertex in DAG which must have outgoing edges, all successors of uu must reside outside of 𝐔\mathbf{U}, meaning they have already been marked in previous iterations.
+
+
+
+We now prove by contradiction that uu must possess at least one directed edge pointing to the current layer 𝐋𝐤\mathbf{L_{k}}. Suppose uu does not point to 𝐋𝐤\mathbf{L_{k}}. Then all successors of uu must belong to strictly older historical layers. Let 𝐋𝐭\mathbf{L_{t}} (t<kt<k) be the most recently generated layer among all successors of uu. During the historical iteration when 𝐋𝐭\mathbf{L_{t}} served as the active layer, uu would have been fetched into the 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} set. At that time, we evaluate the state transition of uu:
+
+
+(i) 
+
+
+If 𝐋𝐭\mathbf{L_{t}} was a red layer: uu would be directly marked gray.
+
+
+(ii) 
+
+
+If 𝐋𝐭\mathbf{L_{t}} was a gray layer: The algorithm checks the 𝑎𝑙𝑙𝑀𝑎𝑟𝑘𝑒𝑑\mathit{allMarked} condition for uu.
+Because 𝐋𝐭\mathbf{L_{t}} is the most recent layer among u’s successors, all successors of uu are already marked. Therefore, uu satisfies the 𝑎𝑙𝑙𝑀𝑎𝑟𝑘𝑒𝑑\mathit{allMarked} condition and is marked red.
+
+
+
+In either case, uu would have been successfully marked during that historical iteration. This directly contradicts the established premise that uu is currently an unmarked vertex. Therefore, the assumption is false. uu must possess at least one successor in the current layer 𝐋𝐤\mathbf{L_{k}}.
+As a result, uu will inevitably be fetched into 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates}, ensuring 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠≠∅\mathit{candidates}\neq\emptyset.
+∎
+
+
+
+
+Lemma 2.
+
+
+Given a non-empty 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} set in any iteration, at least one candidate within this set is guaranteed to be marked.
+
+
+
+
+Proof.
+
+
+We evaluate the two propagation branches based on the current 𝑙𝑎𝑦𝑒𝑟\mathit{layer} 𝐋𝐭\mathbf{L_{t}}:
+
+
+(i) 
+
+
+If 𝐋𝐭\mathbf{L_{t}} was a red layer: All vertices in 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} are unconditionally marked gray. Since 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠≠∅\mathit{candidates}\neq\emptyset, at least one vertex transitions to the gray state.
+
+
+(ii) 
+
+
+If 𝐋𝐭\mathbf{L_{t}} was a gray layer: First, any vertex in 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} can only point to gray or unmarked vertices. Second, recall the local sink vertex uu of the global unmarked subgraph G′​[𝐔]G^{\prime}[\mathbf{U}] from Lemma 1, which is guaranteed to be fetched into 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates}. As the sink of G′​[𝐔]G^{\prime}[\mathbf{U}], uu has no outgoing edges to any unmarked vertices. Combining these two constraints, the outgoing edges of u∈𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠u\in\mathit{candidates} must exclusively point to gray vertices. Therefore, uu is guaranteed to be marked red.
+
+
+
+In both cases, at least one unmarked candidate vertex successfully transitions to a marked state.
+∎
+
+
+
+
+Theorem 1 (Liveness).
+
+
+If the dependency graph G=(V,E)G=(V,E) is acyclic (DAG), the Back-Propagation process satisfies the liveness property and is guaranteed to terminate within a finite number of iterations.
+
+
+
+
+Proof.
+
+
+During initialization, all global zero-out-degree vertices of DAG are successfully marked red, establishing the initial non-empty 𝑙𝑎𝑦𝑒𝑟\mathit{layer}. In each subsequent iteration, if unmarked vertices remain, Lemma 1 guarantees that the fetched 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} set is non-empty. Subsequently, Lemma 2 guarantees that at least one vertex from this 𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡𝑒𝑠\mathit{candidates} set transitions from an unmarked to a marked state.
+Given that the total number of vertices |V||V| is finite and each vertex changes its state at most once, therefore, the algorithm must terminate after at most |V||V| iterations.
+The upper bound of |V||{}V|{} iterations corresponds to the worst-case scenario where the DAG forms a linear chain (𝑇𝑋0←𝑇𝑋1←…←𝑇𝑋|V|−1\mathit{TX}_{0}\leftarrow\mathit{TX}_{1}\leftarrow\dots\leftarrow\mathit{TX}_{|{}V|{}-1}).
+∎
+
+
+
+
+
+
+III-G Conflict‑Free Batch Selection Mechanism
+
+
+
+While the Back-Propagation mechanism effectively finds more committable transactions when the DAG is deep, it remains constrained in Read-Modify-Write (RMW) dominant scenarios.
+In an RMW operation, a transaction first reads a data item’s current state, performs internal business logic, and subsequently writes the updated state back to the same item.
+A common real-world example is found in financial applications:
+
+
+• 
+
+
+Deposit/Withdrawal: A transaction reads account AA’s balance 𝑏𝑎𝑙A\mathit{bal}_{A}, adds or subtracts an amount vv, and writes the new balance (𝑏𝑎𝑙A±v)(\mathit{bal}_{A}\pm v) back to AA.
+
+
+• 
+
+
+Transfer: A transaction reads the balances of both sender AA (𝑏𝑎𝑙A\mathit{bal}_{A}) and receiver BB (𝑏𝑎𝑙B\mathit{bal}_{B}), and writes the updated values (𝑏𝑎𝑙A−v)(\mathit{bal}_{A}-v) and (𝑏𝑎𝑙B+v)(\mathit{bal}_{B}+v) back to AA and BB, respectively.
+
+
+
+
+
+In Lantern’s standard batch processing pattern, if multiple transactions within a single batch target the same hot account (e.g., account AA) with RMW operations, only a single transaction can be committed.
+As illustrated in Fig. 7, because each transaction performs both read and write operations on account AA’s balance, every transaction in the batch develops a RAW dependency on all of its preceding transactions.
+This results in a shallow, star-like DAG where only the first transaction 𝑇𝑋0\mathit{TX}_{0} can be safely committed; according to the Conflict Propagation rule (Rule 3(ii)), all subsequent transactions must be aborted to prevent dirty reads from 𝑇𝑋0\mathit{TX}_{0}.
+
+
+Fig. 7: An example of a shallow star-like DAG under hot-account RMW operations, where only 𝑇𝑋0\mathit{TX}_{0} is committable.
+
+
+
+To resolve this issue, we propose the Conflict-Free Batch Selection (CFBS) mechanism specifically for RMW-intensive workloads.
+The core insight of CFBS is to proactively avoid conflicts during the batch selection phase rather than reactively aborting transactions after execution.
+Before execution, a transaction’s accessed accounts can be statically extracted from its payload, as the input parameters for smart contract invocation explicitly specify the participating accounts.
+By leveraging this extracted account information, CFBS ensures that no two transactions selected within the same batch operate on overlapping accounts.
+
+
+
+Algorithm 4 details the CFBS procedure. Rather than blindly popping a fixed number of B𝑠𝑖𝑧𝑒B_{\mathit{size}} transactions with the smallest indices, CFBS sequentially scans the pending transaction sequence 𝒫\mathcal{P} in ascending index order. For each transaction 𝑇𝑋i\mathit{TX_{i}}, CFBS extracts its target accounts 𝐴𝑐𝑐𝑜𝑢𝑛𝑡𝑠𝑇𝑋i\mathit{Accounts}_{\mathit{TX_{i}}} (Line 5). If these accounts do not overlap with the occupied account set 𝒪\mathcal{O} (Line 6), 𝑇𝑋i\mathit{TX_{i}} is added to the selected set 𝒮\mathcal{S}, and its target accounts are merged into 𝒪\mathcal{O} (Lines 7–8). Otherwise, 𝑇𝑋i\mathit{TX_{i}} is deferred and appended to the remaining sequence 𝒫′\mathcal{P}^{\prime} (Line 10). Consequently, the effective batch size becomes dynamic, defined as B𝑠𝑖𝑧𝑒=|𝒮|B_{\mathit{size}}=|\mathcal{S}|.
+
+
+
+CFBS strictly preserves determinism across the network. Because the targeted accounts extracted from each transaction’s payload are deterministic, and all nodes execute Algorithm 4 over the identical pending sequence 𝒫\mathcal{P} in the exact same ascending order, every node independently derives the identical selected batch 𝒮\mathcal{S} for each round.
+
+
+Algorithm 4 Conflict-Free Batch Selection
+
+Input : pending transaction sequence 𝒫\mathcal{P}
+
+Output : selected transactions 𝒮\mathcal{S}; remaining sequence 𝒫′\mathcal{P}^{\prime}
+
+
+              1
+            𝒮←∅\mathcal{S}\leftarrow\emptyset;
+
+
+              2
+            𝒫′←∅\mathcal{P}^{\prime}\leftarrow\emptyset;
+
+
+              3
+            𝒪←∅\mathcal{O}\leftarrow\emptyset;  // occupied accounts
+
+
+              4
+            foreach 𝑇𝑋i∈𝒫\mathit{TX}_{i}\in\mathcal{P} in ascending order of ii do
+
+   
+              5
+            𝐴𝑐𝑐𝑜𝑢𝑛𝑡𝑠𝑇𝑋i←ExtractAccounts⁡(𝑇𝑋i)\mathit{Accounts}_{\mathit{TX}_{i}}\leftarrow\mathrm{ExtractAccounts}(\mathit{TX}_{i});
+
+   
+              6
+            if 𝐴𝑐𝑐𝑜𝑢𝑛𝑡𝑠𝑇𝑋i∩𝒪=∅\mathit{Accounts}_{\mathit{TX}_{i}}\cap\mathcal{O}=\emptyset then
+
+      
+              7
+            𝒮←𝒮∪{𝑇𝑋i}\mathcal{S}\leftarrow\mathcal{S}\cup\{\mathit{TX}_{i}\};
+
+      
+              8
+            𝒪←𝒪∪𝐴𝑐𝑐𝑜𝑢𝑛𝑡𝑠𝑇𝑋i\mathcal{O}\leftarrow\mathcal{O}\cup\mathit{Accounts}_{\mathit{TX}_{i}};
+
+   
+              9
+            else
+
+      
+              10
+            𝒫′←𝒫′∥𝑇𝑋i\mathcal{P}^{\prime}\leftarrow\mathcal{P}^{\prime}\mathbin{\|}\mathit{TX}_{i};
+
+
+              11
+            return 𝒮,𝒫′\mathcal{S},\mathcal{P}^{\prime};
+
+
+
+
+
+
+
+
+
+III-H Proof of Serializability
+
+
+
+This section formally proves the serializability of Lantern. Theorem 2 first derives the equivalent serializable order within a single batch. Subsequently, Theorem 3 extends this equivalence to the block level.
+
+
+
+Theorem 2 (Intra-Batch Serializability).
+
+
+Within a single batch, the equivalent serializable order of all committed transactions in Lantern is determined by their transaction indices in ascending order.
+
+
+
+
+Proof.
+
+
+On the read side, following the Back-Propagation mechanism, each committable transaction either has no dependencies on other transactions or depends exclusively on transactions aborted in the current round. Consequently, no dirty reads can occur among committable transactions, ensuring that all reads they issue originate from the same initial world state.
+On the write side, when multiple transactions conflict on the same key, Lantern employs an overwrite mechanism that preserves only the write from the transaction with the highest index. This behavior is semantically equivalent to the overwrite semantics produced by executing all committable transactions serially in ascending order of their indices.
+∎
+
+
+
+
+Theorem 3 (Inter-Batch Serializability).
+
+
+The equivalent serializable order of an entire block in Lantern is obtained by sequentially composing the serializable orders of all batches in ascending order of their batch indices.
+
+
+
+
+Proof.
+
+
+Under the Lantern framework, execution across batches enforces strict isolation. Specifically, a subsequent batch Bi+1B_{i+1} starts only after all transactions in BiB_{i} complete and their write sets are applied to the world state.
+Viewing each batch as a “macro-transaction”, the state transitions between batches are logically equivalent to a serial execution of these macro-transactions. Thus, concatenating the internal serializable orders of all batches in ascending order of their batch indices yields the equivalent serializable order for the entire block.
+∎
+
+
+
+
+Example 1.
+
+
+Consider a block execution with a batch size B𝑠𝑖𝑧𝑒=5B_{\mathit{size}}=5:
+
+
+• 
+
+
+Batch 1: Lantern processes the initial batch ℬ1={𝑇𝑋0,𝑇𝑋1,𝑇𝑋2,𝑇𝑋3,𝑇𝑋4}\mathcal{B}_{1}=\{\mathit{TX}_{0},\mathit{TX}_{1},\mathit{TX}_{2},\mathit{TX}_{3},\mathit{TX}_{4}\} and commits the subset 𝒮1=⟨𝑇𝑋0,𝑇𝑋2,𝑇𝑋3⟩\mathcal{S}_{1}=\langle\mathit{TX}_{0},\mathit{TX}_{2},\mathit{TX}_{3}\rangle. The aborted transactions {𝑇𝑋1,𝑇𝑋4}\{\mathit{TX}_{1},\mathit{TX}_{4}\} are reinserted at the head of the pending queue.
+
+
+• 
+
+
+Batch 2: Lantern fetches the next batch ℬ2={𝑇𝑋1,𝑇𝑋4,𝑇𝑋5,𝑇𝑋6,𝑇𝑋7}\mathcal{B}_{2}=\{\mathit{TX}_{1},\mathit{TX}_{4},\mathit{TX}_{5},\mathit{TX}_{6},\mathit{TX}_{7}\} and commits the subset 𝒮2=⟨𝑇𝑋1,𝑇𝑋4,𝑇𝑋6⟩\mathcal{S}_{2}=\langle\mathit{TX}_{1},\mathit{TX}_{4},\mathit{TX}_{6}\rangle.
+
+
+
+By sequentially concatenating the commit sequences across all batches, the equivalent serializable order π⁡(T)\pi(T) for the block is constructed as:
+
+
+
+
+π⁡(T)=𝒮1∥𝒮2∥⋯=⟨𝑇𝑋0,𝑇𝑋2,𝑇𝑋3⏟Batch 1 (𝒮1),𝑇𝑋1,𝑇𝑋4,𝑇𝑋6⏟Batch 2 (𝒮2),…⟩\pi(T)=\mathcal{S}_{1}\mathbin{\|}\mathcal{S}_{2}\mathbin{\|}\dots=\langle\underbrace{\mathit{TX}_{0},\mathit{TX}_{2},\mathit{TX}_{3}}_{\text{Batch 1 ($\mathcal{S}_{1}$)}},\underbrace{\mathit{TX}_{1},\mathit{TX}_{4},\mathit{TX}_{6}}_{\text{Batch 2 ($\mathcal{S}_{2}$)}},\dots\rangle
+
+
+
+
+
+
+Crucially, our serializability proof is constructive, enabling the explicit determination of the equivalent serializable order π⁡(T)\pi(T) upon the completion of a block execution. This explicit construct of π⁡(T)\pi(T) allows us to empirically validate both the serializability and determinism of Lantern, as detailed in our evaluation (Section IV-B).
+Conversely, Aria’s serializability proof is purely existential. While it proves that an equivalent serializable schedule exists, it cannot explicitly construct the corresponding serializable order.
+This non-constructive nature prevents Aria from experimentally validating its serializability.
+
+
+
+
+
+
+IV Evaluation
+
+
+
+
+IV-A Experimental Setup
+
+
+
+Hardware Platform.
+All experiments are performed on a dedicated Linux server equipped with dual Intel(R) Xeon(R) Gold 5218 processors, offering a total of 32 physical CPU cores across two NUMA nodes (16 cores and 128 GB DDR4 local memory per node).
+The server runs CentOS Linux 7 (kernel version 3.10.0).
+Simultaneous Multithreading (SMT) is disabled in the BIOS to eliminate hardware thread contention.
+
+
+
+Software Platform.
+All evaluations are integrated into ChainMaker v2.3.8 [34].
+Smart contracts are authored in Rust and executed on the Wasmer virtual machine.
+To ensure fairness, Lantern and all baseline protocols are compiled and executed using Go 1.24 with default compiler optimization settings.
+The underlying system adopts TBFT consensus [1], configured with a maximum block capacity of 1,000 transactions and a transaction pool limit of 50,000 transactions.
+To fully saturate the execution engine, the ChainMaker Go SDK client [35] is deployed on a separate dedicated server, spawning concurrent goroutines to submit workload transactions via gRPC.
+
+
+
+Baselines.
+We evaluate Lantern against two representative categories of concurrency control baselines:
+
+
+• 
+
+
+ChainMaker: ChainMaker’s default nondeterministic protocol based on Optimistic Concurrency Control (OCC) [13]. It operates under the two-stage execution architecture (Fig. 1), where total execution-layer latency is the combined duration of the primary execution stage and the replica replay stage.
+
+
+• 
+
+
+Aria: A state-of-the-art deterministic protocol operating without a priori knowledge [17]. Since original work has demonstrated Aria’s superiority over classical deterministic protocols (such as Bohm [16], PWV [24], Calvin [15], and PB), we select it as our primary baseline and fully implement all optimization techniques proposed in its original paper.
+
+
+
+Unless otherwise specified, the batch size B𝑠𝑖𝑧𝑒B_{\mathit{size}} for Lantern is set at 5×5\times the number of physical CPU cores.
+
+
+
+Workloads.
+We evaluate execution-layer throughput using two standard benchmarks:
+
+
+• 
+
+
+YCSB [36]:
+A micro-benchmark for fine-grained state access.
+Each transaction invokes a smart contract executing 10 operations (5 reads and 5 writes) over a key space of one million records. Within a single transaction, all read keys (and similarly, write keys) are unique. Intersections between a transaction’s read set and write set are allowed.
+
+
+• 
+
+
+SmallBank [37]:
+A macro-benchmark with heavy RMW operations.
+Our implementation includes three tables (Account, Saving, and Checking) initialized with 100,000 accounts. Each account starts with 100,000 tokens in both its saving and checking balances. We evaluate the five state-modifying transaction types: send_payment (40%), deposit_checking (15%), transact_saving (15%), amalgamate (15%), and write_check (15%). Off-chain read-only queries (balance) and state initialization transactions (create_account) are excluded from throughput measurements.
+
+
+
+
+
+Measurement Methodology.
+All evaluations strictly focus on execution-layer throughput.
+To measure steady-state performance, boundary blocks are filtered out: initial warm-up/initialization blocks (the first 5 blocks in YCSB and account creation blocks in SmallBank) as well as the trailing 50 draining blocks are omitted.
+Consequently, all reported metrics are calculated exclusively from the intermediate stable execution phase, with each metric averaged over at least 100 valid blocks.
+
+
+
+
+
+IV-B Correctness Validation
+
+
+
+Using the serializable order π⁡(T)\pi(T) derived in Section III-H, we validate Lantern’s correctness over 10,000 continuous blocks under high contention.
+Our validation comprises two phases:
+First, to verify determinism, each block is executed via Lantern in multiple independent runs; we observe that all runs consistently yield an identical serializable order.
+Second, to verify serializability, we sequentially re-execute the transactions according to the generated order π⁡(T)\pi(T).
+The evaluation results show that the read/write sets of each transaction perfectly match those from the concurrent execution, and the final state remains identical between the serial and concurrent executions.
+These empirical results demonstrate both the determinism and serializability of Lantern.
+
+
+
+
+
+IV-C Overall Performance
+
+
+
+On YCSB, we disable the CFBS mechanism as the workload does not feature intensive RMW operations. We evaluate Lantern alongside its variant Lantern-NoBP (without Back-Propagation), as well as three baseline systems: ChainMaker, Aria, and Serial execution.
+On SmallBank, an RMW-intensive benchmark where the complete Lantern enables both BP and CFBS mechanisms by default, we conduct a comprehensive ablation study using four variants: full Lantern, Lantern-NoBP (with CFBS only), Lantern-NoCFBS (with BP only), and Lantern-NoBPandCFBS (disabling both mechanisms).
+For both benchmarks, we systematically vary the Zipfian skew parameter to simulate different levels of data contention.
+
+
+Fig. 8: Overall Throughput on YCSB
+
+
+
+As illustrated in Fig. 8, Back-Propagation (BP) yields prominent performance gains under severe data contention. Specifically, when the Zipfian skew reaches 0.90.9, Lantern (6,1316,131 txn/s) outperforms Lantern-NoBP (2,3392,339 txn/s) by 2.6×2.6\times.
+Compared to existing baseline systems, Lantern maintains a substantial throughput lead:
+
+
+• 
+
+
+VS. Aria: Under extreme contention (skew=0.9\textit{skew}=0.9), Lantern outperforms Aria (1,4491,449 txn/s) by 4.2×4.2\times.
+This performance gap originates from Aria’s deterministic execution model, which permits at most one transaction to commit write operations per key within a single batch, thereby disallowing concurrent write overwrites.
+Under write-intensive workloads, this strict reservation policy forces an excessive number of conflicting transactions to abort.
+
+
+• 
+
+
+VS. ChainMaker: Lantern consistently outperforms ChainMaker by at least 2.2×2.2\times across all contention levels.
+This advantage stems from the fact that ChainMaker’s non-deterministic protocol requires an additional replay stage to ensure cross-node consistency, thereby bottlenecking its overall throughput.
+
+
+
+
+
+On SmallBank (Fig. 9), the throughput curves of Lantern and Lantern-NoBP nearly overlap, as do those of Lantern-NoCFBS and Lantern-NoBPandCFBS. This observation indicates that Back-Propagation yields only marginal improvements under RMW-intensive scenarios.
+Conversely, the substantial performance gap between variants with CFBS (Lantern and Lantern-NoBP) and those without (Lantern-NoCFBS and Lantern-NoBPandCFBS) demonstrates the crucial role of the CFBS mechanism in handling RMW workloads.
+Specifically, CFBS boosts throughput by up to 1.84×1.84\times under high contention (skew=0.9\textit{skew}=0.9, elevating throughput from 8,0358,035 txn/s for Lantern-NoCFBS to 14,77514,775 txn/s for Lantern).
+Furthermore, compared to the fully unoptimized baseline (Lantern-NoBPandCFBS), Lantern’s combined optimization achieves a 2.18×2.18\times speedup.
+
+
+Fig. 9: Overall Throughput on SmallBank
+
+
+
+
+
+IV-D Scalability
+
+
+
+To eliminate potential performance anomalies caused by non-uniform memory access (NUMA) in our dual-socket Intel Xeon architecture, we enforce a balanced resource allocation strategy for scalability evaluations across 4, 8, 16, and 32 CPU cores.
+Specifically, we evenly bind CPU cores across the two NUMA sockets using taskset, and enable memory page interleaving via numactl --interleave=all.
+This setup ensures symmetric CPU scaling and uniform memory access latency across all core configurations.
+
+
+
+Fig. 10 illustrates the scalability results under the YCSB benchmark across different CPU core counts.
+Under a uniform distribution (Fig. 10(a)), data conflicts are extremely rare. Consequently, the Back-Propagation mechanism yields marginal performance gains, causing the throughput curves of Lantern and Lantern-NoBP to virtually overlap.
+Furthermore, all concurrent control protocols exhibit near-linear scalability as the core count increases from 4 to 32.
+In contrast, under severe contention (Fig. 10(b)), Lantern consistently outperforms Lantern-NoBP across all core configurations.
+Moreover, while the throughput of Lantern‑NoBP, Aria, and ChainMaker plateaus or even degrades with more CPU cores, Lantern demonstrates superior scalability.
+
+
+
+
+
+(a) Uniform
+
+
+(b) Zipfian (Skew = 0.9)
+
+Fig. 10: Scalability on YCSB
+
+
+
+
+
+(a) Uniform
+
+
+(b) Zipfian (Skew = 0.9)
+
+Fig. 11: Scalability on SmallBank
+
+
+
+Fig. 11 illustrates the scalability results under the SmallBank benchmark.
+When workload access is uniform (Fig. 11(a)), protocols integrated with the CFBS mechanism (Lantern and Lantern-NoBP) consistently outperform those without CFBS (Lantern-NoCFBS and Lantern-NoBPandCFBS).
+Under severe contention (Fig. 11(b)), Lantern and Lantern-NoBP outperform all other baselines by a wide margin.
+When CFBS is enabled, the performance curves of Lantern and Lantern-NoBP virtually overlap, indicating that Back-Propagation provides marginal benefit when conflicts are proactively eliminated during batch selection.
+However, when CFBS is disabled, Back-Propagation takes effect by salvaging valid transactions from the dependency graph; specifically, Lantern-NoCFBS achieves 7,9907,990 txn/s at 32 cores, outperforming Lantern-NoBPandCFBS (6,8866,886 txn/s) by 1.2×1.2\times.
+
+
+
+
+
+IV-E Latency Breakdown
+
+
+
+
+
+(a) Low Contention (Skew = 0.1)
+
+
+(b) High Contention (Skew = 0.9)
+
+Fig. 12: Phase-wise Latency Breakdown On YCSB
+
+
+
+
+
+(a) Low Contention (Skew = 0.1)
+
+
+(b) High Contention (Skew = 0.9)
+
+Fig. 13: Phase-wise Latency Breakdown On SmallBank
+
+
+
+In this section, we evaluate the phase-wise latency breakdown of Lantern under both low-contention (Zipfian skew=0.1\text{Zipfian skew}=0.1) and high-contention (Zipfian skew=0.9\text{Zipfian skew}=0.9) workloads.
+Fig. 12 illustrates the detailed latency distribution on YCSB.
+Under low contention (Fig. 12(a)), transaction execution dominates the block latency, with the Execution phase consuming 48.948.9 ms, followed by the Commit phase at 3.33.3 ms.
+The remaining scheduling operations—including Selection, DAG Construction, and Back-Propagation—account for only 4.9%4.9\% of the total latency, demonstrating Lantern’s minimal scheduling overhead.
+Under high contention (Fig. 12(b)), severe conflicts force aborted transactions into subsequent rounds for re-execution, increasing the Execution phase latency to 150.8150.8 ms.
+On SmallBank (Fig. 13), where the CFBS mechanism is enabled to proactively prevent hot-account conflicts, the Selection phase incurs 1.01.0 ms and 4.94.9 ms under skew 0.10.1 and 0.90.9, respectively.
+
+
+
+
+
+IV-F Impact of Batch Size B𝑠𝑖𝑧𝑒B_{\mathit{size}}
+
+
+
+In this section, we evaluate the impact of the batch size B𝑠𝑖𝑧𝑒B_{\mathit{size}} on throughput.
+We compare five configurations where B𝑠𝑖𝑧𝑒B_{\mathit{size}} is fixed to 1×1\times, 3×3\times, 5×5\times, 7×7\times, and 9×9\times the CPU physical core count (denoted as Lantern-1 through Lantern-9).
+Note that on the SmallBank benchmark, the CFBS mechanism is disabled to prevent B𝑠𝑖𝑧𝑒B_{\mathit{size}} from becoming dynamic during processing.
+Fig. 14 presents the results, revealing a clear performance trade-off across both workloads:
+
+
+• 
+
+
+Low-to-Moderate Contention (skew≤0.7\text{skew}\leq 0.7): Larger batch sizes consistently achieve higher throughput.
+Increasing B𝑠𝑖𝑧𝑒B_{\mathit{size}} from 1×1\times to 5×5\times yields substantial performance gains because a larger batch exposes greater intra-batch parallelism and amortizes scheduling overheads.
+However, further increasing B𝑠𝑖𝑧𝑒B_{\mathit{size}} to 7×7\times and 9×9\times yields diminishing marginal returns as multi-core hardware execution capacity saturates.
+
+
+• 
+
+
+Severe Contention (skew=0.9\text{skew}=0.9): The throughput trend completely reverses.
+Lantern-1 achieves the highest throughput, whereas throughput monotonically degrades as B𝑠𝑖𝑧𝑒B_{\mathit{size}} increases.
+This degradation occurs because a large batch under high contention leads to low transaction commit ratios, and severe computational resource wastage from frequent aborts.
+In contrast, a smaller batch size bounds the contention domain per execution round, maintaining a higher commit ratio and ensuring stable throughput.
+
+
+
+
+
+Based on these findings, Lantern adopts B𝑠𝑖𝑧𝑒=5×CPU coresB_{\mathit{size}}=5\times\text{CPU cores} as its default configuration, balancing parallel throughput under low contention with robust handling of data conflicts.
+
+
+
+
+
+(a) YCSB
+
+
+(b) SmallBank
+
+Fig. 14: Impact of Batch Size B𝑠𝑖𝑧𝑒B_{\mathit{size}}
+
+
+
+
+
+
+V Conclusion
+
+
+
+In this paper, we presented Lantern, a deterministic concurrency control protocol designed for high-performance transaction processing systems operating without prior read-write knowledge.
+By combining an overwrite-permissive strategy on DAGs with a deterministic Back-Propagation mechanism, Lantern significantly expands the set of committable transactions per batch while maintaining cross-node state consistency. Additionally, its Conflict-Free Batch Selection (CFBS) mechanism effectively eliminates contention under RMW-intensive scenarios.
+We integrated Lantern into ChainMaker and evaluated it on YCSB and SmallBank benchmarks. The results demonstrate that Lantern achieves up to a 4.2×4.2\times throughput speedup over Aria and improves ChainMaker’s execution-layer throughput by at least 2.2×2.2\times.
+
+
+
+
+
+References
+
+
+
+[1]
+J. Kwon (2014)
+
+Tendermint: consensus without mining.
+
+Note: https://tendermint.com/static/docs/tendermint.pdf
+
+Cited by: §I,
+§IV-A.
+
+
+[2]
+M. Yin, D. Malkhi, M. K. Reiter, G. G. Gueta, and I. Abraham (2019)
+
+HotStuff: bft consensus with linearity and responsiveness.
+
+In Proceedings of the 2019 ACM Symposium on Principles of Distributed Computing,
+
+PODC ’19, pp. 347–356.
+
+External Links: ISBN 9781450362177,
+Link,
+Document
+
+Cited by: §I.
+
+
+[3]
+G. Golan Gueta, I. Abraham, S. Grossman, D. Malkhi, B. Pinkas, M. Reiter, D. Seredinschi, O. Tamir, and A. Tomescu (2019)
+
+SBFT: a scalable and decentralized trust infrastructure.
+
+In 2019 49th Annual IEEE/IFIP International Conference on Dependable Systems and Networks (DSN),
+
+Vol. , pp. 568–580.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[4]
+S. Nakamoto (2009)
+
+Bitcoin: a peer-to-peer electronic cash system.
+
+External Links: Link
+
+Cited by: §I.
+
+
+[5]
+V. Buterin (2014)
+
+A next-generation smart contract and decentralized application platform.
+
+External Links: Link
+
+Cited by: §I.
+
+
+[6]
+C. Jin, S. Pang, X. Qi, Z. Zhang, and A. Zhou (2022)
+
+A high performance concurrency protocol for smart contracts of permissioned blockchain.
+
+IEEE Transactions on Knowledge and Data Engineering 34 (11), pp. 5070–5083.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[7]
+T. Dickerson, P. Gazzillo, M. Herlihy, and E. Koskinen (2017)
+
+Adding concurrency to smart contracts.
+
+In Proceedings of the ACM Symposium on Principles of Distributed Computing,
+
+PODC ’17, pp. 303–312.
+
+External Links: ISBN 9781450349925,
+Link,
+Document
+
+Cited by: §I.
+
+
+[8]
+ChainMaker Team (2021)
+
+ChainMaker.
+
+External Links: Link
+
+Cited by: §I,
+§I,
+§I.
+
+
+[9]
+P. S. Anjana, S. Kumari, S. Peri, S. Rathor, and A. Somani (2019)
+
+An efficient framework for optimistic concurrent execution of smart contracts.
+
+In 2019 27th Euromicro International Conference on Parallel, Distributed and Network-Based Processing (PDP),
+
+Vol. , pp. 83–92.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[10]
+M. J. Amiri, D. Agrawal, and A. El Abbadi (2019)
+
+ParBlockchain: leveraging transaction parallelism in permissioned blockchain systems.
+
+In 2019 IEEE 39th International Conference on Distributed Computing Systems (ICDCS),
+
+Vol. , pp. 1337–1347.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[11]
+M. Kapritsos, Y. Wang, V. Quéma, A. Clement, L. Alvisi, and M. Dahlin (2012)
+
+All about eve: execute-verify replication for multi-core servers.
+
+In 10th USENIX Symposium on Operating Systems Design and Implementation,
+OSDI 2012, Hollywood, CA, USA, October 8-10, 2012,  C. Thekkath and A. Vahdat (Eds.),
+
+pp. 237–250.
+
+External Links: Link
+
+Cited by: §I.
+
+
+[12]
+P. S. Anjana (2021)
+
+Efficient parallel execution of block transactions in blockchain.
+
+In Proceedings of the 22nd International Middleware Conference: Doctoral Symposium,
+
+Middleware ’21, pp. 8–11.
+
+External Links: ISBN 9781450391559,
+Link,
+Document
+
+Cited by: §I.
+
+
+[13]
+H. T. Kung and J. T. Robinson (1981)
+
+On optimistic methods for concurrency control.
+
+ACM Trans. Database Syst. 6 (2), pp. 213–226.
+
+External Links: ISSN 0362-5915,
+Link,
+Document
+
+Cited by: §I,
+1st item.
+
+
+[14]
+People’s Government of Beijing Municipality (2025)
+
+Beijing’s technological leadership: chainmaker leads national market share for three consecutive years.
+
+Note: https://www.beijing.gov.cn/ywdt/gzdt/202504/t20250406_4056295.html
+
+Cited by: §I.
+
+
+[15]
+A. Thomson, T. Diamond, S. Weng, K. Ren, P. Shao, and D. J. Abadi (2012)
+
+Calvin: fast distributed transactions for partitioned database systems.
+
+In Proceedings of the 2012 ACM SIGMOD International Conference on Management of Data,
+
+SIGMOD ’12, pp. 1–12.
+
+External Links: ISBN 9781450312479,
+Link,
+Document
+
+Cited by: §I,
+§I,
+2nd item.
+
+
+[16]
+J. M. Faleiro and D. J. Abadi (2015)
+
+Rethinking serializable multiversion concurrency control.
+
+Proc. VLDB Endow. 8 (11), pp. 1190–1201.
+
+External Links: ISSN 2150-8097,
+Link,
+Document
+
+Cited by: §I,
+§I,
+2nd item.
+
+
+[17]
+Y. Lu, X. Yu, L. Cao, and S. Madden (2020)
+
+Aria: a fast and practical deterministic oltp database.
+
+Proc. VLDB Endow. 13 (12), pp. 2047–2060.
+
+External Links: ISSN 2150-8097,
+Link,
+Document
+
+Cited by: §I,
+§I,
+§I,
+§I,
+2nd item.
+
+
+[18]
+R. Gelashvili, A. Spiegelman, Z. Xiang, G. Danezis, Z. Li, D. Malkhi, Y. Xia, and R. Zhou (2023)
+
+Block-stm: scaling blockchain execution by turning ordering curse to a performance blessing.
+
+In Proceedings of the 28th ACM SIGPLAN Annual Symposium on Principles and Practice of Parallel Programming,
+
+PPoPP ’23, pp. 232–244.
+
+External Links: ISBN 9798400700156,
+Link,
+Document
+
+Cited by: §I,
+§I,
+§I.
+
+
+[19]
+Y. Xia, X. Yu, W. Moses, J. Shun, and S. Devadas (2019)
+
+LiTM: a lightweight deterministic software transactional memory system.
+
+In Proceedings of the 10th International Workshop on Programming Models and Applications for Multicores and Manycores,
+
+PMAM’19, pp. 1–10.
+
+External Links: ISBN 9781450362900,
+Link,
+Document
+
+Cited by: §I.
+
+
+[20]
+H. Li, Y. Chen, X. Shi, X. Bai, N. Mo, W. Li, R. Guo, Z. Wang, and Y. Sun (2023)
+
+FISCO-bcos: an enterprise-grade permissioned blockchain system with high-performance.
+
+In Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis,
+
+SC ’23.
+
+External Links: ISBN 9798400701092,
+Link,
+Document
+
+Cited by: §I,
+§I.
+
+
+[21]
+R. Kotla and M. Dahlin (2004)
+
+High throughput byzantine fault tolerance.
+
+In International Conference on Dependable Systems and Networks, 2004,
+
+Vol. , pp. 575–584.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[22]
+Quorum Team (2016)
+
+GoQuorum.
+
+External Links: Link
+
+Cited by: §I.
+
+
+[23]
+D. Qin, A. D. Brown, and A. Goel (2021)
+
+Caracal: contention management with deterministic concurrency control.
+
+In Proceedings of the ACM SIGOPS 28th Symposium on Operating Systems Principles,
+
+SOSP ’21, pp. 180–194.
+
+External Links: ISBN 9781450387095,
+Link,
+Document
+
+Cited by: §I.
+
+
+[24]
+J. M. Faleiro, D. J. Abadi, and J. M. Hellerstein (2017)
+
+High performance transactions via early write visibility.
+
+Proc. VLDB Endow. 10 (5), pp. 613–624.
+
+External Links: ISSN 2150-8097,
+Link,
+Document
+
+Cited by: §I,
+2nd item.
+
+
+[25]
+G. Wood (2014)
+
+Ethereum: a secure decentralised generalised transaction ledger.
+
+External Links: Link
+
+Cited by: §I.
+
+
+[26]
+K. Ren, A. Thomson, and D. J. Abadi (2014)
+
+An evaluation of the advantages and disadvantages of deterministic database systems.
+
+Proc. VLDB Endow. 7 (10), pp. 821–832.
+
+External Links: Link,
+Document
+
+Cited by: §I.
+
+
+[27]
+P. A. Bernstein and N. Goodman (1981)
+
+Concurrency control in distributed database systems.
+
+ACM Comput. Surv. 13 (2), pp. 185–221.
+
+External Links: ISSN 0360-0300,
+Link,
+Document
+
+Cited by: §I,
+§II-A.
+
+
+[28]
+P. A. Bernstein, V. Hadzilacos, N. Goodman, et al. (1987)
+
+Concurrency control and recovery in database systems.
+
+Vol. 370,  Addison-wesley Reading.
+
+Cited by: §I,
+§II-A.
+
+
+[29]
+E. Androulaki, A. Barger, V. Bortnikov, C. Cachin, K. Christidis, A. De Caro, et al. (2018)
+
+Hyperledger fabric: a distributed operating system for permissioned blockchains.
+
+In Proceedings of the Thirteenth EuroSys Conference,
+
+EuroSys ’18.
+
+External Links: ISBN 9781450355841,
+Link,
+Document
+
+Cited by: §I.
+
+
+[30]
+A. Sharma, F. M. Schuhknecht, D. Agrawal, and J. Dittrich (2019)
+
+Blurring the lines between blockchains and database systems: the case of hyperledger fabric.
+
+In Proceedings of the 2019 International Conference on Management of Data,
+
+SIGMOD ’19, pp. 105–122.
+
+External Links: ISBN 9781450356435,
+Link,
+Document
+
+Cited by: §I.
+
+
+[31]
+P. Ruan, D. Loghin, Q. Ta, M. Zhang, G. Chen, and B. C. Ooi (2020)
+
+A transactional perspective on execute-order-validate blockchains.
+
+SIGMOD ’20, pp. 543–557.
+
+External Links: ISBN 9781450367356,
+Link,
+Document
+
+Cited by: §I.
+
+
+[32]
+C. Gorenflo, L. Golab, and S. Keshav (2020)
+
+XOX fabric: a hybrid approach to blockchain transaction execution.
+
+In 2020 IEEE International Conference on Blockchain and Cryptocurrency (ICBC),
+
+Vol. , pp. 1–9.
+
+External Links: Document
+
+Cited by: §I.
+
+
+[33]
+P. Festa, P. M. Pardalos, and M. G. C. Resende (1999)
+
+Feedback set problems.
+
+In Handbook of Combinatorial Optimization,
+
+pp. 209–258.
+
+External Links: Document
+
+Cited by: §II-B.
+
+
+[34]
+ChainMaker, a blockchain platform for building secure, trustworthy value-exchange networks to power the new global digital economy.
+
+External Links: Link
+
+Cited by: §IV-A.
+
+
+[35]
+ChainMaker-sdk-go: the official go language sdk for chainmaker
+
+External Links: Link
+
+Cited by: §IV-A.
+
+
+[36]
+B. F. Cooper, A. Silberstein, E. Tam, R. Ramakrishnan, and R. Sears (2010)
+
+Benchmarking cloud serving systems with ycsb.
+
+In Proceedings of the 1st ACM Symposium on Cloud Computing,
+
+SoCC ’10, pp. 143–154.
+
+External Links: ISBN 9781450300360,
+Link,
+Document
+
+Cited by: 1st item.
+
+
+[37]
+M. Alomari, M. Cahill, A. Fekete, and U. Rohm (2008)
+
+The cost of serializability on platforms that use snapshot isolation.
+
+In 2008 IEEE 24th International Conference on Data Engineering,
+
+Vol. , pp. 576–585.
+
+External Links: Document
+
+Cited by: 2nd item.
+
+
+
+
+
+
+
+  
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+    
+      
+        L
+        A
+        T
+        E
+      
+      xml
+      
+    .
+  
+  
+    
+Instructions for reporting errors
+    
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+    
+      
+Click the "Report Issue" (
+            
+          ) button, located in the page header.
+    
+    
+Tip: You can select the relevant text first, to include it in your report.
+    
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+    
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+  
+
+  
+    
+      
+        We gratefully acknowledge support from
+        our major funders,
+        member institutions, ,
+        and all contributors.
+      
+      
+        About
+        ·
+        Help
+        ·
+        Contact
+        ·
+        Subscribe
+        ·
+        Copyright
+        ·
+        Privacy
+        ·
+        Accessibility
+        ·
+        Operational Status (opens in new tab)
+      
+    
+
+    
+      Major funding support from
+      
+        
+          
+        
+        
+          
+        
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+

@@ -1,0 +1,30 @@
+{
+  "binary_sha256": "468d24227a6f77d1a9e273ce847e01c4beea302c2424b5403332d0976088bd7d",
+  "command": [
+    "g++",
+    "-std=c++14",
+    "-Wall",
+    "-Wextra",
+    "-O3",
+    "-DNDEBUG",
+    "-I.",
+    "experiments/target_selection/validator.cpp",
+    "eas/Selector.cpp",
+    "eas/Oracle.cpp",
+    "-o",
+    "/tmp/issue4-clean-release/validator"
+  ],
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "cwd": "/tmp/issue4-clean-measure",
+  "git_head": "4997e9193a38b1ce04b1766e00cc56bd4f7c29e9",
+  "git_status": "",
+  "returncode": 0,
+  "source_sha256": {
+    "eas/Oracle.cpp": "cfdfee7a971d2e93bc74eab4b8f4a66cacdbc8667b6e8014cfb0a837568acee1",
+    "eas/Selector.cpp": "f209e63b53388978bd0a99481532036255f2adeeb7195c5311b851c82fe9c9af",
+    "eas/Selector.h": "6635c8c6b1bf5d8daca7426b76a09bc164626cd38f70d190854f7c838bd646fe",
+    "experiments/target_selection/validator.cpp": "f3e180ad0792a53ac0b208b033569fe7cf1331b3810b5c0f5427469ca2c59efa"
+  },
+  "stderr": "",
+  "stdout": ""
+}

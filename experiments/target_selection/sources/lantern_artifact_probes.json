@@ -1,0 +1,33 @@
+{
+  "retrieved_at_utc": "2026-09-05T09:09:47.096311+00:00",
+  "probes": [
+    {
+      "name": "gitlab_projects",
+      "url": "https://git.chainmaker.org.cn/api/v4/projects?search=lantern&simple=true&per_page=100",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "gitlab_tree",
+      "url": "https://git.chainmaker.org.cn/chainmaker/chainmaker-go/-/tree/v2.3.8",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "github_repositories",
+      "url": "https://api.github.com/search/repositories?q=lantern%20chainmaker",
+      "final_url": "https://api.github.com/search/repositories?q=lantern%20chainmaker",
+      "http_status": 200,
+      "bytes": 55,
+      "path": "experiments/target_selection/sources/lantern_github_repositories.response",
+      "sha256": "4af480b8ee5b87b369a76c49bd22c9a783908272ebffbe97898f8ab0f0772a5f"
+    },
+    {
+      "name": "github_title",
+      "url": "https://api.github.com/search/repositories?q=%22Finding%20Committable%20Transactions%22",
+      "final_url": "https://api.github.com/search/repositories?q=%22Finding%20Committable%20Transactions%22",
+      "http_status": 200,
+      "bytes": 55,
+      "path": "experiments/target_selection/sources/lantern_github_title.response",
+      "sha256": "4af480b8ee5b87b369a76c49bd22c9a783908272ebffbe97898f8ab0f0772a5f"
+    }
+  ]
+}

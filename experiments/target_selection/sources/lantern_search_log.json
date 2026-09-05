@@ -1,0 +1,21 @@
+{
+  "audit_date": "2026-09-05",
+  "primary_paper": "https://arxiv.org/html/2609.03315v1",
+  "queries": [
+    "\"Lantern\" \"Denglong Li\" github",
+    "\"2609.03315\" code",
+    "\"Lantern\" \"CFBS\" ChainMaker github",
+    "\"Finding Committable Transactions\" code artifact",
+    "site:git.chainmaker.org.cn \"Lantern\"",
+    "site:github.com \"Lantern\" \"ChainMaker\"",
+    "\"Denglong Li\" \"Lantern\" artifact"
+  ],
+  "relevant_primary_search_result": "https://arxiv.org/abs/2609.03315",
+  "outcome": "No Lantern-specific repository, patch or artifact identified in returned search results. Mirrors and unrelated name matches were not used as factual evidence.",
+  "paper_external_implementation_links": [
+    "https://git.chainmaker.org.cn/chainmaker/chainmaker-go/-/tree/v2.3.8",
+    "https://git.chainmaker.org.cn/chainmaker/sdk-go"
+  ],
+  "limitation": "Bounded public discovery; neither repository metadata search nor access failures establish that the artifact does not exist. No author contact performed.",
+  "source_scope": "Primary paper I-V, algorithms 1-4, proofs and references read via official full HTML; official PDF archived; pdftotext unavailable. No mirror used."
+}
