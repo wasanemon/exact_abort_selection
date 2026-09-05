@@ -1,0 +1,385 @@
+{
+  "conditions": [
+    {
+      "arity": 2,
+      "batch_id": 776281256,
+      "condition": "l2-n128-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 128,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1713923319,
+      "condition": "l2-n128-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 128,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1102726857,
+      "condition": "l2-n512-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 512,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 3111968606,
+      "condition": "l2-n512-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 512,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 3513906736,
+      "condition": "l2-n2048-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 2048,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 3008090726,
+      "condition": "l2-n2048-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 2048,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 263514048,
+      "condition": "l2-n8192-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive",
+        "eas_k1_graph",
+        "eas_k1_lazy",
+        "eas_k1_profile"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1208417051,
+      "condition": "l2-n8192-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive",
+        "eas_k1_graph",
+        "eas_k1_lazy",
+        "eas_k1_profile"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 4018048452,
+      "condition": "l2-n32768-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 32768,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 566257870,
+      "condition": "l2-n32768-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 32768,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 1,
+      "batch_id": 944948254,
+      "condition": "l1-n8192-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 1,
+      "batch_id": 4213683649,
+      "condition": "l1-n8192-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 3,
+      "batch_id": 3929551833,
+      "condition": "l3-n8192-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 3,
+      "batch_id": 2273540537,
+      "condition": "l3-n8192-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 4,
+      "batch_id": 1091134994,
+      "condition": "l4-n8192-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 4,
+      "batch_id": 4172939062,
+      "condition": "l4-n8192-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "arity",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1208417051,
+      "condition": "l2-n8192-zipf-w2",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "scale",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 2,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1208417051,
+      "condition": "l2-n8192-zipf-w4",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 8192,
+      "selector_only": false,
+      "suite": "scale",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 4,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 3321178628,
+      "condition": "l2-n4096-identical-w1",
+      "distribution": "identical",
+      "key_count": 10000,
+      "n": 4096,
+      "selector_only": false,
+      "suite": "control",
+      "variants": [
+        "eas_k1_graph",
+        "eas_k1_lazy",
+        "eas_k1_profile",
+        "eas_k1_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    }
+  ],
+  "expected_jobs": 1600,
+  "identity": {
+    "binary_sha256": "76d90a2a6af1e9498165dbb57059b0639fcc53ebb97310fac7de051b6ec6b71f",
+    "cpus": [
+      0,
+      2,
+      4,
+      6,
+      8
+    ],
+    "plan_sha256": "9cfbc0e120d08aa8607529ad44784d10958645b1ab5ad3824c85b91d0c30db17",
+    "runner_sha256": "a7d6fa232db6c2a2449d2bb761e6fa88ecf03d741c20a1438eacf106ee06f0c6",
+    "shared_runner_sha256": "98e8da3ebaaa414efbf7373d47525989694ae77945ca97d98df33fe99624c4e8",
+    "smoke": false
+  }
+}

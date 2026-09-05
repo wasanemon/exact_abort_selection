@@ -1,0 +1,8 @@
+{
+  "archive_sha256": "9d21b1c385da194d4c339c2d104fd5d62623e850c80bfce0adb03323c4b7af3e",
+  "files": {
+    "quality.jsonl": "4466d02bbbad5df88b3e74ac7b303ba0efcf5ff60007f223a9138b598bebd529",
+    "witness_search.jsonl": "2a37bd76df90e415fd4ec93eaaeca44d1bb37522db84bd20d2346fdf2cf05745"
+  },
+  "status": "passed"
+}

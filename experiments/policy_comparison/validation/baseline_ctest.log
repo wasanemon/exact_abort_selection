@@ -1,0 +1,28 @@
+Internal ctest changing into directory: /home/wasanemon/project/exact_abort_selection/build
+UpdateCTestConfiguration  from :/home/wasanemon/project/exact_abort_selection/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/wasanemon/project/exact_abort_selection/build/DartConfiguration.tcl
+Test project /home/wasanemon/project/exact_abort_selection/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: eas_selector
+
+1: Test command: /home/wasanemon/project/exact_abort_selection/build/eas_selector_test "--failure-dir" "/home/wasanemon/project/exact_abort_selection/experiments/eas/validation"
+1: Test timeout computed to be: 10000000
+1: {"status":"passed","suite":"independent_selector","exhaustive_universes":[{"keys":3,"n_max":4},{"keys":4,"n_max":3}],"exhaustive_batches":9050,"random_batches":1024,"targeted_batches":29,"generated_batches":10103,"oracle_runs":40412,"selector_runs":323296,"audited_rounds":696640,"observed_switches":26879,"rejection_checks":35,"random_seeds":[1,7,20260905,11400714819323198485],"random_arity":[1,2,3,4],"extra_arity":[6,8],"k":[1,2,3,"n+1"],"profile_B":[1,2,"default"],"adaptive_budget":[0,1,"default"],"degree_audit":true}
+1/2 Test #1: eas_selector .....................   Passed    5.97 sec
+test 2
+    Start 2: eas_integration
+
+2: Test command: /home/wasanemon/project/exact_abort_selection/build/eas_integration_test
+2: Test timeout computed to be: 10000000
+2: {"status":"passed","engine_invocations":161,"requested_batches":181,"assertions":246,"workers":[1,2,4],"multi_batch_epochs":3,"direct_snapshot_private_write_full_state_checks":true}
+2/2 Test #2: eas_integration ..................   Passed    0.06 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   6.03 sec

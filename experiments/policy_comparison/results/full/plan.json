@@ -1,0 +1,163 @@
+{
+  "arity": {
+    "arity": [
+      1,
+      3,
+      4
+    ],
+    "distribution": [
+      "uniform",
+      "zipf"
+    ],
+    "n": [
+      8192
+    ],
+    "workers": [
+      1
+    ]
+  },
+  "base_sha": "d1de8c4fe3285cc5ed338b760a13be8890007a29",
+  "budgets": {
+    "max_graph_bytes": 536870912,
+    "max_incidence": 8000000,
+    "memory_mib": 2048,
+    "timeout_seconds": 120,
+    "total_seconds": 14400
+  },
+  "control": {
+    "arity": [
+      2
+    ],
+    "cases": [
+      [
+        8192,
+        "uniform"
+      ],
+      [
+        8192,
+        "zipf"
+      ],
+      [
+        4096,
+        "identical"
+      ]
+    ],
+    "k": 1,
+    "workers": [
+      1
+    ]
+  },
+  "control_implementations": [
+    "graph",
+    "lazy",
+    "profile",
+    "adaptive"
+  ],
+  "control_reuse": "8192 adaptive k1 reuses exact main trace/seed/repetition observations; no duplicate measurement",
+  "eas_main_implementation": "adaptive",
+  "issue": 3,
+  "key_count": 10000,
+  "main": {
+    "arity": [
+      2
+    ],
+    "distribution": [
+      "uniform",
+      "zipf"
+    ],
+    "n": [
+      128,
+      512,
+      2048,
+      8192,
+      32768
+    ],
+    "workers": [
+      1
+    ]
+  },
+  "order_seed": 202609053,
+  "paired": "same trace and repeat; summarize time noise within each of 5 seeds before across-seed comparison; 15 timings are not 15 inputs",
+  "policies": [
+    "native",
+    "accept_id",
+    "accept_static_degree",
+    "eas_k1",
+    "eas_k2"
+  ],
+  "quality": {
+    "exhaustive": [
+      {
+        "all_subsets": true,
+        "n_max": 4,
+        "universe": 3
+      },
+      {
+        "exact_arity": 2,
+        "n_max": 6,
+        "universe": 4
+      }
+    ],
+    "maximum": "all 2^n transaction subsets, n<=18, only exhaustive and random quality cases; no large-input optimum claim",
+    "minimize": "first witness of each strict direction: repeatedly delete transactions or identify keys while preserving exact arity 2 and inequality; preserve ID order; local minimality only",
+    "random": {
+      "arity_max": 4,
+      "cases": 1000,
+      "n_max": 18,
+      "seed": 202609053,
+      "universe_max": 10
+    },
+    "timeout_seconds": 1800,
+    "witness_search": {
+      "arity": 2,
+      "cases": 20000,
+      "n_max": 18,
+      "n_min": 5,
+      "seed": 202609054,
+      "universe_max": 10,
+      "universe_min": 4
+    }
+  },
+  "repetitions_per_seed": 3,
+  "saved_before_measurement": "2026-09-05",
+  "scale": {
+    "arity": [
+      2
+    ],
+    "distribution": [
+      "zipf"
+    ],
+    "n": [
+      8192
+    ],
+    "workers": [
+      2,
+      4
+    ]
+  },
+  "scope": "single-node CPU in-memory point complete RMW; no Issue #4, port, retry engine, merge or force push",
+  "seeds": [
+    11,
+    29,
+    47,
+    71,
+    101
+  ],
+  "sensitivity": {
+    "extra_body_cost_us": [
+      0,
+      0.1,
+      1,
+      10,
+      100,
+      1000
+    ],
+    "model": "C/(measured_batch_seconds+n*c); c hypothetical uniform per attempted transaction, no retries",
+    "workers": 1
+  },
+  "trace_source": "prefer TSV bytes in experiments/eas/results/full/raw_data.tar.gz; regenerate with existing generator and verify SHA256/bytes; generate only missing conditions",
+  "verification": "C++ independent all-pairs oracle, direct disjointness/maximality, full actual-Aria snapshot/private-write/serial full-state validation outside timing; EAS exact arrays grouped by policy AND k",
+  "version": 1,
+  "warmup": "one separate process at seed 7 per unique condition/variant before measurements; does not warm the next process heap/cache",
+  "zipf": 0.99
+}

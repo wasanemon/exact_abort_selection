@@ -1,0 +1,1 @@
+{"status":"passed","quality_cases":61668,"optimal_subsets_enumerated":27430660,"witness_cases":20000,"policies":["native","accept_id","accept_static_degree","eas_k1","eas_k2"]}

@@ -5,3 +5,11 @@ experiments/eas/results/**/*.svg whitespace=-blank-at-eol
 experiments/eas/validation/*.json linguist-generated=true
 experiments/eas/validation/*.jsonl linguist-generated=true
 experiments/eas/validation/*.log linguist-generated=true
+# Issue #3 raw/derived artifacts preserve the same CSV and SVG byte formats.
+experiments/policy_comparison/results/** linguist-generated=true
+experiments/policy_comparison/baseline_smoke/** linguist-generated=true
+experiments/policy_comparison/quality/*.csv linguist-generated=true
+experiments/policy_comparison/**/*.csv whitespace=cr-at-eol
+experiments/policy_comparison/**/*.svg whitespace=-blank-at-eol
+experiments/policy_comparison/validation/*.json linguist-generated=true
+experiments/policy_comparison/validation/*.log linguist-generated=true

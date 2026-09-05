@@ -1,0 +1,2035 @@
+{
+  "checks": [
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "0b32ab31bed4d253a439e316f733fb32ee3f375b9a0d5e135f580fd12721edcc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "0b32ab31bed4d253a439e316f733fb32ee3f375b9a0d5e135f580fd12721edcc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "0b32ab31bed4d253a439e316f733fb32ee3f375b9a0d5e135f580fd12721edcc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "0b32ab31bed4d253a439e316f733fb32ee3f375b9a0d5e135f580fd12721edcc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "0b32ab31bed4d253a439e316f733fb32ee3f375b9a0d5e135f580fd12721edcc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d7d71431e5310b3d17d5a88751db5b8273ad34c15239c18dc931ac790029759b",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d7d71431e5310b3d17d5a88751db5b8273ad34c15239c18dc931ac790029759b",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d7d71431e5310b3d17d5a88751db5b8273ad34c15239c18dc931ac790029759b",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d7d71431e5310b3d17d5a88751db5b8273ad34c15239c18dc931ac790029759b",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d7d71431e5310b3d17d5a88751db5b8273ad34c15239c18dc931ac790029759b",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "39076b57dbb878002df0ed7b8104acbb9a71cf096e0939e6c8b9347a3ff09945",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "39076b57dbb878002df0ed7b8104acbb9a71cf096e0939e6c8b9347a3ff09945",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "39076b57dbb878002df0ed7b8104acbb9a71cf096e0939e6c8b9347a3ff09945",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "39076b57dbb878002df0ed7b8104acbb9a71cf096e0939e6c8b9347a3ff09945",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "39076b57dbb878002df0ed7b8104acbb9a71cf096e0939e6c8b9347a3ff09945",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "f648a3839bdc3e146d566b5697598236c46f064ebcad36ea9c54761b7993f704",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "f648a3839bdc3e146d566b5697598236c46f064ebcad36ea9c54761b7993f704",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "f648a3839bdc3e146d566b5697598236c46f064ebcad36ea9c54761b7993f704",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "f648a3839bdc3e146d566b5697598236c46f064ebcad36ea9c54761b7993f704",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "f648a3839bdc3e146d566b5697598236c46f064ebcad36ea9c54761b7993f704",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cfa80a0115e1fb62f941619d2f5b592a516fe9e6eb9eb5c0489352686d69d2a1",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cfa80a0115e1fb62f941619d2f5b592a516fe9e6eb9eb5c0489352686d69d2a1",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cfa80a0115e1fb62f941619d2f5b592a516fe9e6eb9eb5c0489352686d69d2a1",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cfa80a0115e1fb62f941619d2f5b592a516fe9e6eb9eb5c0489352686d69d2a1",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cfa80a0115e1fb62f941619d2f5b592a516fe9e6eb9eb5c0489352686d69d2a1",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "4aad40590f1fde84cfa7cfeeea398d92d40d8a219794b5b5fc8551aa70c6b5d8",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "4aad40590f1fde84cfa7cfeeea398d92d40d8a219794b5b5fc8551aa70c6b5d8",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "4aad40590f1fde84cfa7cfeeea398d92d40d8a219794b5b5fc8551aa70c6b5d8",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "4aad40590f1fde84cfa7cfeeea398d92d40d8a219794b5b5fc8551aa70c6b5d8",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "4aad40590f1fde84cfa7cfeeea398d92d40d8a219794b5b5fc8551aa70c6b5d8",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "419078cb815fde347c779dc8222d3d1243758a3763e499e39b6eb0fe2cf8aaab",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "419078cb815fde347c779dc8222d3d1243758a3763e499e39b6eb0fe2cf8aaab",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "419078cb815fde347c779dc8222d3d1243758a3763e499e39b6eb0fe2cf8aaab",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "419078cb815fde347c779dc8222d3d1243758a3763e499e39b6eb0fe2cf8aaab",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "419078cb815fde347c779dc8222d3d1243758a3763e499e39b6eb0fe2cf8aaab",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "bdcc6704c8565733e7725d072de28a7995158ec34dc296fa7510d1f6eda423e5",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "bdcc6704c8565733e7725d072de28a7995158ec34dc296fa7510d1f6eda423e5",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "bdcc6704c8565733e7725d072de28a7995158ec34dc296fa7510d1f6eda423e5",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "bdcc6704c8565733e7725d072de28a7995158ec34dc296fa7510d1f6eda423e5",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "bdcc6704c8565733e7725d072de28a7995158ec34dc296fa7510d1f6eda423e5",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "20a3235c9c38cdc8820062f33972f43eed49a3d172b226722649532db1d2041f",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "20a3235c9c38cdc8820062f33972f43eed49a3d172b226722649532db1d2041f",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "20a3235c9c38cdc8820062f33972f43eed49a3d172b226722649532db1d2041f",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "20a3235c9c38cdc8820062f33972f43eed49a3d172b226722649532db1d2041f",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "20a3235c9c38cdc8820062f33972f43eed49a3d172b226722649532db1d2041f",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "7441105e63b60140f0b1dc12459063dda99e26eb97b6c10f21e02263ce103aee",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "7441105e63b60140f0b1dc12459063dda99e26eb97b6c10f21e02263ce103aee",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "7441105e63b60140f0b1dc12459063dda99e26eb97b6c10f21e02263ce103aee",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "7441105e63b60140f0b1dc12459063dda99e26eb97b6c10f21e02263ce103aee",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "7441105e63b60140f0b1dc12459063dda99e26eb97b6c10f21e02263ce103aee",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 2
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5bbbae1daef1e0d3a285af192cacaec58bbacb1047c0323885f43b124e431b96",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "c7f49ad230a1d7031dfd1a2ab8aa582d83cccb41bcafb4c58c634dc8a3f47825",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "aec93f3c04a60ce1308c3405aa8d73858cdf1c9301a58df09cd39228cdd76473",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "21a11027122240b36b0bf48469389ee148b26e6f0d69f4ea7773dfa618824e6c",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "a82432984fdb8173ff5bab2ac379000756dcfb2bb917f609a705704459bce0cc",
+      "workers": 4
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cdde14d205ddbb9b01cd950e9fb90bf0e87e3763a32ecb59834372455a5b0400",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cdde14d205ddbb9b01cd950e9fb90bf0e87e3763a32ecb59834372455a5b0400",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cdde14d205ddbb9b01cd950e9fb90bf0e87e3763a32ecb59834372455a5b0400",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cdde14d205ddbb9b01cd950e9fb90bf0e87e3763a32ecb59834372455a5b0400",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "cdde14d205ddbb9b01cd950e9fb90bf0e87e3763a32ecb59834372455a5b0400",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "9b1baf567c2d766f258b9bb692e4b9c6dd11666c982daaad3165dbc3a9a280a2",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "9b1baf567c2d766f258b9bb692e4b9c6dd11666c982daaad3165dbc3a9a280a2",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "9b1baf567c2d766f258b9bb692e4b9c6dd11666c982daaad3165dbc3a9a280a2",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "9b1baf567c2d766f258b9bb692e4b9c6dd11666c982daaad3165dbc3a9a280a2",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "9b1baf567c2d766f258b9bb692e4b9c6dd11666c982daaad3165dbc3a9a280a2",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d478adaeab1d9963c2d2dabaa8564fb8aee29d045becc29aee0ec5362bb2fd76",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d478adaeab1d9963c2d2dabaa8564fb8aee29d045becc29aee0ec5362bb2fd76",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d478adaeab1d9963c2d2dabaa8564fb8aee29d045becc29aee0ec5362bb2fd76",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d478adaeab1d9963c2d2dabaa8564fb8aee29d045becc29aee0ec5362bb2fd76",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "d478adaeab1d9963c2d2dabaa8564fb8aee29d045becc29aee0ec5362bb2fd76",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5734c5aad3dbfaa35127a6042b114a57f34172c45718abeba7b647a20cf62349",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5734c5aad3dbfaa35127a6042b114a57f34172c45718abeba7b647a20cf62349",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5734c5aad3dbfaa35127a6042b114a57f34172c45718abeba7b647a20cf62349",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5734c5aad3dbfaa35127a6042b114a57f34172c45718abeba7b647a20cf62349",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "5734c5aad3dbfaa35127a6042b114a57f34172c45718abeba7b647a20cf62349",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "858c910146ce3f7b7a5e7d795fa7d203539ae507835f64456961c0534a92e802",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "native"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "native",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "858c910146ce3f7b7a5e7d795fa7d203539ae507835f64456961c0534a92e802",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "eas",
+      "policy_k": 2,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "858c910146ce3f7b7a5e7d795fa7d203539ae507835f64456961c0534a92e802",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_id",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "858c910146ce3f7b7a5e7d795fa7d203539ae507835f64456961c0534a92e802",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "greedy"
+      ],
+      "mismatch": [],
+      "observations": 3,
+      "policy": "accept_static_degree",
+      "policy_k": null,
+      "status": "passed",
+      "successful": 3,
+      "trace_sha256": "858c910146ce3f7b7a5e7d795fa7d203539ae507835f64456961c0534a92e802",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive",
+        "graph",
+        "lazy",
+        "profile"
+      ],
+      "mismatch": [],
+      "observations": 12,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 12,
+      "trace_sha256": "a48a21070444db802596478b0d94efca440478b5c0c2d7f0130034300d252f89",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive",
+        "graph",
+        "lazy",
+        "profile"
+      ],
+      "mismatch": [],
+      "observations": 12,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 12,
+      "trace_sha256": "c949b28e58edeb085426205b1dbda49d3c6b799b2e7235dba5fcdcc278b918de",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive",
+        "graph",
+        "lazy",
+        "profile"
+      ],
+      "mismatch": [],
+      "observations": 12,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 12,
+      "trace_sha256": "7978cc3e4811fa117de2002785c15371d5b275e2b3ce8b4f435cd74cf9553521",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive",
+        "graph",
+        "lazy",
+        "profile"
+      ],
+      "mismatch": [],
+      "observations": 12,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 12,
+      "trace_sha256": "82854d38c39cd59ef70fd29eb743345faebf88058472424a0f81f1f2b8e62bd9",
+      "workers": 1
+    },
+    {
+      "implementations": [
+        "adaptive",
+        "graph",
+        "lazy",
+        "profile"
+      ],
+      "mismatch": [],
+      "observations": 12,
+      "policy": "eas",
+      "policy_k": 1,
+      "status": "passed",
+      "successful": 12,
+      "trace_sha256": "c20337c37260b7c57543fb86522632ef2c43440c45e843d4fd77273f9d880687",
+      "workers": 1
+    }
+  ],
+  "failed": 0
+}

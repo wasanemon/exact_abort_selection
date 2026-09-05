@@ -24,10 +24,12 @@ python3 tests/test_audit_results.py
 mkdir -p experiments/policy_comparison/reproduced/quality
 python3 tests/test_hsc.py --output experiments/policy_comparison/reproduced/hsc.json --log experiments/policy_comparison/reproduced/hsc.log
 timeout 1800 build/policy_comparison_test --quality-dir experiments/policy_comparison/reproduced/quality
+python3 experiments/policy_comparison/analyze_quality.py experiments/policy_comparison/reproduced/quality
 python3 experiments/policy_comparison/run.py --smoke --output experiments/policy_comparison/reproduced/smoke --cpus 0,2,4,6,8
 python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/reproduced/smoke
 python3 experiments/policy_comparison/run.py --full --output experiments/policy_comparison/reproduced/full --cpus 0,2,4,6,8
 python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/reproduced/full
+python3 experiments/policy_comparison/report_facts.py experiments/policy_comparison/reproduced/full
 ```
 
 CPU番号は利用可能なaffinityの部分集合に置き換えられます。
@@ -90,6 +92,9 @@ tar -xzf experiments/policy_comparison/results/smoke/raw_data.tar.gz -C experime
 tar -xzf experiments/policy_comparison/quality/raw_data.tar.gz -C experiments/policy_comparison/quality
 python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/results/full --output /tmp/policy-summary-full
 python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/results/smoke --output /tmp/policy-summary-smoke
+python3 experiments/policy_comparison/analyze_quality.py experiments/policy_comparison/quality
+python3 experiments/policy_comparison/report_facts.py experiments/policy_comparison/results/full
+python3 experiments/policy_comparison/audit_delivery.py --output /tmp/policy-delivery-audit.json
 ```
 
 `analyze.py`はraw/trace hash・予定全件・全配列のpolicy/k別一致・確定集合の非交差・
