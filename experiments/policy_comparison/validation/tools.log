@@ -1,0 +1,10 @@
+test_failures_remain_missing (__main__.Bookkeeping) ... ok
+test_group_by_policy_and_k_then_detect_repeat_mismatch (__main__.Bookkeeping) ... ok
+test_paired_seed_summary_not_ratio_of_marginal_medians (__main__.Bookkeeping) ... ok
+test_plan_coverage_and_pairing (__main__.Bookkeeping) ... ok
+test_sensitivity_algebra_and_undefined_statistics (__main__.Bookkeeping) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.016s
+
+OK

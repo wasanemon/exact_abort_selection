@@ -1,0 +1,16 @@
+{
+  "counts": {
+    "measure": {
+      "ok": 1500
+    },
+    "warmup": {
+      "ok": 100
+    }
+  },
+  "decision_checks": {
+    "passed": 455
+  },
+  "elapsed_seconds_total": 195.74498657183722,
+  "expected_jobs": 1600,
+  "saved_jobs": 1600
+}

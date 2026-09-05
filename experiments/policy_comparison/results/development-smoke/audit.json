@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "expected_records": 544,
+  "failures": {},
+  "records": 544,
+  "saved_legacy_decision_comparisons": 18,
+  "status": "passed",
+  "unique_traces": 30
+}

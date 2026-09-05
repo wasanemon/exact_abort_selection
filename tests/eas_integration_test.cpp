@@ -41,14 +41,14 @@ int main(int argc, char **argv) {
             eas::normalize(logical_b.input, logical_options).keys, "dense relabeling counterexample setup");
     require(!eas::same_logical_inputs(logical_a.input, logical_b.input),
             "trace equality must compare original logical values, not separately dense labels");
-    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive"}) {
+    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive", "accept_id", "accept_static_degree"}) {
       eas::Options o; o.mode = mode; o.k = 1;
       auto m = execute({example}, o, 1).front();
-      require(m.result.certificate == (o.mode == "native" ? std::vector<uint64_t>{1} : std::vector<uint64_t>{2,3}), "native vs EAS semantic example");
+      require(m.result.certificate == ((o.mode == "native" || o.mode == "accept_id") ? std::vector<uint64_t>{1} : std::vector<uint64_t>{2,3}), "native vs EAS semantic example");
       o.k = 2;
       m = execute({zero}, o, 4).front();
-      require(m.result.certificate.size() == (o.mode == "native" ? 1 : 0), "frozen top-2 zero commits");
-      if (o.mode != "native") {
+      require(m.result.certificate.size() == (o.mode == "native" || eas::is_acceptance(o.mode) ? 1 : 0), "frozen top-2 zero commits");
+      if (o.mode != "native" && !eas::is_acceptance(o.mode)) {
         m = execute({frozen}, o, 2).front();
         require(m.result.abort_rounds.front() == std::vector<uint64_t>({4,3}), "frozen candidates changed within round");
       }
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
         tx.writes = tx.reads; input.input.push_back(tx);
       }
       eas::Result reference;
-      for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive"}) {
+      for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive", "accept_id", "accept_static_degree"}) {
         eas::Options o; o.mode = mode; o.k = sample % 4 == 3 ? n + 3 : sample % 3 + 1;
         if (o.mode == "adaptive" && sample % 2) o.adaptive_budget = sample % 3;
         auto one = execute({input}, o, 1).front();
@@ -72,27 +72,36 @@ int main(int argc, char **argv) {
         require(eas::same_decisions(one.result, many.result), "worker-dependent decisions");
         require(one.final_state == many.final_state, "worker-dependent full DB state");
         if (o.mode == "graph") reference = one.result;
-        if (o.mode != "native") require(eas::same_decisions(reference, one.result), "EAS mode-dependent decisions");
+        if (o.mode != "native" && !eas::is_acceptance(o.mode)) require(eas::same_decisions(reference, one.result), "EAS mode-dependent decisions");
       }
     }
     auto a = trace({{0,1}, {0,2}, {1,3}});
     auto b = trace({{0,2}, {0,2}, {0,2}}); b.batch_id = 1;
     auto c = trace({{0,1}, {2,3}, {4,5}}); c.batch_id = 2;
-    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive"}) {
+    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive", "accept_id", "accept_static_degree"}) {
       eas::Options o; o.mode = mode; o.k = 2; o.adaptive_budget = 0;
       auto single = execute({a,b,c}, o, 1);
       auto parallel = execute({a,b,c}, o, 4);
+      auto two = execute({a,b,c}, o, 2);
       require(single.size() == 3 && parallel.size() == 3, "three real batches missing");
       for (size_t i = 0; i < 3; ++i) {
         require(eas::same_decisions(single[i].result, parallel[i].result), "multi-batch decision state leak");
         require(single[i].final_state == parallel[i].final_state, "multi-batch DB state leak");
+        require(eas::same_decisions(single[i].result, two[i].result) && single[i].final_state == two[i].final_state, "worker=2 multi-batch leak");
       }
       require(parallel[2].result.certificate == std::vector<uint64_t>({1,2,3}), "mask leaked across epochs");
     }
-    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive"}) {
+    for (const auto &mode : {"native", "graph", "lazy", "profile", "adaptive", "accept_id", "accept_static_degree"}) {
       eas::Options o; o.mode = mode;
       require(execute({trace({})}, o, 2).front().result.commit.empty(), "empty batch");
       require(execute({trace({{}})}, o, 2).front().result.certificate == std::vector<uint64_t>{1}, "empty transaction");
+    }
+    // Native keeps reservations of later-rejected transactions; accept_id does not.
+    const auto reservations = trace({{0}, {0,1}, {1,2}});
+    for (const auto &mode : {"native", "accept_id", "accept_static_degree"}) {
+      eas::Options o; o.mode = mode; o.max_incidence = mode == std::string("accept_id") ? 0 : 8000000;
+      const auto r = execute({reservations}, o, 2).front().result;
+      require(r.certificate == (o.mode == "native" ? std::vector<uint64_t>{1} : std::vector<uint64_t>{1,3}), "rejected reservation semantic distinction");
     }
     // Validate extraction using actual AriaRWKey objects and different addresses.
     aria::HashPartitioner partitioner(0, 1);

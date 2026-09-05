@@ -187,19 +187,31 @@ public:
               const Trace &trace, Measurement &m) {
     // This method is entirely outside all measured time intervals.
     auto actual = extract_transactions(txns, db.key_count);
-    Options validate = options; if (validate.mode == "native") validate.mode = "graph";
+    Options validate = options; if (validate.mode == "native") validate.mode = "accept_id";
     auto actual_batch = normalize(actual, validate);
     if (!same_logical_inputs(actual, trace.input))
       throw std::logic_error("executed R/W sets differ from trace");
     if (!use_decisions) {
+      std::vector<uint64_t> first(db.key_count, std::numeric_limits<uint64_t>::max());
+      for (const auto &t : actual) for (const auto &key : t.writes)
+        first[key.value] = std::min(first[key.value], t.id);
+      for (size_t t = 0; t < actual.size(); ++t) {
+        bool expected = true;
+        for (const auto &key : actual[t].writes) expected = expected && first[key.value] == actual[t].id;
+        if (bool(m.result.commit[t]) != expected) throw std::logic_error("native minimum-writer rule mismatch");
+      }
       // Descriptive native input statistic, collected outside its validation time.
       std::vector<size_t> counts(actual_batch.key_count);
       for (const auto &keys : actual_batch.keys) for (auto key : keys) ++counts[key];
       for (const auto &keys : actual_batch.keys)
         for (auto key : keys) if (counts[key] > 1) { ++m.result.stats.initial_core_size; break; }
     }
-    if (use_decisions && txns.size() <= 64 && !same_decisions(m.result, oracle(actual, options.k)))
-      throw std::logic_error("engine decisions differ from independent oracle");
+    if (use_decisions && txns.size() <= 64) {
+      const auto reference = is_acceptance(options.mode) ?
+          acceptance_oracle(actual, options.mode == "accept_static_degree") : oracle(actual, options.k);
+      if (!same_decisions(m.result, reference))
+        throw std::logic_error("engine decisions differ from independent policy oracle");
+    }
     auto sequential = initial;
     std::vector<uint8_t> touched(db.key_count);
     for (size_t t = 0; t < txns.size(); ++t) {
@@ -316,7 +328,7 @@ std::vector<Measurement> run_engine(const std::vector<Trace> &traces,
   if (options.max_arity > 8) throw Unsupported("selector arity cap exceeds 8");
   const size_t n = traces.front().input.size(), key_count = traces.front().key_count;
   if (n >= (1u << 20) || !key_count || key_count > 1000000) throw Unsupported("Aria ID / database capacity");
-  Options validate = options; if (validate.mode == "native") validate.mode = "graph";
+  Options validate = options; if (validate.mode == "native") validate.mode = "accept_id";
   for (const auto &trace : traces) {
     if (trace.input.size() != n || trace.key_count != key_count) throw Unsupported("smoke batches must share n/domain");
     auto b = normalize(trace.input, validate);
@@ -366,7 +378,11 @@ std::string measurement_json(const Measurement &m, const Trace &trace,
   }
   struct rusage usage{}; getrusage(RUSAGE_SELF, &usage);
   out << "{\"status\":\"ok\",\"verification\":\"passed\",\"mode\":\"" << o.mode
-      << "\",\"policy_k\":" << o.k << ",\"seed\":" << trace.seed << ",\"batch_id\":" << trace.batch_id
+      << "\",\"policy\":\"" << (is_acceptance(o.mode) || o.mode == "native" ? o.mode : "eas")
+      << "\",\"implementation\":\"" << (is_acceptance(o.mode) ? "greedy" : o.mode)
+      << "\",\"policy_k\":";
+  if (is_acceptance(o.mode) || o.mode == "native") out << "null"; else out << o.k;
+  out << ",\"seed\":" << trace.seed << ",\"batch_id\":" << trace.batch_id
       << ",\"n\":" << trace.input.size() << ",\"actual_arity\":" << (trace.input.empty() ? 0 : double(access) / trace.input.size())
       << ",\"arity_min\":" << min_arity << ",\"arity_max\":" << max_arity << ",\"key_count\":" << trace.key_count
       << ",\"workers\":" << workers << ",\"selector_only\":" << (selector_only ? "true" : "false")
@@ -377,6 +393,10 @@ std::string measurement_json(const Measurement &m, const Trace &trace,
       << ",\"aria_snapshot_isolation\":false,\"aria_reordering_optmization\":true"
       << ",\"batch_ms\":";
   if (selector_only) out << "null"; else out << m.batch_ms;
+  out << ",\"effective_commits_per_second\":";
+  if (selector_only || m.batch_ms <= 0) out << "null"; else out << commits * 1000.0 / m.batch_ms;
+  out << ",\"ms_per_commit\":";
+  if (selector_only || !commits) out << "null"; else out << m.batch_ms / commits;
 #define FIELD(name) out << ",\"" #name "\":" << m.name
   FIELD(read_wall_ms); FIELD(commit_wall_ms); FIELD(read_worker_ms); FIELD(commit_worker_ms);
   FIELD(reservation_worker_ms); FIELD(dependency_worker_ms); FIELD(apply_worker_ms);
@@ -391,6 +411,7 @@ std::string measurement_json(const Measurement &m, const Trace &trace,
   STAT(switches); STAT(switch_round); STAT(switch_remaining); STAT(switch_queries);
   STAT(graph_bytes); STAT(index_payload_bytes); STAT(normalize_ms); STAT(build_ms); STAT(trim_ms);
   STAT(select_ms); STAT(switch_ms); STAT(certificate_ms); STAT(kernel_ms); STAT(total_ms);
+  STAT(count_ms); STAT(sort_ms); STAT(initial_degree_evaluations); STAT(acceptance_key_visits);
 #undef STAT
   out << "},\"decisions\":{\"abort_rounds\":[";
   for (size_t i = 0; i < m.result.abort_rounds.size(); ++i) {
@@ -406,7 +427,17 @@ std::string measurement_json(const Measurement &m, const Trace &trace,
   for (size_t i = 0; i < m.result.commit.size(); ++i) { if (i) out << ','; out << unsigned(m.result.commit[i]); }
   out << "],\"certificate\":[";
   for (size_t i = 0; i < m.result.certificate.size(); ++i) { if (i) out << ','; out << m.result.certificate[i]; }
-  out << "]}}";
+  out << ']';
+  if (is_acceptance(o.mode)) {
+    out << ",\"consideration_order\":[";
+    for (size_t i = 0; i < m.result.consideration_order.size(); ++i) { if (i) out << ','; out << m.result.consideration_order[i]; }
+    out << "],\"rejected_ids\":[";
+    for (size_t i = 0; i < m.result.rejected_ids.size(); ++i) { if (i) out << ','; out << m.result.rejected_ids[i]; }
+    out << "],\"initial_degrees\":[";
+    for (size_t i = 0; i < m.result.initial_degrees.size(); ++i) { if (i) out << ','; out << m.result.initial_degrees[i]; }
+    out << ']';
+  }
+  out << "}}";
   return out.str();
 }
 } // namespace eas

@@ -224,15 +224,17 @@ def check_pairs(records, destination):
 
     groups = {}
     for record in records:
-        if record["phase"] == "measure" and record["mode"] != "native":
-            groups.setdefault((record["condition"], record["seed"]), []).append(record)
+        if record["phase"] == "measure" and record["mode"] in ("graph", "lazy", "profile", "adaptive"):
+            groups.setdefault((record["condition"], record["seed"], record.get("policy_k"),
+                               record.get("repetition", 0)), []).append(record)
     checks = []
-    for (condition, seed), values in sorted(groups.items()):
+    for (condition, seed, k, repetition), values in sorted(groups.items()):
         valid = [value for value in values if value["status"] == "ok"]
         expected_modes = ["graph", "lazy", "profile", "adaptive"]
         unavailable = {mode: "not_run" for mode in expected_modes if mode not in {v["mode"] for v in values}}
         unavailable.update({v["mode"]: v["status"] for v in values if v["status"] != "ok"})
-        comparison = {"condition": condition, "seed": seed, "expected_modes": expected_modes,
+        comparison = {"condition": condition, "seed": seed, "policy": "eas", "policy_k": k,
+                      "repetition": repetition, "expected_modes": expected_modes,
                       "successful_modes": [v["mode"] for v in valid],
                       "unavailable": unavailable}
         if valid:
@@ -249,7 +251,7 @@ def check_pairs(records, destination):
         else:
             comparison["status"] = "unavailable"
         checks.append(comparison)
-    save_json(destination, {"comparison": "exact abort rounds, commit mask, certificate; native policy excluded",
+    save_json(destination, {"comparison": "exact abort rounds, commit mask, certificate; only same EAS policy/k/repetition",
                             "checks": checks, "failed": sum(x["status"] == "failed" for x in checks)})
     return checks
 

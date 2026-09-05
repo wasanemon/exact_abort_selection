@@ -1,0 +1,85 @@
+[
+  {
+    "cwd": "/home/wasanemon/project/exact_abort_selection",
+    "command": "ctest --test-dir build --verbose --output-on-failure",
+    "log": "baseline_ctest.log",
+    "phase": "before changes"
+  },
+  {
+    "cwd": "/home/wasanemon/project/exact_abort_selection",
+    "command": "python3 experiments/eas/run.py --smoke --output experiments/policy_comparison/baseline_smoke --cpus 0,2,4,6,8",
+    "log": "baseline_smoke.log",
+    "phase": "before changes"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "cmake -S . -B build -DARIA_BUILD_EAS=ON -DCMAKE_BUILD_TYPE=Release",
+    "log": "clean_configure.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "cmake --build build --target bench_eas eas_selector_test eas_integration_test policy_comparison_test -j 2",
+    "log": "clean_build.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "ctest --test-dir build --verbose --output-on-failure",
+    "log": "clean_ctest.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "python3 experiments/policy_comparison/test_tools.py",
+    "log": "clean_tools.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "timeout 1800 build/policy_comparison_test --quality-dir experiments/policy_comparison/quality",
+    "stdout": "clean_quality.log",
+    "stderr": "clean_quality.stderr"
+  },
+  {
+    "cwd": "/home/wasanemon/project/exact_abort_selection",
+    "command": "cmake -S . -B build-asan -DARIA_BUILD_EAS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEAS_SANITIZER=address,undefined",
+    "log": "asan_configure.log"
+  },
+  {
+    "cwd": "/home/wasanemon/project/exact_abort_selection",
+    "command": "cmake --build build-asan --target eas_selector_test eas_integration_test policy_comparison_test -j 2",
+    "log": "asan_build.log"
+  },
+  {
+    "cwd": "/home/wasanemon/project/exact_abort_selection",
+    "command": "ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 ctest --test-dir build-asan --verbose --output-on-failure",
+    "log": "asan_ubsan.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "cmake -S . -B build-default -DCMAKE_BUILD_TYPE=Release",
+    "log": "default_configure.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "cmake --build build-default --target bench_ycsb bench_tpcc -j 2",
+    "log": "default_build.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "python3 experiments/policy_comparison/run.py --smoke --output experiments/policy_comparison/results/smoke --cpus 0,2,4,6,8",
+    "log": "clean_smoke.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/results/smoke",
+    "log": "clean_smoke_analysis.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "python3 experiments/policy_comparison/run.py --full --output experiments/policy_comparison/results/full --cpus 0,2,4,6,8",
+    "log": "clean_full.log"
+  },
+  {
+    "cwd": "/tmp/eas-policy-clean-20260905",
+    "command": "python3 experiments/policy_comparison/analyze.py experiments/policy_comparison/results/full",
+    "log": "clean_full_analysis.log"
+  }
+]

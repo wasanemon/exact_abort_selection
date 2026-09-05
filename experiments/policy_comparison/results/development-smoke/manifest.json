@@ -1,0 +1,151 @@
+{
+  "conditions": [
+    {
+      "arity": 2,
+      "batch_id": 776281256,
+      "condition": "l2-n128-uniform-w1",
+      "distribution": "uniform",
+      "key_count": 10000,
+      "n": 128,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1713923319,
+      "condition": "l2-n128-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 128,
+      "selector_only": false,
+      "suite": "main",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1627961177,
+      "condition": "l2-n32-zipf-w1",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 32,
+      "selector_only": false,
+      "suite": "smoke_parallel",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1627961177,
+      "condition": "l2-n32-zipf-w2",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 32,
+      "selector_only": false,
+      "suite": "smoke_parallel",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 2,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 1627961177,
+      "condition": "l2-n32-zipf-w4",
+      "distribution": "zipf",
+      "key_count": 10000,
+      "n": 32,
+      "selector_only": false,
+      "suite": "smoke_parallel",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 4,
+      "zipf": 0.99
+    },
+    {
+      "arity": 1,
+      "batch_id": 3985015542,
+      "condition": "l1-n2-identical-w1",
+      "distribution": "identical",
+      "key_count": 10000,
+      "n": 2,
+      "selector_only": false,
+      "suite": "zero_commit",
+      "variants": [
+        "native",
+        "accept_id",
+        "accept_static_degree",
+        "eas_k1_adaptive",
+        "eas_k2_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    },
+    {
+      "arity": 2,
+      "batch_id": 2451448071,
+      "condition": "l2-n32-identical-w1",
+      "distribution": "identical",
+      "key_count": 10000,
+      "n": 32,
+      "selector_only": false,
+      "suite": "control",
+      "variants": [
+        "eas_k1_graph",
+        "eas_k1_lazy",
+        "eas_k1_profile",
+        "eas_k1_adaptive"
+      ],
+      "workers": 1,
+      "zipf": 0.99
+    }
+  ],
+  "expected_jobs": 544,
+  "identity": {
+    "binary_sha256": "d9978696b13535970e4b4d4e438febd9835b1a33887a7283493bfca641cda9be",
+    "cpus": [
+      0,
+      2,
+      4,
+      6,
+      8
+    ],
+    "plan_sha256": "9cfbc0e120d08aa8607529ad44784d10958645b1ab5ad3824c85b91d0c30db17",
+    "runner_sha256": "a7d6fa232db6c2a2449d2bb761e6fa88ecf03d741c20a1438eacf106ee06f0c6",
+    "shared_runner_sha256": "98e8da3ebaaa414efbf7373d47525989694ae77945ca97d98df33fe99624c4e8",
+    "smoke": true
+  }
+}

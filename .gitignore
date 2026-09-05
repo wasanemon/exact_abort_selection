@@ -40,3 +40,15 @@ cmake/*
 /experiments/eas/results/*/records/
 /experiments/eas/results/*/traces/
 /experiments/eas/results/*/logs/
+!REPORT_policy_comparison_ja.md
+!README_policy_comparison.md
+!next_stage.json
+/experiments/policy_comparison/results/*/raw/
+/experiments/policy_comparison/results/*/records/
+/experiments/policy_comparison/results/*/traces/
+/experiments/policy_comparison/results/*/logs/
+/experiments/policy_comparison/baseline_smoke/raw/
+/experiments/policy_comparison/baseline_smoke/records/
+/experiments/policy_comparison/baseline_smoke/traces/
+/experiments/policy_comparison/baseline_smoke/logs/
+/experiments/policy_comparison/quality/*.jsonl

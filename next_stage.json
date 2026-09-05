@@ -1,0 +1,645 @@
+{
+  "schema_version": 1,
+  "issue": 3,
+  "issue_4_status": "not_started",
+  "measured_commit": "a93af73b8f6ca1a56002ed508cbd40d50519417f",
+  "measured_binary_sha256": "76d90a2a6af1e9498165dbb57059b0639fcc53ebb97310fac7de051b6ec6b71f",
+  "base_commit": "d1de8c4fe3285cc5ed338b760a13be8890007a29",
+  "report": "REPORT_policy_comparison_ja.md",
+  "reproduction": "README_policy_comparison.md",
+  "data_paths": {
+    "plan": "experiments/policy_comparison/plan.json",
+    "full": "experiments/policy_comparison/results/full",
+    "raw_archive": "experiments/policy_comparison/results/full/raw_data.tar.gz",
+    "raw_records": "experiments/policy_comparison/results/full/runs.jsonl",
+    "trace_hashes": "experiments/policy_comparison/results/full/trace_manifest.json",
+    "seed_timing_variation": "experiments/policy_comparison/results/full/summary/seed_metrics.csv",
+    "paired_observations": "experiments/policy_comparison/results/full/summary/paired_observations.csv",
+    "paired_seed_summaries": "experiments/policy_comparison/results/full/summary/paired_seed.csv",
+    "paired_condition_summaries": "experiments/policy_comparison/results/full/summary/paired.csv",
+    "sensitivity": "experiments/policy_comparison/results/full/summary/sensitivity_roots.csv",
+    "quality_archive": "experiments/policy_comparison/quality/raw_data.tar.gz",
+    "quality_summary": "experiments/policy_comparison/quality/summary.json",
+    "witnesses": "experiments/policy_comparison/quality/witnesses.json",
+    "validation": "experiments/policy_comparison/validation"
+  },
+  "completion": {
+    "full_measurements": 1500,
+    "full_warmups": 100,
+    "full_status": "all_ok",
+    "smoke_processes": 544,
+    "policy_group_checks_full": 455,
+    "policy_group_checks_smoke": 155,
+    "legacy_eas_k2_exact_matches": 96,
+    "quality_inputs": 61668,
+    "finite_witness_search_inputs": 20000,
+    "release_tests": "passed",
+    "asan_ubsan": "passed",
+    "clean_checkout_build_test_smoke_full_aggregation": "passed",
+    "unexecuted_issue_3_items": [],
+    "worker_invariant_policy_groups": 405,
+    "worker_1_2_4_groups": 25
+  },
+  "assessment_label": "今回の軽い取引ではEASを選ぶ実用的根拠は弱い。小差と条件付き件数利得は残る。",
+  "label_use": "Evidence summary only; not automatic adoption, novelty certification, or authorization to start Issue #4.",
+  "promising_conditions": [
+    {
+      "scope": "同じEAS k=1判断を保存する実装比較",
+      "conditions": [
+        {
+          "condition": "l2-n8192-uniform-w1",
+          "graph_over_adaptive_selector": {
+            "maximum": 1.622003765090905,
+            "median": 1.5455329158964979,
+            "minimum": 1.4086571418612022
+          },
+          "modes": {
+            "eas_k1_adaptive": {
+              "batch_ms": 29.61368,
+              "commit_count": 3385.0,
+              "selector_build_ms": 7.819208,
+              "selector_degree_queries": 21044.0,
+              "selector_degree_requeries": 13163.0,
+              "selector_ms": 21.804948,
+              "selector_select_ms": 3.553514,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_graph": {
+              "batch_ms": 41.509519,
+              "commit_count": 3385.0,
+              "selector_build_ms": 16.215487,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 33.763876,
+              "selector_select_ms": 8.21118,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_lazy": {
+              "batch_ms": 29.593744,
+              "commit_count": 3385.0,
+              "selector_build_ms": 7.741779,
+              "selector_degree_queries": 21044.0,
+              "selector_degree_requeries": 13163.0,
+              "selector_ms": 21.973773,
+              "selector_select_ms": 3.499753,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_profile": {
+              "batch_ms": 36.777368,
+              "commit_count": 3385.0,
+              "selector_build_ms": 9.255528,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 28.967925,
+              "selector_select_ms": 8.549771,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            }
+          }
+        },
+        {
+          "condition": "l2-n8192-zipf-w1",
+          "graph_over_adaptive_selector": {
+            "maximum": 9.580322941613499,
+            "median": 9.198140783604767,
+            "minimum": 9.020021317140449
+          },
+          "modes": {
+            "eas_k1_adaptive": {
+              "batch_ms": 76.072296,
+              "commit_count": 1041.0,
+              "selector_build_ms": 6.9458,
+              "selector_degree_queries": 317028.0,
+              "selector_degree_requeries": 308981.0,
+              "selector_ms": 69.283167,
+              "selector_select_ms": 53.363257,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_graph": {
+              "batch_ms": 653.569649,
+              "commit_count": 1041.0,
+              "selector_build_ms": 17.185366,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 646.61406,
+              "selector_select_ms": 621.003414,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_lazy": {
+              "batch_ms": 75.854865,
+              "commit_count": 1041.0,
+              "selector_build_ms": 6.938241,
+              "selector_degree_queries": 317028.0,
+              "selector_degree_requeries": 308981.0,
+              "selector_ms": 69.321508,
+              "selector_select_ms": 53.416476,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_profile": {
+              "batch_ms": 70.463168,
+              "commit_count": 1041.0,
+              "selector_build_ms": 9.051945,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 63.631026,
+              "selector_select_ms": 45.376244,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            }
+          }
+        },
+        {
+          "condition": "l2-n4096-identical-w1",
+          "graph_over_adaptive_selector": {
+            "maximum": 45.58649715818606,
+            "median": 45.21338408035804,
+            "minimum": 40.788948369524604
+          },
+          "modes": {
+            "eas_k1_adaptive": {
+              "batch_ms": 32.96277,
+              "commit_count": 1.0,
+              "selector_build_ms": 0.829189,
+              "selector_degree_queries": 264160.0,
+              "selector_degree_requeries": 260064.0,
+              "selector_ms": 30.54629,
+              "selector_select_ms": 24.908041,
+              "selector_switch_ms": 1.460291,
+              "selector_switch_round": 65.0,
+              "selector_switches": 1.0
+            },
+            "eas_k1_graph": {
+              "batch_ms": 1386.29727,
+              "commit_count": 1.0,
+              "selector_build_ms": 4.718428,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 1383.86813,
+              "selector_select_ms": 1375.628807,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_lazy": {
+              "batch_ms": 835.877165,
+              "commit_count": 1.0,
+              "selector_build_ms": 0.827202,
+              "selector_degree_queries": 8390655.0,
+              "selector_degree_requeries": 8386559.0,
+              "selector_ms": 833.512162,
+              "selector_select_ms": 829.304794,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            },
+            "eas_k1_profile": {
+              "batch_ms": 8.738517,
+              "commit_count": 1.0,
+              "selector_build_ms": 1.366585,
+              "selector_degree_queries": 0.0,
+              "selector_degree_requeries": 0.0,
+              "selector_ms": 6.353199,
+              "selector_select_ms": 1.650114,
+              "selector_switch_ms": 0.0,
+              "selector_switch_round": 0.0,
+              "selector_switches": 0.0
+            }
+          }
+        }
+      ],
+      "interpretation": "adaptiveは代表3条件でgraphより速い。ただしprofileや安い異policyへの優位を意味しない。"
+    },
+    {
+      "scope": "仮定した追加本体費用下の限定的可能性",
+      "condition": "l2-n8192-zipf-w1",
+      "seed": 101,
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_gain": 1,
+      "paired_batch_extra_ms_median": 60.21644,
+      "hypothetical_cost_crossover_us_per_attempt": 7451.747810302734,
+      "measured_heavy_body": false
+    },
+    {
+      "scope": "仮定した追加本体費用下の限定的可能性",
+      "condition": "l3-n8192-zipf-w1",
+      "seeds": [
+        11,
+        29
+      ],
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_gains": [
+        1,
+        4
+      ],
+      "hypothetical_cost_crossover_us_per_attempt": [
+        2176.292123046875,
+        561.0030280151368
+      ],
+      "measured_heavy_body": false,
+      "other_three_seeds": "no high-c crossover"
+    }
+  ],
+  "unfavorable_conditions": [
+    {
+      "condition": "l2-n128-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": 0.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 0.140681,
+        "median": 0.122913,
+        "minimum": 0.114672
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.7257339663460481,
+        "median": 0.7082171132332349,
+        "minimum": 0.6703454838732686
+      }
+    },
+    {
+      "condition": "l2-n512-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": 0.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 0.067631,
+        "median": 0.05451600000000001,
+        "minimum": 0.03215600000000007
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.9731506638839464,
+        "median": 0.9554159088234652,
+        "minimum": 0.9458221248836861
+      }
+    },
+    {
+      "condition": "l2-n512-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": 0.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 0.8667239999999998,
+        "median": 0.81873,
+        "minimum": 0.794241
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.566902053592123,
+        "median": 0.5605482321528988,
+        "minimum": 0.5456678099401187
+      }
+    },
+    {
+      "condition": "l2-n2048-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -3.0,
+        "median": -4.0,
+        "minimum": -7.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 1.2504529999999994,
+        "median": 1.2135610000000003,
+        "minimum": 1.1553830000000005
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.7937638157925772,
+        "median": 0.7883544811466545,
+        "minimum": 0.7825085070674721
+      }
+    },
+    {
+      "condition": "l2-n2048-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": -1.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 7.596057,
+        "median": 6.971257000000001,
+        "minimum": 6.631080999999999
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.37551286944825973,
+        "median": 0.35381922540453825,
+        "minimum": 0.33535493232645125
+      }
+    },
+    {
+      "condition": "l2-n8192-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -103.0,
+        "median": -115.0,
+        "minimum": -118.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 80.14987500000001,
+        "median": 12.491507000000002,
+        "minimum": 12.312189
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.5608310442786454,
+        "median": 0.5586711749829822,
+        "minimum": 0.19822239514942488
+      }
+    },
+    {
+      "condition": "l2-n8192-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 1.0,
+        "median": -1.0,
+        "minimum": -2.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 62.816908,
+        "median": 61.370971000000004,
+        "minimum": 60.21643999999999
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.19831166278552984,
+        "median": 0.19382773942162543,
+        "minimum": 0.19153072368194923
+      }
+    },
+    {
+      "condition": "l2-n32768-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -517.0,
+        "median": -519.0,
+        "minimum": -546.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 86.209365,
+        "median": 84.84297500000001,
+        "minimum": 83.445152
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.4050736595930603,
+        "median": 0.3966845217356309,
+        "minimum": 0.3914032273616006
+      }
+    },
+    {
+      "condition": "l2-n32768-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -2.0,
+        "median": -8.0,
+        "minimum": -12.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 527.21811,
+        "median": 513.856238,
+        "minimum": 485.02349399999997
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.11105690162802478,
+        "median": 0.10509634579542462,
+        "minimum": 0.10211590658242507
+      }
+    },
+    {
+      "condition": "l1-n8192-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": 0.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 5.960007999999998,
+        "median": 5.576672999999998,
+        "minimum": 5.405710999999998
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.7050533943825297,
+        "median": 0.6952911276887148,
+        "minimum": 0.6787349667601454
+      }
+    },
+    {
+      "condition": "l1-n8192-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": 0.0,
+        "minimum": 0.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 6.998327,
+        "median": 6.954559,
+        "minimum": 6.6654170000000015
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.623940264803688,
+        "median": 0.6128048922175264,
+        "minimum": 0.6089192480802362
+      }
+    },
+    {
+      "condition": "l3-n8192-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -43.0,
+        "median": -84.0,
+        "minimum": -92.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 8.502823,
+        "median": 8.150151000000001,
+        "minimum": 8.1372
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.841675899459472,
+        "median": 0.8237450630232295,
+        "minimum": 0.8222302714074007
+      }
+    },
+    {
+      "condition": "l3-n8192-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 4.0,
+        "median": 0.0,
+        "minimum": -7.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 36.782695999999994,
+        "median": 34.567759,
+        "minimum": 33.888187
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.5603819333301224,
+        "median": 0.5537438534089191,
+        "minimum": 0.539593032247723
+      }
+    },
+    {
+      "condition": "l4-n8192-uniform-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": -53.0,
+        "median": -56.0,
+        "minimum": -70.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 9.781972999999994,
+        "median": 8.55437599999999,
+        "minimum": 7.654977000000002
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.8938430203296823,
+        "median": 0.8842581094124462,
+        "minimum": 0.8791676993978783
+      }
+    },
+    {
+      "condition": "l4-n8192-zipf-w1",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 0.0,
+        "median": -2.0,
+        "minimum": -4.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 28.507814999999994,
+        "median": 27.76678100000001,
+        "minimum": 27.46956
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.773984397596836,
+        "median": 0.7666431125531676,
+        "minimum": 0.7616905386071923
+      }
+    },
+    {
+      "condition": "l2-n8192-zipf-w2",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 1.0,
+        "median": -1.0,
+        "minimum": -2.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 62.43363399999999,
+        "median": 60.313486999999995,
+        "minimum": 60.12237700000001
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.17528083146696383,
+        "median": 0.17295440025886608,
+        "minimum": 0.16962746473626453
+      }
+    },
+    {
+      "condition": "l2-n8192-zipf-w4",
+      "baseline": "accept_static_degree",
+      "eas_k": 1,
+      "commit_delta": {
+        "maximum": 1.0,
+        "median": -1.0,
+        "minimum": -2.0
+      },
+      "paired_batch_extra_ms": {
+        "maximum": 62.818948999999996,
+        "median": 60.051230000000004,
+        "minimum": 59.467656999999996
+      },
+      "paired_effective_rate_ratio": {
+        "maximum": 0.1599874723212151,
+        "median": 0.1572271496916424,
+        "minimum": 0.15226185299867231
+      }
+    }
+  ],
+  "uncertain_conditions": [
+    {
+      "condition": "l2-n128-uniform-w1",
+      "eas_k": 1,
+      "baseline": "accept_static_degree",
+      "paired_effective_rate_ratio_median": 1.0220702273248239,
+      "same_commit_counts": true,
+      "note": "約6.7usの小時間差。12/15反復で勝ち、3/15は負け。accept_id/nativeには劣る。"
+    },
+    {
+      "condition": "l2-n8192-uniform-w1",
+      "note": "seed71/101の大きな同一入力時間変動を保持。原因は未特定。"
+    }
+  ],
+  "model_constraints": [
+    "single-node CPU",
+    "in-memory point accesses",
+    "complete RMW R=W=S",
+    "arity 2 main; arity 1/3/4 auxiliary",
+    "32-byte values, shared light transaction body",
+    "single batch, one attempt, no retry",
+    "fixed five input seeds, three process timings per seed",
+    "process affinity is not exclusive CPU ownership",
+    "separate-process warmup does not warm next process heap/cache",
+    "native retains all writer reservations; acceptance retains only accepted key usage",
+    "maximum commit counts measured only in prespecified n<=18 samples",
+    "sensitivity c is hypothetical uniform additional cost per attempted transaction, workers=1 only"
+  ],
+  "unresolved_points": [
+    "実用上の本体費用とcache/selector干渉",
+    "再試行を含む費用・公平性・定常throughput",
+    "独占機での小時間差/変動の再現性",
+    "大入力の最大matchingとの差",
+    "汎用R/W・耐久性・分散の適用性（本Issueの範囲外）"
+  ],
+  "finite_counterexamples": {
+    "eas_k1_gt_static": 185,
+    "static_gt_eas_k1": 1727,
+    "ties": 18088,
+    "minimality": "local under transaction deletion and key identification preserving arity=2",
+    "interpretation": "mechanism examples, not practical workload advantage"
+  },
+  "porting_performed": false,
+  "retry_engine_implemented": false,
+  "existing_pr_merged": false
+}

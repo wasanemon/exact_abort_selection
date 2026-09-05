@@ -1,0 +1,8 @@
+{
+  "measured_commit": "a93af73b8f6ca1a56002ed508cbd40d50519417f",
+  "clean_checkout": "/tmp/eas-policy-clean-20260905",
+  "tracked_source_diff": "",
+  "binary_sha256": "76d90a2a6af1e9498165dbb57059b0639fcc53ebb97310fac7de051b6ec6b71f",
+  "performance_and_sanitizer_separate": true,
+  "commands": "results/full/commands.json; validation/clean_* logs; README_policy_comparison.md"
+}

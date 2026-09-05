@@ -1,0 +1,1891 @@
+{
+  "conditions": [
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 0.02754000000000001,
+          "median": 0.019637000000000016,
+          "minimum": 0.016019000000000005
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 14,
+          "variant_dominates": 1
+        },
+        "rate_ratio": {
+          "maximum": 0.9479708332649374,
+          "median": 0.9356123824102038,
+          "minimum": 0.9137261290173999
+        },
+        "rate_wins": 1,
+        "root_cases": {
+          "all_c": 1,
+          "no_c": 14
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": -0.00121899999999997,
+          "median": -0.006730999999999987,
+          "minimum": -0.010394000000000014
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 3,
+          "variant_dominates": 12
+        },
+        "rate_ratio": {
+          "maximum": 1.0341810074111095,
+          "median": 1.0220702273248239,
+          "minimum": 1.0038125918742915
+        },
+        "rate_wins": 12,
+        "root_cases": {
+          "all_c": 12,
+          "no_c": 3
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n128-uniform-w1",
+      "distribution": "uniform",
+      "n": 128.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 0.156203,
+          "median": 0.14082899999999998,
+          "minimum": 0.140653
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.5464933424424369,
+          "median": 0.5407710067038967,
+          "minimum": 0.5082851155660163
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 0.170441,
+          "median": 0.15102900000000002,
+          "minimum": 0.13793899999999998
+        },
+        "commit_delta": {
+          "maximum": 2.0,
+          "median": 2.0,
+          "minimum": 1.0
+        },
+        "crossover_us_seed_median": 34.95350781250001,
+        "crossover_us_seed_range": [
+          34.50569531249999,
+          79.31003125000002
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.6840369266668643,
+          "median": 0.6499886877189959,
+          "minimum": 0.6218422360257742
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 0.140681,
+          "median": 0.122913,
+          "minimum": 0.114672
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.7257339663460481,
+          "median": 0.7082171132332349,
+          "minimum": 0.6703454838732686
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n128-zipf-w1",
+      "distribution": "zipf",
+      "n": 128.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 0.29403999999999997,
+          "median": 0.28151899999999996,
+          "minimum": 0.273308
+        },
+        "commit_delta": {
+          "maximum": 7.0,
+          "median": 5.0,
+          "minimum": 5.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.3756649247038664,
+          "median": 0.3556736593197296,
+          "minimum": 0.3428998207755535
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 0.189986,
+          "median": 0.13051199999999996,
+          "minimum": 0.11604100000000006
+        },
+        "commit_delta": {
+          "maximum": 3.0,
+          "median": 2.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": 55.20086848958335,
+        "crossover_us_seed_range": [
+          33.77256510416671,
+          64.23910742187495
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 3,
+        "quality_cost_counts": {
+          "baseline_dominates": 6,
+          "extra_commits_extra_time": 9
+        },
+        "rate_ratio": {
+          "maximum": 0.9088129459561515,
+          "median": 0.8940356056360561,
+          "minimum": 0.8532992635245852
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 9,
+          "no_c": 6
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 0.067631,
+          "median": 0.05451600000000001,
+          "minimum": 0.03215600000000007
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.9731506638839464,
+          "median": 0.9554159088234652,
+          "minimum": 0.9458221248836861
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n512-uniform-w1",
+      "distribution": "uniform",
+      "n": 512.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 0.6224999999999999,
+          "median": 0.599469,
+          "minimum": 0.577713
+        },
+        "commit_delta": {
+          "maximum": 4.0,
+          "median": 4.0,
+          "minimum": 2.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.5206090891630545,
+          "median": 0.515826439186355,
+          "minimum": 0.5056678872709905
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 0.981532,
+          "median": 0.950576,
+          "minimum": 0.9249569999999999
+        },
+        "commit_delta": {
+          "maximum": 10.0,
+          "median": 9.0,
+          "minimum": 6.0
+        },
+        "crossover_us_seed_median": 35.46313953993056,
+        "crossover_us_seed_range": [
+          30.377767578124995,
+          49.55720377604167
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.5244839472991218,
+          "median": 0.5198854295795774,
+          "minimum": 0.5112822007381166
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 0.8667239999999998,
+          "median": 0.81873,
+          "minimum": 0.794241
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.566902053592123,
+          "median": 0.5605482321528988,
+          "minimum": 0.5456678099401187
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n512-zipf-w1",
+      "distribution": "zipf",
+      "n": 512.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 1.4147219999999998,
+          "median": 1.372733,
+          "minimum": 1.368772
+        },
+        "commit_delta": {
+          "maximum": 36.0,
+          "median": 35.0,
+          "minimum": 28.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.32809241480356127,
+          "median": 0.31792253809520615,
+          "minimum": 0.3119404923884919
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 1.6957190000000004,
+          "median": 1.630509,
+          "minimum": 1.5738770000000004
+        },
+        "commit_delta": {
+          "maximum": 34.0,
+          "median": 33.0,
+          "minimum": 27.0
+        },
+        "crossover_us_seed_median": 34.77593335700758,
+        "crossover_us_seed_range": [
+          31.849440774356616,
+          41.34044267216437
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.7386470674713768,
+          "median": 0.7333229927003152,
+          "minimum": 0.7220424123620199
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 1.2504529999999994,
+          "median": 1.2135610000000003,
+          "minimum": 1.1553830000000005
+        },
+        "commit_delta": {
+          "maximum": -3.0,
+          "median": -4.0,
+          "minimum": -7.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.7937638157925772,
+          "median": 0.7883544811466545,
+          "minimum": 0.7825085070674721
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n2048-uniform-w1",
+      "distribution": "uniform",
+      "n": 2048.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 3.451462,
+          "median": 3.398275,
+          "minimum": 3.2728190000000006
+        },
+        "commit_delta": {
+          "maximum": 89.0,
+          "median": 83.0,
+          "minimum": 79.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.45206605309257125,
+          "median": 0.4415211242961472,
+          "minimum": 0.42839398502608733
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 8.046412,
+          "median": 7.434298,
+          "minimum": 7.187277
+        },
+        "commit_delta": {
+          "maximum": 33.0,
+          "median": 28.0,
+          "minimum": 26.0
+        },
+        "crossover_us_seed_median": 50.195995378766746,
+        "crossover_us_seed_range": [
+          43.512030229048285,
+          55.223733642578125
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.3495677322927238,
+          "median": 0.3293505293737709,
+          "minimum": 0.31648183661536355
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 7.596057,
+          "median": 6.971257000000001,
+          "minimum": 6.631080999999999
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": -1.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.37551286944825973,
+          "median": 0.35381922540453825,
+          "minimum": 0.33535493232645125
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n2048-zipf-w1",
+      "distribution": "zipf",
+      "n": 2048.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 9.740293,
+          "median": 9.056593999999999,
+          "minimum": 8.803899
+        },
+        "commit_delta": {
+          "maximum": 145.0,
+          "median": 136.0,
+          "minimum": 122.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.2467683965720845,
+          "median": 0.23418811267096973,
+          "minimum": 0.2128129325854192
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 21.983078000000006,
+          "median": 14.882937,
+          "minimum": 14.519607
+        },
+        "commit_delta": {
+          "maximum": 326.0,
+          "median": 281.0,
+          "minimum": 253.0
+        },
+        "crossover_us_seed_median": 18.268323907709632,
+        "crossover_us_seed_range": [
+          15.1503310224849,
+          52.7827188588018
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 14,
+          "variant_dominates": 1
+        },
+        "rate_ratio": {
+          "maximum": 0.8456978229287687,
+          "median": 0.5546769215174505,
+          "minimum": 0.5427576434770501
+        },
+        "rate_wins": 1,
+        "root_cases": {
+          "all_c": 1,
+          "c_above": 14
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 80.14987500000001,
+          "median": 12.491507000000002,
+          "minimum": 12.312189
+        },
+        "commit_delta": {
+          "maximum": -103.0,
+          "median": -115.0,
+          "minimum": -118.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 13,
+          "tradeoff_or_tie": 2
+        },
+        "rate_ratio": {
+          "maximum": 0.5608310442786454,
+          "median": 0.5586711749829822,
+          "minimum": 0.19822239514942488
+        },
+        "rate_wins": 2,
+        "root_cases": {
+          "c_below": 2,
+          "no_c": 13
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n8192-uniform-w1",
+      "distribution": "uniform",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 43.713176000000004,
+          "median": 21.234246,
+          "minimum": 21.123528
+        },
+        "commit_delta": {
+          "maximum": 1050.0,
+          "median": 983.0,
+          "minimum": 972.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 13,
+          "variant_dominates": 2
+        },
+        "rate_ratio": {
+          "maximum": 0.8034372203758551,
+          "median": 0.40813957341696794,
+          "minimum": 0.3964134943496744
+        },
+        "rate_wins": 2,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 64.97967299999999,
+          "median": 63.315215,
+          "minimum": 62.529447000000005
+        },
+        "commit_delta": {
+          "maximum": 107.0,
+          "median": 91.0,
+          "minimum": 85.0
+        },
+        "crossover_us_seed_median": 75.9709006253756,
+        "crossover_us_seed_range": [
+          67.2152946812221,
+          83.47010923647075
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.1895731883555723,
+          "median": 0.18448362955217298,
+          "minimum": 0.1791744505333165
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 62.816908,
+          "median": 61.370971000000004,
+          "minimum": 60.21643999999999
+        },
+        "commit_delta": {
+          "maximum": 1.0,
+          "median": -1.0,
+          "minimum": -2.0
+        },
+        "crossover_us_seed_median": 7451.747810302734,
+        "crossover_us_seed_range": [
+          7451.747810302734,
+          7451.747810302734
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 1,
+        "quality_cost_counts": {
+          "baseline_dominates": 12,
+          "extra_commits_extra_time": 3
+        },
+        "rate_ratio": {
+          "maximum": 0.19831166278552984,
+          "median": 0.19382773942162543,
+          "minimum": 0.19153072368194923
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 3,
+          "no_c": 12
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n8192-zipf-w1",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 70.883804,
+          "median": 69.249808,
+          "minimum": 68.562785
+        },
+        "commit_delta": {
+          "maximum": 518.0,
+          "median": 494.0,
+          "minimum": 479.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.1759667497093703,
+          "median": 0.1704373985142652,
+          "minimum": 0.16711336889047612
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 97.555941,
+          "median": 96.209057,
+          "minimum": 93.89632899999998
+        },
+        "commit_delta": {
+          "maximum": -20.0,
+          "median": -37.0,
+          "minimum": -56.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.3738012937320518,
+          "median": 0.36846619425075305,
+          "minimum": 0.3649758894315333
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 86.209365,
+          "median": 84.84297500000001,
+          "minimum": 83.445152
+        },
+        "commit_delta": {
+          "maximum": -517.0,
+          "median": -519.0,
+          "minimum": -546.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.4050736595930603,
+          "median": 0.3966845217356309,
+          "minimum": 0.3914032273616006
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n32768-uniform-w1",
+      "distribution": "uniform",
+      "n": 32768.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 123.050124,
+          "median": 121.159481,
+          "minimum": 120.57515400000001
+        },
+        "commit_delta": {
+          "maximum": 1816.0,
+          "median": 1791.0,
+          "minimum": 1758.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.35317205208391217,
+          "median": 0.35154965086902623,
+          "minimum": 0.34930650899068627
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 536.654319,
+          "median": 523.9844169999999,
+          "minimum": 495.46196799999996
+        },
+        "commit_delta": {
+          "maximum": 298.0,
+          "median": 292.0,
+          "minimum": 268.0
+        },
+        "crossover_us_seed_median": 97.9913648271833,
+        "crossover_us_seed_range": [
+          96.17488034067857,
+          109.62794574999454
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.10634544258197512,
+          "median": 0.10224060508866378,
+          "minimum": 0.09958065349382578
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 527.21811,
+          "median": 513.856238,
+          "minimum": 485.02349399999997
+        },
+        "commit_delta": {
+          "maximum": -2.0,
+          "median": -8.0,
+          "minimum": -12.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.11105690162802478,
+          "median": 0.10509634579542462,
+          "minimum": 0.10211590658242507
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 2.0,
+      "condition": "l2-n32768-zipf-w1",
+      "distribution": "zipf",
+      "n": 32768.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 560.555332,
+          "median": 547.643838,
+          "minimum": 519.206617
+        },
+        "commit_delta": {
+          "maximum": 1418.0,
+          "median": 1409.0,
+          "minimum": 1390.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.14476349988505743,
+          "median": 0.139708228625294,
+          "minimum": 0.1348974212345285
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "main",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 6.568821,
+          "median": 6.246277000000001,
+          "minimum": 6.042489
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.6688822688962875,
+          "median": 0.6593703167425968,
+          "minimum": 0.6466397033328158
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 5.960007999999998,
+          "median": 5.576672999999998,
+          "minimum": 5.405710999999998
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.7050533943825297,
+          "median": 0.6952911276887148,
+          "minimum": 0.6787349667601454
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 1.0,
+      "condition": "l1-n8192-uniform-w1",
+      "distribution": "uniform",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 11.464379,
+          "median": 11.161796000000002,
+          "minimum": 10.880219999999998
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.4016806604393895,
+          "median": 0.3943829155347989,
+          "minimum": 0.383407696833835
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 7.951886999999999,
+          "median": 7.788540999999999,
+          "minimum": 7.631471999999999
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.5709776000739106,
+          "median": 0.5679603694754621,
+          "minimum": 0.5585497326805899
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 6.998327,
+          "median": 6.954559,
+          "minimum": 6.6654170000000015
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.623940264803688,
+          "median": 0.6128048922175264,
+          "minimum": 0.6089192480802362
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 1.0,
+      "condition": "l1-n8192-zipf-w1",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 12.350403,
+          "median": 12.204833,
+          "minimum": 12.081167
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": 0.0,
+          "minimum": 0.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.3213413313453804,
+          "median": 0.3166916006154167,
+          "minimum": 0.30992672711769903
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 39.829314,
+          "median": 39.3506,
+          "minimum": 39.132026999999994
+        },
+        "commit_delta": {
+          "maximum": 266.0,
+          "median": 247.0,
+          "minimum": 222.0
+        },
+        "crossover_us_seed_median": 35.940055212847135,
+        "crossover_us_seed_range": [
+          32.44394277242789,
+          41.171670264991555
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.357896257553876,
+          "median": 0.3529246133995263,
+          "minimum": 0.3481702521622282
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 8.502823,
+          "median": 8.150151000000001,
+          "minimum": 8.1372
+        },
+        "commit_delta": {
+          "maximum": -43.0,
+          "median": -84.0,
+          "minimum": -92.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.841675899459472,
+          "median": 0.8237450630232295,
+          "minimum": 0.8222302714074007
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 3.0,
+      "condition": "l3-n8192-uniform-w1",
+      "distribution": "uniform",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 48.37012,
+          "median": 47.575419000000004,
+          "minimum": 47.325057
+        },
+        "commit_delta": {
+          "maximum": 1126.0,
+          "median": 1076.0,
+          "minimum": 1057.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.3440580979711505,
+          "median": 0.33265857514589386,
+          "minimum": 0.32276303708810294
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 63.96236699999999,
+          "median": 62.424268,
+          "minimum": 61.664288
+        },
+        "commit_delta": {
+          "maximum": 81.0,
+          "median": 79.0,
+          "minimum": 74.0
+        },
+        "crossover_us_seed_median": 42.598293441381216,
+        "crossover_us_seed_range": [
+          40.403092618918116,
+          46.68840928856101
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.23961923147280406,
+          "median": 0.23341594264676543,
+          "minimum": 0.2323751346935791
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 36.782695999999994,
+          "median": 34.567759,
+          "minimum": 33.888187
+        },
+        "commit_delta": {
+          "maximum": 4.0,
+          "median": 0.0,
+          "minimum": -7.0
+        },
+        "crossover_us_seed_median": 1368.647575531006,
+        "crossover_us_seed_range": [
+          561.0030280151368,
+          2176.292123046875
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 2,
+        "quality_cost_counts": {
+          "baseline_dominates": 9,
+          "extra_commits_extra_time": 6
+        },
+        "rate_ratio": {
+          "maximum": 0.5603819333301224,
+          "median": 0.5537438534089191,
+          "minimum": 0.539593032247723
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 6,
+          "no_c": 9
+        }
+      },
+      "arity": 3.0,
+      "condition": "l3-n8192-zipf-w1",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 71.471758,
+          "median": 69.513238,
+          "minimum": 68.769862
+        },
+        "commit_delta": {
+          "maximum": 425.0,
+          "median": 407.0,
+          "minimum": 395.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.4554648614783564,
+          "median": 0.4391443526975699,
+          "minimum": 0.42547514876419784
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 89.610422,
+          "median": 88.596516,
+          "minimum": 88.406002
+        },
+        "commit_delta": {
+          "maximum": 192.0,
+          "median": 179.0,
+          "minimum": 156.0
+        },
+        "crossover_us_seed_median": 79.51837294253556,
+        "crossover_us_seed_range": [
+          73.45450195757549,
+          92.03920318603514
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.20898370280567372,
+          "median": 0.20577123690261534,
+          "minimum": 0.20193530952660013
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 9.781972999999994,
+          "median": 8.55437599999999,
+          "minimum": 7.654977000000002
+        },
+        "commit_delta": {
+          "maximum": -53.0,
+          "median": -56.0,
+          "minimum": -70.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.8938430203296823,
+          "median": 0.8842581094124462,
+          "minimum": 0.8791676993978783
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 4.0,
+      "condition": "l4-n8192-uniform-w1",
+      "distribution": "uniform",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 98.882719,
+          "median": 97.760052,
+          "minimum": 97.272956
+        },
+        "commit_delta": {
+          "maximum": 922.0,
+          "median": 910.0,
+          "minimum": 902.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.2435131281988836,
+          "median": 0.24261990110883846,
+          "minimum": 0.23738939796056566
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 105.858394,
+          "median": 105.06525400000001,
+          "minimum": 104.247786
+        },
+        "commit_delta": {
+          "maximum": 71.0,
+          "median": 65.0,
+          "minimum": 56.0
+        },
+        "crossover_us_seed_median": 47.056272927024146,
+        "crossover_us_seed_range": [
+          42.72719165726783,
+          57.585738582066135
+        ],
+        "measured_pairs": 15,
+        "positive_root_seed_count": 5,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.18176588464573468,
+          "median": 0.17761927302404207,
+          "minimum": 0.16982012687824602
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "c_above": 15
+        }
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 28.507814999999994,
+          "median": 27.76678100000001,
+          "minimum": 27.46956
+        },
+        "commit_delta": {
+          "maximum": 0.0,
+          "median": -2.0,
+          "minimum": -4.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.773984397596836,
+          "median": 0.7666431125531676,
+          "minimum": 0.7616905386071923
+        },
+        "rate_wins": 0,
+        "root_cases": {
+          "no_c": 15
+        }
+      },
+      "arity": 4.0,
+      "condition": "l4-n8192-zipf-w1",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 113.70348899999999,
+          "median": 113.31281800000001,
+          "minimum": 112.595613
+        },
+        "commit_delta": {
+          "maximum": 287.0,
+          "median": 281.0,
+          "minimum": 262.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.7006497866815443,
+          "median": 0.6056537548269835,
+          "minimum": 0.5317719731209412
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "arity",
+      "workers": 1.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 64.714395,
+          "median": 62.47373199999999,
+          "minimum": 62.38659200000001
+        },
+        "commit_delta": {
+          "maximum": 107.0,
+          "median": 91.0,
+          "minimum": 85.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.1601488834937565,
+          "median": 0.1573400750045289,
+          "minimum": 0.1522870711188819
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 62.43363399999999,
+          "median": 60.313486999999995,
+          "minimum": 60.12237700000001
+        },
+        "commit_delta": {
+          "maximum": 1.0,
+          "median": -1.0,
+          "minimum": -2.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 12,
+          "extra_commits_extra_time": 3
+        },
+        "rate_ratio": {
+          "maximum": 0.17528083146696383,
+          "median": 0.17295440025886608,
+          "minimum": 0.16962746473626453
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "arity": 2.0,
+      "condition": "l2-n8192-zipf-w2",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 70.77932,
+          "median": 68.650809,
+          "minimum": 68.299513
+        },
+        "commit_delta": {
+          "maximum": 518.0,
+          "median": 494.0,
+          "minimum": 479.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.11830001569504792,
+          "median": 0.11420106143305613,
+          "minimum": 0.11210897122050231
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "scale",
+      "workers": 2.0
+    },
+    {
+      "accept_id": {
+        "batch_delta_ms": {
+          "maximum": 64.835565,
+          "median": 62.129561,
+          "minimum": 61.50205
+        },
+        "commit_delta": {
+          "maximum": 107.0,
+          "median": 91.0,
+          "minimum": 85.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.14466847557862436,
+          "median": 0.14219676184349136,
+          "minimum": 0.13662623988445136
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "accept_static_degree": {
+        "batch_delta_ms": {
+          "maximum": 62.818948999999996,
+          "median": 60.051230000000004,
+          "minimum": 59.467656999999996
+        },
+        "commit_delta": {
+          "maximum": 1.0,
+          "median": -1.0,
+          "minimum": -2.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "baseline_dominates": 12,
+          "extra_commits_extra_time": 3
+        },
+        "rate_ratio": {
+          "maximum": 0.1599874723212151,
+          "median": 0.1572271496916424,
+          "minimum": 0.15226185299867231
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "arity": 2.0,
+      "condition": "l2-n8192-zipf-w4",
+      "distribution": "zipf",
+      "n": 8192.0,
+      "native": {
+        "batch_delta_ms": {
+          "maximum": 71.181191,
+          "median": 68.504184,
+          "minimum": 67.743195
+        },
+        "commit_delta": {
+          "maximum": 518.0,
+          "median": 494.0,
+          "minimum": 479.0
+        },
+        "crossover_us_seed_median": null,
+        "crossover_us_seed_range": null,
+        "measured_pairs": 15,
+        "positive_root_seed_count": 0,
+        "quality_cost_counts": {
+          "extra_commits_extra_time": 15
+        },
+        "rate_ratio": {
+          "maximum": 0.0809048987061162,
+          "median": 0.07660728415660457,
+          "minimum": 0.07464950813489327
+        },
+        "rate_wins": 0,
+        "root_cases": {}
+      },
+      "suite": "scale",
+      "workers": 4.0
+    }
+  ],
+  "controls": [
+    {
+      "condition": "l2-n8192-uniform-w1",
+      "graph_over_adaptive_selector": {
+        "maximum": 1.622003765090905,
+        "median": 1.5455329158964979,
+        "minimum": 1.4086571418612022
+      },
+      "modes": {
+        "eas_k1_adaptive": {
+          "batch_ms": 29.61368,
+          "commit_count": 3385.0,
+          "selector_build_ms": 7.819208,
+          "selector_degree_queries": 21044.0,
+          "selector_degree_requeries": 13163.0,
+          "selector_ms": 21.804948,
+          "selector_select_ms": 3.553514,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_graph": {
+          "batch_ms": 41.509519,
+          "commit_count": 3385.0,
+          "selector_build_ms": 16.215487,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 33.763876,
+          "selector_select_ms": 8.21118,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_lazy": {
+          "batch_ms": 29.593744,
+          "commit_count": 3385.0,
+          "selector_build_ms": 7.741779,
+          "selector_degree_queries": 21044.0,
+          "selector_degree_requeries": 13163.0,
+          "selector_ms": 21.973773,
+          "selector_select_ms": 3.499753,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_profile": {
+          "batch_ms": 36.777368,
+          "commit_count": 3385.0,
+          "selector_build_ms": 9.255528,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 28.967925,
+          "selector_select_ms": 8.549771,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        }
+      }
+    },
+    {
+      "condition": "l2-n8192-zipf-w1",
+      "graph_over_adaptive_selector": {
+        "maximum": 9.580322941613499,
+        "median": 9.198140783604767,
+        "minimum": 9.020021317140449
+      },
+      "modes": {
+        "eas_k1_adaptive": {
+          "batch_ms": 76.072296,
+          "commit_count": 1041.0,
+          "selector_build_ms": 6.9458,
+          "selector_degree_queries": 317028.0,
+          "selector_degree_requeries": 308981.0,
+          "selector_ms": 69.283167,
+          "selector_select_ms": 53.363257,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_graph": {
+          "batch_ms": 653.569649,
+          "commit_count": 1041.0,
+          "selector_build_ms": 17.185366,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 646.61406,
+          "selector_select_ms": 621.003414,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_lazy": {
+          "batch_ms": 75.854865,
+          "commit_count": 1041.0,
+          "selector_build_ms": 6.938241,
+          "selector_degree_queries": 317028.0,
+          "selector_degree_requeries": 308981.0,
+          "selector_ms": 69.321508,
+          "selector_select_ms": 53.416476,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_profile": {
+          "batch_ms": 70.463168,
+          "commit_count": 1041.0,
+          "selector_build_ms": 9.051945,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 63.631026,
+          "selector_select_ms": 45.376244,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        }
+      }
+    },
+    {
+      "condition": "l2-n4096-identical-w1",
+      "graph_over_adaptive_selector": {
+        "maximum": 45.58649715818606,
+        "median": 45.21338408035804,
+        "minimum": 40.788948369524604
+      },
+      "modes": {
+        "eas_k1_adaptive": {
+          "batch_ms": 32.96277,
+          "commit_count": 1.0,
+          "selector_build_ms": 0.829189,
+          "selector_degree_queries": 264160.0,
+          "selector_degree_requeries": 260064.0,
+          "selector_ms": 30.54629,
+          "selector_select_ms": 24.908041,
+          "selector_switch_ms": 1.460291,
+          "selector_switch_round": 65.0,
+          "selector_switches": 1.0
+        },
+        "eas_k1_graph": {
+          "batch_ms": 1386.29727,
+          "commit_count": 1.0,
+          "selector_build_ms": 4.718428,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 1383.86813,
+          "selector_select_ms": 1375.628807,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_lazy": {
+          "batch_ms": 835.877165,
+          "commit_count": 1.0,
+          "selector_build_ms": 0.827202,
+          "selector_degree_queries": 8390655.0,
+          "selector_degree_requeries": 8386559.0,
+          "selector_ms": 833.512162,
+          "selector_select_ms": 829.304794,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        },
+        "eas_k1_profile": {
+          "batch_ms": 8.738517,
+          "commit_count": 1.0,
+          "selector_build_ms": 1.366585,
+          "selector_degree_queries": 0.0,
+          "selector_degree_requeries": 0.0,
+          "selector_ms": 6.353199,
+          "selector_select_ms": 1.650114,
+          "selector_switch_ms": 0.0,
+          "selector_switch_round": 0.0,
+          "selector_switches": 0.0
+        }
+      }
+    }
+  ],
+  "count_reproduction": [
+    {
+      "batch_id": 1208417051,
+      "cpp_medians": [
+        538.0,
+        936.0,
+        1042.0,
+        1038.0,
+        1041.0
+      ],
+      "equal": true,
+      "n": 8192,
+      "previous_python_medians": [
+        538,
+        936,
+        1042,
+        1038,
+        1041
+      ]
+    },
+    {
+      "batch_id": 566257870,
+      "cpp_medians": [
+        711.0,
+        1829.0,
+        2125.0,
+        2116.0,
+        2119.0
+      ],
+      "equal": true,
+      "n": 32768,
+      "previous_python_medians": [
+        711,
+        1829,
+        2125,
+        2116,
+        2119
+      ]
+    }
+  ]
+}
